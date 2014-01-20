@@ -1,7 +1,7 @@
 angular-keyboard
 ================
 
-Completely automated keyboard shortcuts for your Angular apps.
+Configurable keyboard shortcuts for your Angular apps.
 
 ### Features:
 - managing hotkeys per directive is too cumbersome
