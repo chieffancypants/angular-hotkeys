@@ -1,12 +1,18 @@
 {
   "name": "angular-loading-bar",
   "version": "0.1.1",
-  "main": ["src/loading-bar.js", "src/loading-bar.css"],
+  "main": [
+    "src/loading-bar.js",
+    "src/loading-bar.css"
+  ],
   "ignore": [
     "**/.*",
     "node_modules",
     "components",
     "test",
     "example"
-  ]
+  ],
+  "dependencies": {
+    "mousetrap": "~1.4.6"
+  }
 }

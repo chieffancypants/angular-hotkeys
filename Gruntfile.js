@@ -18,8 +18,8 @@ module.exports = function(grunt) {
         report: 'gzip'
       },
       build: {
-        src: 'src/loading-bar.js',
-        dest: 'build/loading-bar.min.js'
+        src: 'src/hotkeys.js',
+        dest: 'build/hotkeys.min.js'
       }
     },
 
@@ -29,8 +29,8 @@ module.exports = function(grunt) {
         report: 'gzip'
       },
       minify: {
-        src: 'src/loading-bar.css',
-        dest: 'build/loading-bar.min.css'
+        src: 'src/hotkeys.css',
+        dest: 'build/hotkeys.min.css'
       }
     },
 
@@ -66,8 +66,8 @@ module.exports = function(grunt) {
           banner: '<%= banner %>'
         },
         files: {
-          'build/loading-bar.css': 'src/loading-bar.css',
-          'build/loading-bar.js':  'src/loading-bar.js',
+          'build/hotkeys.css': 'src/hotkeys.css',
+          'build/hotkeys.js':  'src/hotkeys.js',
         }
       }
     }
