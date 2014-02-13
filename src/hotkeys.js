@@ -13,7 +13,11 @@
 
 angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
 
+  var helpMenu = angular.element('<div class="cfp-hotkeys">')
+
   this.$get = ['$window', '$rootScope', function ($window, $rootScope) {
+
+    var hotkeys = [];
 
     function wrapApply (callback) {
       // return mousetrap a function to call
@@ -27,8 +31,26 @@ angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
       };
     }
 
+    // Auto-create a help menu:
+    Mousetrap.bind('?', wrapApply(function (event) {
+      hotkeys.push({
+        hotkey: '?',
+        description: 'Show this help menu'
+      });
+      console.log('? was pressed', hotkeys);
+    }));
+
     return {
-      add: function(hotkey, callback) {
+      add: function(hotkey, description, callback) {
+        if (description instanceof Function) {
+          callback = description;
+          description = '';
+        }
+
+        hotkeys.push({
+          hotkey: hotkey,
+          description: description
+        });
         Mousetrap.bind(hotkey, wrapApply(callback));
       }
     };
