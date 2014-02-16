@@ -48,25 +48,34 @@ angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
     scope.hotkeys = [];
     scope.helpVisible = !false;
 
-    $rootScope.$on('$routeChangeStart', function(event, route) {
-      console.log('route changed:', event, route.hotkeys);
+    $rootScope.$on('$routeChangeSuccess', function(event, route) {
       purgeHotkeys();
 
       if (route.hotkeys) {
         angular.forEach(route.hotkeys, function (hotkey) {
+
+          // a string was given, which implies this is a function that is to be
+          // $eval()'d within that controller's scope
+          // TODO: hotkey here is super confusing.  sometimes a function (that gets turned into an array), sometimes a string
+          if (typeof(hotkey[2]) === 'string' || hotkey[2] instanceof String) {
+            hotkey[2]= [hotkey[2], route];
+          }
+
           // todo: perform check to make sure not already defined:
+          // this came from a route, so it's likely not meant to be persistent:
           hotkey[3] = false;
+
           _add.apply(this, hotkey);
+
         });
       }
-      console.log(scope.hotkeys);
     });
 
 
     // TODO: Make this configurable:
     var helpMenu = angular.element('<div class="cfp-hotkeys" ng-show="helpVisible"><table><tbody>' +
                                       '<tr ng-repeat="hotkey in hotkeys | filter:{description: \'!$$undefined$$\'}">' +
-                                        '<td class="cfp-hotkeys-keys"><span ng-repeat="key in hotkey.hotkey" class="cfp-hotkeys-key">' +
+                                        '<td class="cfp-hotkeys-keys"><span ng-repeat="key in hotkey" class="cfp-hotkeys-key">' +
                                           '{{key}}' +
                                         '</span></td>' +
                                         '<td class="cfp-hotkeys-text">{{hotkey.description}}</td>' +
@@ -79,7 +88,6 @@ angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
     // TODO: Make this configurable
     _add('?', 'Show this help menu', toggleHelp);
     angular.element(document.body).append($compile(helpMenu)(scope));
-    // console.log($compile(helpMenu)(scope)[0]);
 
 
     /**
@@ -173,6 +181,18 @@ angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
     function wrapApply (callback) {
       // return mousetrap a function to call
       return function (event) {
+
+        // if this is an array, it means we provided a route object
+        // because the scope wasn't available yet, so rewrap the callback
+        // now that the scope is available:
+        if (callback instanceof Array) {
+          var funcString = callback[0];
+          var route = callback[1];
+          callback = function (event) {
+            route.scope.$eval(funcString);
+          };
+        }
+
         // this takes place outside angular, so we'll have to call
         // $apply() to make sure angular's digest happens
         $rootScope.$apply(function() {
