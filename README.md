@@ -14,6 +14,7 @@ Configuration-centric keyboard shortcuts for your Angular apps.
 - when controllers are descructed, lib must remove those hotkeys
 - should allow a build without mousetrap in the event it's already included
 - hotkeys.add() should accept an array to make it more configuration-like
+- template should be configurable
 
 
 ### Why I created this:
