@@ -56,7 +56,7 @@ angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
      * Contains the state of the help's visibility
      * @type {Boolean}
      */
-    scope.helpVisible = !false;
+    scope.helpVisible = false;
 
     $rootScope.$on('$routeChangeSuccess', function (event, route) {
       purgeHotkeys();
@@ -83,21 +83,21 @@ angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
     });
 
     // TODO: Make this configurable:
-    var helpMenu = angular.element('<div class="cfp-hotkeys" ng-show="helpVisible"><table><tbody>' +
+    var helpMenu = angular.element('<div class="cfp-hotkeys-container"><div class="cfp-hotkeys" ng-show="helpVisible"><table><tbody>' +
                                       '<tr ng-repeat="hotkey in hotkeys | filter:{ description: \'!$$undefined$$\' }">' +
                                         '<td class="cfp-hotkeys-keys">' +
                                           '<span class="cfp-hotkeys-key">{{ hotkey.key }}</span>' +
                                         '</td>' +
                                         '<td class="cfp-hotkeys-text">{{ hotkey.description }}</td>' +
                                       '</tr>' +
-                                   '</tbody></table></div>');
+                                   '</tbody></table></div></div>');
 
 
 
     // Auto-create a help menu:
     // TODO: Make this configurable
     _add('?', 'Show this help menu', toggleHelp);
-    angular.element(document.body).append($compile(helpMenu)(scope));
+    angular.element($rootElement).append($compile(helpMenu)(scope));
 
 
     /**
@@ -133,6 +133,15 @@ angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
      * @param {boolean}  persistent  if true, the binding is preserved upon route changes
      */
     function _add (key, description, callback, persistent) {
+      // a config object was passed instead, so unwrap it:
+      if (key instanceof Object) {
+        description = key.description;
+        callback = key.callback;
+        persistent = key.persistent;
+        key = key.hotkey;
+      }
+
+      // description is optional:
       if (description instanceof Function) {
         callback = description;
         description = '$$undefined$$';
