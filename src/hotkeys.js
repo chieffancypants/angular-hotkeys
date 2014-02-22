@@ -45,15 +45,24 @@ angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
   this.$get = ['$rootElement', '$rootScope', '$compile', function ($rootElement, $rootScope, $compile) {
 
     var scope = $rootScope.$new();
+
+    /**
+     * Holds an array of Hotkey objects currently bound
+     * @type {Array}
+     */
     scope.hotkeys = [];
+
+    /**
+     * Contains the state of the help's visibility
+     * @type {Boolean}
+     */
     scope.helpVisible = !false;
 
-    $rootScope.$on('$routeChangeSuccess', function(event, route) {
+    $rootScope.$on('$routeChangeSuccess', function (event, route) {
       purgeHotkeys();
 
       if (route.hotkeys) {
         angular.forEach(route.hotkeys, function (hotkey) {
-
           // a string was given, which implies this is a function that is to be
           // $eval()'d within that controller's scope
           // TODO: hotkey here is super confusing.  sometimes a function (that gets turned into an array), sometimes a string
@@ -69,16 +78,17 @@ angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
 
         });
       }
-    });
 
+      console.log(scope.hotkeys);
+    });
 
     // TODO: Make this configurable:
     var helpMenu = angular.element('<div class="cfp-hotkeys" ng-show="helpVisible"><table><tbody>' +
-                                      '<tr ng-repeat="hotkey in hotkeys | filter:{description: \'!$$undefined$$\'}">' +
-                                        '<td class="cfp-hotkeys-keys"><span ng-repeat="key in hotkey" class="cfp-hotkeys-key">' +
-                                          '{{key}}' +
-                                        '</span></td>' +
-                                        '<td class="cfp-hotkeys-text">{{hotkey.description}}</td>' +
+                                      '<tr ng-repeat="hotkey in hotkeys | filter:{ description: \'!$$undefined$$\' }">' +
+                                        '<td class="cfp-hotkeys-keys">' +
+                                          '<span class="cfp-hotkeys-key">{{ hotkey.key }}</span>' +
+                                        '</td>' +
+                                        '<td class="cfp-hotkeys-text">{{ hotkey.description }}</td>' +
                                       '</tr>' +
                                    '</tbody></table></div>');
 
@@ -91,7 +101,7 @@ angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
 
 
     /**
-     * Purges all transient hotkeys (such as those defined in routes)
+     * Purges all non-persistent hotkeys (such as those defined in routes)
      *
      * Without this, the same hotkey would get recreated everytime
      * the route is accessed.
@@ -107,10 +117,21 @@ angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
       });
     }
 
+    /**
+     * Toggles the help menu element's visiblity
+     */
     function toggleHelp() {
       scope.helpVisible = !scope.helpVisible;
     }
 
+    /**
+     * Creates a new Hotkey and creates the Mousetrap binding
+     *
+     * @param {string}   key         mousetrap key binding
+     * @param {string}   description description for the help menu
+     * @param {Function} callback    method to call when key is pressed
+     * @param {boolean}  persistent  if true, the binding is preserved upon route changes
+     */
     function _add (key, description, callback, persistent) {
       if (description instanceof Function) {
         callback = description;
@@ -149,6 +170,7 @@ angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
 
     /**
      * delete and unbind a Hotkey
+     *
      * @param  {mixed} hotkey Either the bound key or an instance of Hotkety
      * @return {boolean}        true if successful
      */
@@ -166,6 +188,7 @@ angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
 
     /**
      * Get a Hotkey object by key binding
+     *
      * @param  {[string]} key they key the Hotkey is bound to
      * @return {Hotkey}   The Hotkey object
      */
@@ -178,6 +201,13 @@ angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
       return false;
     }
 
+    /**
+     * All callbacks sent to Mousetrap are wrapped using this function
+     * so that we can force a $scope.$apply()
+     *
+     * @param  {Function} callback [description]
+     * @return {[type]}            [description]
+     */
     function wrapApply (callback) {
       // return mousetrap a function to call
       return function (event) {

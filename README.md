@@ -1,6 +1,11 @@
 angular-hotkeys
 ================
 
+## This is under heavy development, please do not use yet.
+
+* * *
+
+
 Configuration-centric keyboard shortcuts for your Angular apps.
 
 ### Features:
@@ -17,8 +22,8 @@ Configuration-centric keyboard shortcuts for your Angular apps.
 - template should be configurable
 
 
-### Why I created this:
-I needed keyboard shortcuts for my application, but the other projects out there relied too heavily on HTML markup for those shortcuts.  For example:
+### Why this is needed:
+Other projects out there rely too heavily on HTML markup for keyboard shortcuts.  For example:
 
 ```html
 <div class="player">
