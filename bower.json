@@ -1,9 +1,9 @@
 {
-  "name": "angular-loading-bar",
+  "name": "angular-hotkeys",
   "version": "0.1.1",
   "main": [
-    "src/loading-bar.js",
-    "src/loading-bar.css"
+    "src/hotkeys.js",
+    "src/hotkeys.css"
   ],
   "ignore": [
     "**/.*",
@@ -13,6 +13,8 @@
     "example"
   ],
   "dependencies": {
-    "mousetrap": "~1.4.6"
+    "mousetrap": "~1.4.6",
+    "angular-mocks": "~1.2.9",
+    "angular-animate": "~1.2.9"
   }
 }

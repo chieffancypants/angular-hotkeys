@@ -1,3 +1,4 @@
-node_modules
+node_modules/
 test/coverage
-bower_components
+bower_components/
+build/

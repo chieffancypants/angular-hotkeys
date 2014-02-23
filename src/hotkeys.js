@@ -199,7 +199,7 @@ angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
     /**
      * delete and unbind a Hotkey
      *
-     * @param  {mixed} hotkey Either the bound key or an instance of Hotkety
+     * @param  {mixed} hotkey Either the bound key or an instance of Hotkey
      * @return {boolean}        true if successful
      */
     function _del (hotkey) {
@@ -221,11 +221,11 @@ angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
      * @return {Hotkey}   The Hotkey object
      */
     function _get (key) {
-      angular.forEach(scope.hotkeys, function (hotkey) {
-        if (hotkey.key === key) {
-          return hotkey;
+      for (var i = 0; i < scope.hotkeys.length; i++) {
+        if (scope.hotkeys[i].key === key) {
+          return scope.hotkeys[i];
         }
-      });
+      }
       return false;
     }
 

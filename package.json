@@ -1,5 +1,5 @@
 {
-  "name": "angular-keyboard",
+  "name": "angular-hotkeys",
   "version": "0.0.1",
   "description": "Automatic keyboard shortcuts for your Angular Apps",
   "main": "src/loading-bar.js",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/chieffancypants/angular-keyboard.git"
+    "url": "git://github.com/chieffancypants/angular-hotkeys.git"
   },
   "keywords": [
     "angular",
@@ -21,9 +21,9 @@
   "author": "Wes Cruver",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/chieffancypants/angular-keyboard/issues"
+    "url": "https://github.com/chieffancypants/angular-hotkeys/issues"
   },
-  "homepage": "https://chieffancypants.github.io/angular-keyboard",
+  "homepage": "https://chieffancypants.github.io/angular-hotkeys",
   "devDependencies": {
     "karma-script-launcher": "~0.1.0",
     "karma-chrome-launcher": "~0.1.0",
