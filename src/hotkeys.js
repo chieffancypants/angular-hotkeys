@@ -18,18 +18,34 @@
 
 angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
 
-  function symbolize (key) {
+  function symbolize (combo) {
     var map = {
       command   : '⌘',
       shift     : '⇧',
       left      : '←',
       right     : '→',
-      top       : '↑',
-      bottom    : '↓',
+      up        : '↑',
+      down      : '↓',
       'return'  : '↩',
       backspace : '⌫'
     };
-    return map[key] || key;
+    combo = combo.split('+');
+
+    for (var i = 0; i < combo.length; i++) {
+      // try to resolve command / ctrl based on OS:
+      if (combo[i] == 'mod') {
+        if (window.navigator && window.navigator.platform.indexOf('Mac') >=0 ) {
+          console.log(window.navigator.platform);
+          combo[i] = 'command';
+        } else {
+          combo[i] = 'ctrl';
+        }
+      }
+
+      combo[i] = map[combo[i]] || combo[i];
+    }
+
+    return combo.join(' + ');
   }
 
   function Hotkey (key, description, callback, persistent) {
@@ -41,6 +57,17 @@ angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
     this.callback = callback;
     this.persistent = persistent;
   }
+
+  // TODO: this gets called a lot.  We should cache the result
+  Hotkey.prototype.format = function() {
+    // format the hotkey for display:
+    var sequence = this.key.split(/[\s]/);
+    for (var i = 0; i < sequence.length; i++) {
+      sequence[i] = symbolize(sequence[i]);
+    }
+
+    return sequence;
+  };
 
   this.$get = ['$rootElement', '$rootScope', '$compile', function ($rootElement, $rootScope, $compile) {
 
@@ -57,6 +84,13 @@ angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
      * @type {Boolean}
      */
     scope.helpVisible = false;
+
+    /**
+     * Holds the title string for the help menu
+     * @type {String}
+     */
+    scope.title = 'Keyboard Shortcuts:';
+
 
     $rootScope.$on('$routeChangeSuccess', function (event, route) {
       purgeHotkeys();
@@ -83,14 +117,17 @@ angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
     });
 
     // TODO: Make this configurable:
-    var helpMenu = angular.element('<div class="cfp-hotkeys-container"><div class="cfp-hotkeys" ng-show="helpVisible"><table><tbody>' +
-                                      '<tr ng-repeat="hotkey in hotkeys | filter:{ description: \'!$$undefined$$\' }">' +
-                                        '<td class="cfp-hotkeys-keys">' +
-                                          '<span class="cfp-hotkeys-key">{{ hotkey.key }}</span>' +
-                                        '</td>' +
-                                        '<td class="cfp-hotkeys-text">{{ hotkey.description }}</td>' +
-                                      '</tr>' +
-                                   '</tbody></table></div></div>');
+    var helpMenu = angular.element('<div class="cfp-hotkeys-container"><div class="cfp-hotkeys" ng-show="helpVisible">' +
+                                      '<h4>{{ title }}</h4>' +
+                                      '<table><tbody>' +
+                                        '<tr ng-repeat="hotkey in hotkeys | filter:{ description: \'!$$undefined$$\' }">' +
+                                          '<td class="cfp-hotkeys-keys">' +
+                                            '<span ng-repeat="derp in hotkey.format()" class="cfp-hotkeys-key">{{ derp }}</span>' +
+                                          '</td>' +
+                                          '<td class="cfp-hotkeys-text">{{ hotkey.description }}</td>' +
+                                        '</tr>' +
+                                      '</tbody></table>' +
+                                    '</div></div>');
 
 
 
@@ -155,24 +192,6 @@ angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
       }
 
       Mousetrap.bind(key, wrapApply(callback));
-
-      // format the hotkey for display:
-      // hotkey = hotkey.split(/[\s]/);
-      // for (var i = 0; i < hotkey.length; i++) {
-      //   switch (hotkey[i]) {
-      //     case 'ctrl':
-      //     case 'alt':
-      //     case 'option':
-      //     case 'meta':
-      //     case 'mod':
-      //       hotkey[i] = hotkey[i].toUpperCase();
-      //       break;
-      //     default:
-      //       hotkey[i] = symbolize(hotkey[i]);
-      //       break;
-      //   }
-      // }
-
       scope.hotkeys.push(new Hotkey(key, description, callback, persistent));
 
     }
