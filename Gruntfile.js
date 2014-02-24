@@ -18,7 +18,7 @@ module.exports = function(grunt) {
         report: 'gzip'
       },
       build: {
-        src: 'src/hotkeys.js',
+        src: ['src/hotkeys.js', 'bower_components/mousetrap/mousetrap.js'],
         dest: 'build/hotkeys.min.js'
       }
     },
@@ -67,7 +67,7 @@ module.exports = function(grunt) {
         },
         files: {
           'build/hotkeys.css': 'src/hotkeys.css',
-          'build/hotkeys.js':  'src/hotkeys.js',
+          'build/hotkeys.js':  ['src/hotkeys.js', 'bower_components/mousetrap/mousetrap.js'],
         }
       }
     }
