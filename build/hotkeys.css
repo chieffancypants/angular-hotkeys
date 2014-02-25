@@ -7,7 +7,7 @@
 .cfp-hotkeys-container {
   display: table;
   position: fixed;
-  z-index: 1024;
+  z-index: -1024;
   width: 100%;
   height: 100%;
   top: 0;
@@ -15,6 +15,10 @@
   color: #333;
   font-size: 1em;
   background-color: rgba(255,255,255,0.85);
+}
+
+.cfp-hotkeys-container.fade.in {
+  z-index: 1024;
 }
 
 .cfp-hotkeys-title {
