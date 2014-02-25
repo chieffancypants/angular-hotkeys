@@ -123,8 +123,8 @@ angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
     });
 
     // TODO: Make this configurable:
-    var helpMenu = angular.element('<div class="cfp-hotkeys-container"><div class="cfp-hotkeys" ng-show="helpVisible">' +
-                                      '<h4>{{ title }}</h4>' +
+    var helpMenu = angular.element('<div class="cfp-hotkeys-container fade" ng-class="{in: helpVisible}"><div class="cfp-hotkeys">' +
+                                      '<h4 class="cfp-hotkeys-title">{{ title }}</h4>' +
                                       '<table><tbody>' +
                                         '<tr ng-repeat="hotkey in hotkeys | filter:{ description: \'!$$undefined$$\' }">' +
                                           '<td class="cfp-hotkeys-keys">' +

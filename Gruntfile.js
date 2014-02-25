@@ -70,13 +70,31 @@ module.exports = function(grunt) {
           'build/hotkeys.js':  ['src/hotkeys.js', 'bower_components/mousetrap/mousetrap.js'],
         }
       }
-    }
+    },
+
+    watch: {
+      scripts: {
+        files: ['src/*.js'],
+        tasks: ['uglify', 'concat:build'],
+        options: {
+          spawn: false,
+        },
+      },
+      css: {
+        files: ['src/*.css'],
+        tasks: ['cssmin', 'concat:build'],
+        options: {
+          spawn: false,
+        },
+      }
+    },
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-karma');
 
   grunt.registerTask('default', ['jshint', 'karma:unit', 'uglify', 'cssmin', 'concat:build']);
