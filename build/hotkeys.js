@@ -128,7 +128,7 @@ angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
                                       '<table><tbody>' +
                                         '<tr ng-repeat="hotkey in hotkeys | filter:{ description: \'!$$undefined$$\' }">' +
                                           '<td class="cfp-hotkeys-keys">' +
-                                            '<span ng-repeat="derp in hotkey.format()" class="cfp-hotkeys-key">{{ derp }}</span>' +
+                                            '<span ng-repeat="key in hotkey.format() track by $index" class="cfp-hotkeys-key">{{ key }}</span>' +
                                           '</td>' +
                                           '<td class="cfp-hotkeys-text">{{ hotkey.description }}</td>' +
                                         '</tr>' +
@@ -139,7 +139,7 @@ angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
 
     // Auto-create a help menu:
     // TODO: Make this configurable
-    _add('?', 'Show this help menu', toggleHelp);
+    _add('?', 'Show / hide this help menu', toggleHelp);
     angular.element($rootElement).append($compile(helpMenu)(scope));
 
 
@@ -266,11 +266,16 @@ angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
       };
     }
 
-    return {
+
+    var publicApi = {
       add: _add,
       del: _del,
-      get: _get
+      get: _get,
+      // TODO: when configurable, check this:
+      toggleHelp: toggleHelp
     };
+
+    return publicApi;
 
   }];
 
