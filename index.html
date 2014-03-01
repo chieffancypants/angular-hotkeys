@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>ProjectName.js</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="angular hotkeys" />
+  <meta name="author" content="chieffancypants" />
+
+  <!-- libs -->
+  <script type="text/javascript" src="js/skrollr.min.js"></script>
+  <script type="text/javascript" src="js/highlight.pack.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular.min.js"></script>
+  <link href='http://fonts.googleapis.com/css?family=Oxygen:400,700,300' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/monokai_sublime.css">
+
+  <!-- app -->
+  <script src="build/hotkeys.js"></script>
+  <script src="js/app.js"></script>
+  <link rel="stylesheet" href="build/hotkeys.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+
+<body ng-app="example" ng-controller="ExampleCtrl">
+  <div class="intro" data-0="background-position: 50% 0px" data-500="background-position: 50% -150px">
+    <div class="author" data-50="top:0px" data-600="top:-50px">
+      <div class="author-img"><a href="https://github.com/chieffancypants"><img src="http://www.gravatar.com/avatar/2904352cb2e80219e33cc5879c5f0bc9.png"/></a></div>
+      <div class="author-text">Made with <i class="glyphicon glyphicon-heart-empty"></i> by <a href="https://github.com/chieffancypants">chieffancypants</a></div>
+    </div>
+    <div class="icon"><i class="fa fa-keyboard-o"></i></div>
+    <h1>AngularHotkeys<span class="emphasis">.js</span></h1>
+    <span class="tagline">Configuration-centric keyboard shortcuts for your angular apps</span>
+    <div class="actions">
+      <a class="btn btn-outline btn-lg" href="https://github.com/chieffancypants/angular-hotkeys/archive/0.0.1.zip"><i class="fa fa-download"></i> Download Zip</a>
+      <a class="btn btn-outline btn-lg" href="https://github.com/chieffancypants/angular-hotkeys/"><i class="octicon octicon-mark-github"></i> View on GitHub</a>
+    </div>
+    <div class="scroll-down">
+      <a href="#features"><i class="glyphicon glyphicon-chevron-down"></i></a>
+    </div>
+  </div>
+  <div class="container">
+
+    <div class="features clearfix" id="features">
+      <div class="feature">
+        <i class="fa fa-road"></i>
+        <h2>Fully route-aware</h2>
+        <div>Bind and undbind keys as you navigate the app</div>
+      </div>
+      <div class="feature">
+        <i class="fa fa-cog"></i>
+       <h2>Configuration centric</h2>
+       <div>No messy DOM attributes to litter your templates</div>
+      </div>
+      <div class="feature">
+        <i class="fa fa-check-square-o"></i>
+        <h2>Automatic Help</h2>
+        <div>Creates a <a href ng-click="toggleHelp()">pretty cheat sheet</a> automatically</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>What is this?</h2>
+      <p>Put simply, <strong>managing shotcuts via the DOM is a nightmare</strong>:</p>
+
+<pre><code>&lt;!-- player.html: --&gt;
+&lt;div class=&quot;player&quot; shortcut=&quot;{space: playPause, 'alt+right': forward30, 'ctrl+right': forward60, 'left': back30, 'ctrl+left': back60, up: volumeUp, down: volumeDown, 'ctrl+down': mute, 'ctrl+up': unmute, f: fullscreen, h: showHelp, m: muteToggle, right: nextChapter, left: previousChapter, c: toggleCaptions}&quot;&gt;
+  &lt;div class=&quot;playPause-btn&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;mute-btn&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+
+      <p>Your DOM is littered with attributes making it hard to read, and moreover, <strong>managing the shortcuts over dozens of templates is very tedious</strong>.</p>
+
+    </div>
+    <div class="section">
+      <h2>What makes this different?</h2>
+      <p>This project is quite a bit different from any other angular-based keyboard shortcut libraries.  It is aimed at creating configurable shortcuts in javascript, intead of as directives in the DOM.  While tying the shortcuts to DOM elements may work for some Angular apps, mine rarely have a 1-to-1 relationship between DOM elements and controller methods. In my case, many methods on the controller were only accessible through the keyboard.</p>
+    </div>
+    <div class="section">
+      <h2>What about the cheat-sheet?</h2>
+      <p>Well, go ahead and try it.  Hit the <span class="cfp-hotkeys-key">?</span> key. As you create shortcuts, they will appear automatically in the cheat-sheet when they are active.  This means the cheat-sheet is route aware as well, and will only show shortcuts that work for the current application's state.</p>
+    </div>
+    <div class="section">
+      <h2></h2>
+      Learn more at <a href="https://github.com/chieffancypants/angular-hotkeys">github.com</a>
+    </div>
+    <div class="section license">
+      <h2>License</h2>
+      <p>The MIT License (MIT)</p>
+      <p>Copyright (c) 2014 Wes Cruver</p>
+      <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+
+      <p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+
+      <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+    </div>
+  </div>
+
+
+  <footer ng-hide="fakeIntro">
+    <iframe width="150" height="35" frameborder="0" src="http://ghbtns.com/github-btn.html?user=chieffancypants&amp;repo=angular-loading-bar&amp;type=watch&amp;count=true&amp;size=large"></iframe>
+    <iframe width="310" height="35" frameborder="0" src="http://ghbtns.com/github-btn.html?user=chieffancypants&amp;type=follow&amp;count=true&amp;size=large"></iframe>
+  </footer>
+<!--
+  <div class="cfp-hotkeys-container fade" ng-class="{in: keypressed}">
+    <div class="cfp-hotkeys">
+      <div class="hotkey-display">
+        <div class="cfp-hotkeys-key">{{ keypressed }}</div>
+      </div>
+    </div>
+  </div>
+ -->
+  <script type="text/javascript">
+    var s = skrollr.init();
+    skrollr.menu.init(s, {easing: 'outCubic'});
+    hljs.initHighlightingOnLoad();
+  </script>
+</body>
+</html>

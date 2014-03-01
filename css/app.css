@@ -1,0 +1,187 @@
+body {
+  font-family: 'Oxygen', sans;
+  line-height: 2em;
+}
+
+@font-face {
+  font-family: 'octicons';
+  src: url("https://github.global.ssl.fastly.net/assets/octicons-d014e51542f9c7898a6e803ee79e714a05d2fa9e.eot");
+  src: url("https://github.global.ssl.fastly.net/assets/octicons-d014e51542f9c7898a6e803ee79e714a05d2fa9e.eot#iefix") format("embedded-opentype"),url("https://github.global.ssl.fastly.net/assets/octicons-60ea98c9292f725220220d571a41aa049165053c.woff") format("woff"),url("https://github.global.ssl.fastly.net/assets/octicons-aa678f53582c51b4a6165519f3627d3c41763c94.ttf") format("truetype"),url("https://github.global.ssl.fastly.net/assets/octicons-cdc456dbc5906e59b8c4d1c649a4b734fb0fd97b.svg#octicons") format("svg");
+  font-weight: normal;
+  font-style: normal
+}
+
+.container {
+  font-size: 16px;
+  /*margin-top: 20px;*/
+}
+
+.octicon {
+  font-family: octicons;
+  font-style: normal;
+  /*font: normal normal 16px octicons;*/
+  line-height: 1;
+  display: inline-block;
+  text-decoration: none;
+  -webkit-font-smoothing: antialiased
+}
+
+.glyphicon {
+  top: 2px;
+}
+
+.octicon-mark-github:before {
+  content: '\f00a';
+}
+
+.octicon-code {
+  font-size: 1.5em;
+}
+.octicon-code:before {
+  content: '\f05f';
+}
+
+h1 {
+  font-weight: bold;
+  font-size: 3.5em;
+}
+
+h1 .emphasis {
+  color: #3498db;
+  opacity: 0.5;
+}
+
+pre {
+  background-color: transparent;
+  padding: 0;
+  border: none;
+  font-size: 1em;
+}
+
+.hljs {
+  border-radius: 5px;
+}
+
+.btn-outline {
+  border-color: #fff;
+  background-color: transparent;
+  color: #fff;
+}
+
+.btn-outline:hover {
+  color: #3498db;
+  border-color: #3498db;
+}
+
+.intro {
+  background: url(../img/bg.jpg) 50% 0 no-repeat fixed #000;
+  position: relative;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  padding: 100px 0 100px;
+  text-align:center;
+  color: #fff;
+  font-size: 1.5em;
+}
+
+.intro .icon {
+  font-size: 6em;
+  line-height: 0.6em;
+  color: #3498db;
+}
+
+.tagline {
+  font-weight: 300;
+}
+
+.actions {
+  margin: 35px 0 15px;
+  font-size: 2em;
+}
+
+.scroll-down {
+  position: relative;
+  top: 85px;
+}
+
+.scroll-down a {
+  color: #fff;
+}
+
+.scroll-down a:hover {
+  color: #3498db;
+}
+
+.author {
+  position: fixed;
+  top: 0;
+  left: 0;
+  font-size: 0.6em;
+  color: #ccc;
+  font-weight: 300;
+}
+
+.author div {
+  float: left;
+  margin: 15px 0 0 15px
+}
+
+.author img {
+  height: 30px;
+  border-radius: 50%;
+}
+
+.hotkey-display {
+  font-size: 10em;
+  line-height: 2em;
+  display: fixed;
+  margin: auto;
+}
+
+.features {
+  margin: 50px 0;
+  text-align: center;
+}
+
+.feature {
+  float: left;
+  width: 33%;
+  padding: 0 20px;
+}
+
+.feature i {
+  font-size: 3em;
+}
+.feature h2 {
+  margin: 8px 0;
+}
+
+.feature div {
+  font-weight: 300;
+}
+
+
+.section h2 {
+  margin-top: 60px;
+}
+
+.section .cfp-hotkeys-key {
+  padding: 1px 10px;
+}
+
+.section.license {
+  font-size:0.8em;
+  line-height: 2em;
+  margin-bottom: 55px;
+}
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(255,255,255,0.9);
+  width: 100%;
+  text-align: center;
+  padding: 10px 0 0 0;
+  height: 50px;
+}
