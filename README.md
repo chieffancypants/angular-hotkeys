@@ -56,6 +56,9 @@ You can either define hotkeys in your Controller, or in your Route configuration
 angular.module('myApp', ['ngRoute', 'cfp.hotkeys']);
 ```
 
+Behind the scenes, I'm using the [Mousetrap](https://github.com/ccampbell/mousetrap) library to manage the key bindings.  Check out the docs there for more information on what kind of key combinations can be used.
+
+
 #### Binding hotkeys in controllers:
 
 ```js
@@ -94,3 +97,51 @@ angular.module('myApp').config(function ($routeProvider) {
 });
 ```
 
+
+
+### API
+
+#### add(key, description, callback)
+
+- `key`: They keyboard shortcut you want to bind
+- `description`: [OPTIONAL] The description for what the combo does and is only used for the Cheat Sheet.  If it is not supplied, it will not show up, and in effect, allows you to have unlisted hotkeys.
+- `callback`: The function to execute when the key(s) are pressed.  Passes along two arguments, `event` and `hotkey`
+
+```js
+hotkeys.add('ctrl+w', 'Description goes here', function (event, hotkey) {
+  event.preventDefault();
+});
+
+// this hotkey will not show up on the cheat sheet:
+hotkeys.add('ctrl+y', function (event, hotkey) {
+  event.preventDefault();
+});
+```
+
+#### add(object)
+- `object`: An object version of the above parameters.
+
+```js
+hotkeys.add({
+  key: 'ctrl+w',
+  description: 'Description goes here',
+  callback: function(event, hotkey) {
+    event.preventDefault();
+  }
+});
+```
+
+#### get(key)
+Returns the Hotkey object
+
+```js
+hotkeys.get('ctrl+w');
+// -> Hotkey { key: 'ctrl+w', description: 'ctrl+w', callback: function (event, hotkey) }
+```
+
+#### del(key)
+Removes and unbinds a hotkey
+
+```js
+hotkeys.del('ctrl+w');
+```
