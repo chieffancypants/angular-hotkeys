@@ -103,25 +103,21 @@
       <a class="btn btn-outline btn-lg" href="https://github.com/chieffancypants/angular-hotkeys/archive/0.0.1.zip"><i class="fa fa-download"></i> Download Zip</a>
       <a class="btn btn-outline btn-lg" href="https://github.com/chieffancypants/angular-hotkeys/"><i class="octicon octicon-mark-github"></i> View on GitHub</a>
     </div>
-      <div class="author clearfix">
-        <div class="author-img"><a href="https://github.com/chieffancypants"><img src="http://www.gravatar.com/avatar/2904352cb2e80219e33cc5879c5f0bc9.png"/></a></div>
-        <div class="author-text">Made with <i class="glyphicon glyphicon-heart-empty"></i> by <a href="https://github.com/chieffancypants">chieffancypants</a></div>
-      </div>
+    <div class="author clearfix">
+      <div class="author-img"><a href="https://github.com/chieffancypants"><img src="http://www.gravatar.com/avatar/2904352cb2e80219e33cc5879c5f0bc9.png"/></a></div>
+      <div class="author-text">Made with <i class="glyphicon glyphicon-heart-empty"></i> by <a href="https://github.com/chieffancypants">chieffancypants</a></div>
+    </div>
   </div>
 
   <footer data-200="bottom: -50px" data-300="bottom: 0px">
     <iframe width="100" height="25" frameborder="0" src="http://ghbtns.com/github-btn.html?user=chieffancypants&amp;repo=angular-loading-bar&amp;type=watch&amp;count=true&amp;size=medium"></iframe>
     <iframe width="210" height="25" frameborder="0" src="http://ghbtns.com/github-btn.html?user=chieffancypants&amp;type=follow&amp;count=true&amp;size=medium"></iframe>
   </footer>
-<!--
-  <div class="cfp-hotkeys-container fade" ng-class="{in: keypressed}">
-    <div class="cfp-hotkeys">
-      <div class="hotkey-display">
-        <div class="cfp-hotkeys-key">{{ keypressed }}</div>
-      </div>
-    </div>
+
+  <div class="hotkey-display fade" ng-class="{out: !keypressed, in: keypressed}">
+    <span ng-repeat="key in keypressed track by $index" class="cfp-hotkeys-key">{{ key }}</span>
   </div>
- -->
+
   <script type="text/javascript">
     var s = skrollr.init();
     skrollr.menu.init(s, {easing: 'outCubic'});
