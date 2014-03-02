@@ -13,8 +13,9 @@
     "example"
   ],
   "dependencies": {
-    "mousetrap": "~1.4.6",
-    "angular-mocks": "~1.2.9",
-    "angular-animate": "~1.2.9"
+    "mousetrap": "~1.4.6"
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.2.9"
   }
 }

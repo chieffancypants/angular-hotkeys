@@ -2,9 +2,8 @@
   "name": "angular-hotkeys",
   "version": "0.0.1",
   "description": "Automatic keyboard shortcuts for your Angular Apps",
-  "main": "src/loading-bar.js",
+  "main": "build/hotkeys.js",
   "directories": {
-    "example": "example",
     "test": "test"
   },
   "repository": {
@@ -15,7 +14,7 @@
     "angular",
     "angularjs",
     "keyboard",
-    "shortcuts",
+    "shortcut",
     "hotkeys"
   ],
   "author": "Wes Cruver",
