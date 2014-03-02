@@ -238,7 +238,7 @@ angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
      */
     function wrapApply (callback) {
       // return mousetrap a function to call
-      return function (event) {
+      return function (event, combo) {
 
         // if this is an array, it means we provided a route object
         // because the scope wasn't available yet, so rewrap the callback
@@ -255,7 +255,7 @@ angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
         // $apply() to make sure angular's digest happens
         $rootScope.$apply(function() {
           // call the original hotkey callback with the keyboard event
-          callback(event);
+          callback(event, _get(combo));
         });
       };
     }
