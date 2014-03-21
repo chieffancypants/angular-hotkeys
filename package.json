@@ -22,6 +22,9 @@
   "bugs": {
     "url": "https://github.com/chieffancypants/angular-hotkeys/issues"
   },
+  "scripts": {
+    "test": "node_modules/karma/bin/karma start test/karma.conf.js"
+  },
   "homepage": "https://chieffancypants.github.io/angular-hotkeys",
   "devDependencies": {
     "karma-script-launcher": "~0.1.0",
