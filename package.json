@@ -1,15 +1,11 @@
 {
   "name": "angular-hotkeys",
+  "author": "Wes Cruver",
   "version": "0.0.1",
+  "license": "MIT",
   "description": "Automatic keyboard shortcuts for your Angular Apps",
+  "homepage": "https://chieffancypants.github.io/angular-hotkeys",
   "main": "build/hotkeys.js",
-  "directories": {
-    "test": "test"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/chieffancypants/angular-hotkeys.git"
-  },
   "keywords": [
     "angular",
     "angularjs",
@@ -17,22 +13,22 @@
     "shortcut",
     "hotkeys"
   ],
-  "author": "Wes Cruver",
-  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/chieffancypants/angular-hotkeys.git"
+  },
   "bugs": {
     "url": "https://github.com/chieffancypants/angular-hotkeys/issues"
   },
   "scripts": {
     "test": "node_modules/karma/bin/karma start test/karma.conf.js"
   },
-  "homepage": "https://chieffancypants.github.io/angular-hotkeys",
   "devDependencies": {
     "karma-script-launcher": "~0.1.0",
     "karma-chrome-launcher": "~0.1.0",
     "karma-firefox-launcher": "~0.1.0",
     "karma-html2js-preprocessor": "~0.1.0",
     "karma-jasmine": "~0.1.3",
-    "karma-requirejs": "~0.1.0",
     "karma-coffee-preprocessor": "~0.1.0",
     "karma-phantomjs-launcher": "~0.1.0",
     "karma": "~0.10.2",
