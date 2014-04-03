@@ -97,13 +97,22 @@ angular.module('myApp').config(function ($routeProvider) {
 });
 ```
 
+#### Binding hotkeys in directives:
+Lastly, even though binding hotkeys in your templates/html tends to be a bad idea, it can be super useful for simple shortcuts.  Think along the lines of a modal directive where you simply want to bind to the escape key or something equally simple.  Accomplishing this within a controller is too much overhead, and it may lead to code-reuse.
+
+Example of how directive-based hotkeys works:
+
+```html
+<modal title="Modal Title" hotkeys="{esc: close}">
+```
+
 
 
 ### API
 
-#### add(key, description, callback)
+#### hotkeys.add(combo, description, callback)
 
-- `key`: They keyboard shortcut you want to bind
+- `combo`: They keyboard combo (shortcut) you want to bind to
 - `description`: [OPTIONAL] The description for what the combo does and is only used for the Cheat Sheet.  If it is not supplied, it will not show up, and in effect, allows you to have unlisted hotkeys.
 - `callback`: The function to execute when the key(s) are pressed.  Passes along two arguments, `event` and `hotkey`
 
@@ -118,12 +127,12 @@ hotkeys.add('ctrl+y', function (event, hotkey) {
 });
 ```
 
-#### add(object)
+#### hotkeys.add(object)
 - `object`: An object version of the above parameters.
 
 ```js
 hotkeys.add({
-  key: 'ctrl+w',
+  combo: 'ctrl+w',
   description: 'Description goes here',
   callback: function(event, hotkey) {
     event.preventDefault();
@@ -131,15 +140,15 @@ hotkeys.add({
 });
 ```
 
-#### get(key)
+#### hotkeys.get(key)
 Returns the Hotkey object
 
 ```js
 hotkeys.get('ctrl+w');
-// -> Hotkey { key: 'ctrl+w', description: 'ctrl+w', callback: function (event, hotkey) }
+// -> Hotkey { combo: 'ctrl+w', description: 'Description goes here', callback: function (event, hotkey) }
 ```
 
-#### del(key)
+#### hotkeys.del(key)
 Removes and unbinds a hotkey
 
 ```js

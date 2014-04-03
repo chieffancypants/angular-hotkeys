@@ -19,57 +19,58 @@
 
   angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
 
-    function symbolize (combo) {
-      var map = {
-        command   : '⌘',
-        shift     : '⇧',
-        left      : '←',
-        right     : '→',
-        up        : '↑',
-        down      : '↓',
-        'return'  : '↩',
-        backspace : '⌫'
-      };
-      combo = combo.split('+');
+    this.$get = ['$rootElement', '$rootScope', '$compile', '$window', function ($rootElement, $rootScope, $compile, $window) {
 
-      for (var i = 0; i < combo.length; i++) {
-        // try to resolve command / ctrl based on OS:
-        if (combo[i] === 'mod') {
-          if (window.navigator && window.navigator.platform.indexOf('Mac') >=0 ) {
-            combo[i] = 'command';
-          } else {
-            combo[i] = 'ctrl';
+      function symbolize (combo) {
+        var map = {
+          command   : '⌘',
+          shift     : '⇧',
+          left      : '←',
+          right     : '→',
+          up        : '↑',
+          down      : '↓',
+          'return'  : '↩',
+          backspace : '⌫'
+        };
+        combo = combo.split('+');
+
+        for (var i = 0; i < combo.length; i++) {
+          // try to resolve command / ctrl based on OS:
+          if (combo[i] === 'mod') {
+            if ($window.navigator && $window.navigator.platform.indexOf('Mac') >=0 ) {
+              combo[i] = 'command';
+            } else {
+              combo[i] = 'ctrl';
+            }
           }
+
+          combo[i] = map[combo[i]] || combo[i];
         }
 
-        combo[i] = map[combo[i]] || combo[i];
+        return combo.join(' + ');
       }
 
-      return combo.join(' + ');
-    }
-
-    function Hotkey (key, description, callback, persistent) {
-      // TODO: Check that the values are sane because we could
-      // be trying to instantiate a new Hotkey with outside dev's
-      // supplied values
-      this.key = key;
-      this.description = description;
-      this.callback = callback;
-      this.persistent = persistent;
-    }
-
-    // TODO: this gets called a lot.  We should cache the result
-    Hotkey.prototype.format = function() {
-      // format the hotkey for display:
-      var sequence = this.key.split(/[\s]/);
-      for (var i = 0; i < sequence.length; i++) {
-        sequence[i] = symbolize(sequence[i]);
+      function Hotkey (combo, description, callback, persistent) {
+        // TODO: Check that the values are sane because we could
+        // be trying to instantiate a new Hotkey with outside dev's
+        // supplied values
+        this.combo = combo;
+        this.description = description;
+        this.callback = callback;
+        this.persistent = persistent;
       }
 
-      return sequence;
-    };
+      // TODO: this gets called a lot.  We should cache the result
+      Hotkey.prototype.format = function() {
+        // format the hotkey for display:
+        var sequence = this.combo.split(/[\s]/);
+        for (var i = 0; i < sequence.length; i++) {
+          sequence[i] = symbolize(sequence[i]);
+        }
 
-    this.$get = ['$rootElement', '$rootScope', '$compile', function ($rootElement, $rootScope, $compile) {
+        return sequence;
+      };
+
 
       var scope = $rootScope.$new();
 
@@ -109,11 +110,8 @@
             hotkey[3] = false;
 
             _add.apply(this, hotkey);
-
           });
         }
-
-        console.log(scope.hotkeys);
       });
 
       // TODO: Make this configurable:
@@ -164,18 +162,18 @@
       /**
        * Creates a new Hotkey and creates the Mousetrap binding
        *
-       * @param {string}   key         mousetrap key binding
+       * @param {string}   combo       mousetrap key binding
        * @param {string}   description description for the help menu
        * @param {Function} callback    method to call when key is pressed
        * @param {boolean}  persistent  if true, the binding is preserved upon route changes
        */
-      function _add (key, description, callback, persistent) {
+      function _add (combo, description, callback, persistent) {
         // a config object was passed instead, so unwrap it:
-        if (key instanceof Object) {
-          description = key.description;
-          callback = key.callback;
-          persistent = key.persistent;
-          key = key.hotkey;
+        if (combo instanceof Object) {
+          description = combo.description;
+          callback = combo.callback;
+          persistent = combo.persistent;
+          combo = combo.combo;
         }
 
         // description is optional:
@@ -193,24 +191,24 @@
           persistent = true;
         }
 
-        Mousetrap.bind(key, wrapApply(callback));
-        scope.hotkeys.push(new Hotkey(key, description, callback, persistent));
+        Mousetrap.bind(combo, wrapApply(callback));
+        scope.hotkeys.push(new Hotkey(combo, description, callback, persistent));
 
       }
 
       /**
        * delete and unbind a Hotkey
        *
-       * @param  {mixed} hotkey Either the bound key or an instance of Hotkey
+       * @param  {mixed} hotkey   Either the bound key or an instance of Hotkey
        * @return {boolean}        true if successful
        */
       function _del (hotkey) {
-        var key = (hotkey instanceof Hotkey) ? hotkey.key : hotkey;
+        var combo = (hotkey instanceof Hotkey) ? hotkey.combo : hotkey;
 
-        Mousetrap.unbind(key);
+        Mousetrap.unbind(combo);
 
         for (var i = 0; i < scope.hotkeys.length; i++) {
-          if (scope.hotkeys[i].key === key) {
+          if (scope.hotkeys[i].combo === combo) {
             scope.hotkeys.splice(i, 1);
           }
         }
@@ -219,12 +217,12 @@
       /**
        * Get a Hotkey object by key binding
        *
-       * @param  {[string]} key they key the Hotkey is bound to
-       * @return {Hotkey}   The Hotkey object
+       * @param  {[string]} combo  the key the Hotkey is bound to
+       * @return {Hotkey}          The Hotkey object
        */
-      function _get (key) {
+      function _get (combo) {
         for (var i = 0; i < scope.hotkeys.length; i++) {
-          if (scope.hotkeys[i].key === key) {
+          if (scope.hotkeys[i].combo === combo) {
             return scope.hotkeys[i];
           }
         }
@@ -274,14 +272,22 @@
       return publicApi;
 
     }];
+  })
 
-  }).directive('hotkey', function (hotkeys) {
+  .directive('hotkey', function (hotkeys) {
     return {
       restrict: 'A',
       link: function (scope, el, attrs) {
-        var keys = scope.$eval(attrs.hotkey);
-        angular.forEach(keys, function (func, hotkey) {
+        var key;
+
+        angular.forEach(scope.$eval(attrs.hotkey), function (func, hotkey) {
+          key = hotkey;
           hotkeys.add(hotkey, attrs.hotkeyDescription, func);
+        });
+
+        // remove the hotkey if the directive is destroyed:
+        el.bind('$destroy', function() {
+          hotkeys.del(key);
         });
       }
     };
