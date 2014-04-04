@@ -11,6 +11,21 @@ Configuration-centric keyboard shortcuts for your Angular apps.
 - Super duper unit tests
 
 
+### Installation:
+
+#### via bower:
+
+```
+$ bower install chieffancypants/angular-hotkeys
+```
+
+#### via npm:
+
+```
+$ npm install angular-hotkeys
+```
+
+
 ### Why I made this:
 Other projects out there rely too heavily on HTML markup for keyboard shortcuts.  For example:
 
@@ -47,6 +62,7 @@ With a few dozen shortcuts, this left the DOM really messy, and with multiple vi
 
 
 ### Usage:
+
 You can either define hotkeys in your Controller, or in your Route configuration (or both).  To start, though, require the lib as a dependency for your angular app:
 
 ```js
