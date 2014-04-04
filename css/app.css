@@ -122,7 +122,7 @@ pre {
   position: absolute;
   top: 0;
   left: 0;
-  font-size: 0.6em;
+  font-size: 0.75em;
   color: #ccc;
   font-weight: 300;
 }
@@ -202,15 +202,6 @@ pre {
   position: static;
 }
 
-
-
-
-
-
-
-
-
-
 .section.license {
   font-size:0.85em;
   line-height: 2em;
@@ -227,5 +218,38 @@ footer {
   height: 40px;
   background-color: rgba(255,255,255,0.9);
   box-shadow: 0 -1px 7px rgba(0,0,0,0.1);
+}
 
+
+
+@media all and (max-width: 675px) {
+  .intro {
+    font-size: 1.3em;
+    padding: 75px 0 75px;
+    background-position: 50% -50px;
+  }
+  .author {
+    font-size: 0.8em;
+  }
+  .scroll-down {
+    top: 50px;
+  }
+  .feature {
+    float: none;
+    width: auto;
+    padding: 25px 0;
+  }
+}
+
+@media all and (max-width: 600px) {
+  .intro {
+    font-size: 1em;
+    padding: 50px 0 40px;
+  }
+  .scroll-down {
+    top: 30px;
+  }
+  .author {
+    font-size: 1em;
+  }
 }
