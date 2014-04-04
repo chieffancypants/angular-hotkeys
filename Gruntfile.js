@@ -107,7 +107,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-karma-coveralls');
 
-  grunt.registerTask('default', ['jshint', 'karma:unit', 'uglify', 'cssmin', 'concat:build']);
+  grunt.registerTask('default', ['jshint', 'karma:unit', 'uglify', 'cssmin', 'concat:build', 'coveralls']);
   grunt.registerTask('test', ['karma:watch']);
   grunt.registerTask('build', ['default']);
 

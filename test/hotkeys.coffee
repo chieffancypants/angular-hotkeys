@@ -58,6 +58,16 @@ describe 'Angular Hotkeys', ->
     KeyEvent.simulate('?'.charCodeAt(0), 90)
     expect(angular.element($rootElement).children().hasClass('in')).toBe true
 
+  it 'should bind esc when the cheatsheet is shown', ->
+    expect(hotkeys.get('esc')).toBe false
+    expect(angular.element($rootElement).children().hasClass('in')).toBe false
+    KeyEvent.simulate('?'.charCodeAt(0), 90)
+    expect(angular.element($rootElement).children().hasClass('in')).toBe true
+    expect(hotkeys.get('esc').combo).toBe 'esc'
+    KeyEvent.simulate('?'.charCodeAt(0), 90)
+    expect(hotkeys.get('esc')).toBe false
+
+
   it 'should (un)bind based on route changes', ->
     # fake a route change:
     expect(hotkeys.get('w e s')).toBe false
