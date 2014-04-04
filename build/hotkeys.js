@@ -101,8 +101,9 @@
             // a string was given, which implies this is a function that is to be
             // $eval()'d within that controller's scope
             // TODO: hotkey here is super confusing.  sometimes a function (that gets turned into an array), sometimes a string
-            if (typeof(hotkey[2]) === 'string' || hotkey[2] instanceof String) {
-              hotkey[2]= [hotkey[2], route];
+            var callback = hotkey[2];
+            if (typeof(callback) === 'string' || callback instanceof String) {
+              hotkey[2] = [callback, route];
             }
 
             // todo: perform check to make sure not already defined:

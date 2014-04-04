@@ -39,7 +39,7 @@ module.exports = function(grunt) {
         configFile: 'test/karma.conf.js',
         singleRun: true,
         coverageReporter: {
-          type: 'text',
+          type: 'lcov',
           dir: 'coverage/'
         }
       },
@@ -88,6 +88,15 @@ module.exports = function(grunt) {
         },
       }
     },
+
+    coveralls: {
+      options: {
+          debug: true,
+          coverage_dir: 'test/coverage',
+          // force: true
+      }
+    }
+
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -96,6 +105,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-karma');
+  grunt.loadNpmTasks('grunt-karma-coveralls');
 
   grunt.registerTask('default', ['jshint', 'karma:unit', 'uglify', 'cssmin', 'concat:build']);
   grunt.registerTask('test', ['karma:watch']);

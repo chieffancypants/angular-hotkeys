@@ -53,20 +53,68 @@ describe 'Angular Hotkeys', ->
     hotkeys.del 'w'
     expect(hotkeys.get('w')).toBe false
 
-  it 'should toggle help whem ? is pressed', ->
+  it 'should toggle help when ? is pressed', ->
+    expect(angular.element($rootElement).children().hasClass('in')).toBe false
     KeyEvent.simulate('?'.charCodeAt(0), 90)
-    el = document.getElementsByTagName('cfp-hotkeys-container')
-    dump el.length
+    expect(angular.element($rootElement).children().hasClass('in')).toBe true
 
   it 'should (un)bind based on route changes', ->
     # fake a route change:
     expect(hotkeys.get('w e s')).toBe false
-    $rootScope.$broadcast('$routeChangeSuccess', { hotkeys: [['w e s', 'Do something Amazing!', 'consoleme("playa")']] });
+    $rootScope.$broadcast('$routeChangeSuccess', { hotkeys: [['w e s', 'Do something Amazing!', 'callme("ishmael")']] });
     expect(hotkeys.get('w e s').combo).toBe 'w e s'
 
     # ensure hotkey is unbound when the route changes
     $rootScope.$broadcast('$routeChangeSuccess', {});
     expect(hotkeys.get('w e s')).toBe false
+
+  it 'should callback when the hotkey is pressed', ->
+    executed = false
+
+    hotkeys.add 'w', ->
+      executed = true
+
+    KeyEvent.simulate('w'.charCodeAt(0), 90)
+    expect(executed).toBe true
+
+  it 'should run routes-defined hotkey callbacks when scope is available', ->
+    executed = false
+    passedArg = null
+
+    $rootScope.callme = (arg) ->
+      executed = true
+      passedArg = arg
+
+    $rootScope.$broadcast '$routeChangeSuccess',
+      hotkeys: [['w', 'Do something Amazing!', 'callme("ishmael")']]
+      scope: $rootScope
+
+    expect(executed).toBe false
+    KeyEvent.simulate('w'.charCodeAt(0), 90)
+    expect(executed).toBe true
+    expect(passedArg).toBe 'ishmael'
+
+describe 'hotkey directive', ->
+
+  el = scope = hotkeys = $compile = $document = null
+
+  beforeEach ->
+    module('cfp.hotkeys')
+    inject ($rootScope, _$compile_, _$document_, _hotkeys_) ->
+      hotkeys = _hotkeys_
+      $compile = _$compile_
+      # el = angular.element()
+      scope = $rootScope.$new()
+      el = $compile('<div hotkey="{dir: callme}"></div>')(scope)
+      scope.$digest()
+
+  it 'should allow hotkey binding via directive', ->
+    expect(hotkeys.get('dir').combo).toBe 'dir'
+
+  it 'should unbind the hotkey when the directive is destroyed', ->
+
+
+
 
 describe 'Platform specific things', ->
   beforeEach ->
