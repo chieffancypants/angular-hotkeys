@@ -126,6 +126,7 @@
                                             '<td class="cfp-hotkeys-text">{{ hotkey.description }}</td>' +
                                           '</tr>' +
                                         '</tbody></table>' +
+                                        '<div class="cfp-hotkeys-close" ng-click="helpVisible = false">×</div>' +
                                       '</div></div>');
 
 
