@@ -67,6 +67,23 @@
   font-size: 1em;
 }
 
+.cfp-hotkeys-close {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  font-size: 2em;
+  font-weight: bold;
+  background-color: #fff;
+  padding: 0px 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.cfp-hotkeys-close:hover {
+  background-color: #efefef;
+  cursor: pointer;
+}
+
 @media all and (max-width: 500px) {
   .cfp-hotkeys {
     font-size: 0.8em;
