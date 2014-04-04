@@ -3,7 +3,7 @@ angular-hotkeys
 Configuration-centric keyboard shortcuts for your Angular apps.
 
 [![Coverage Status](https://coveralls.io/repos/chieffancypants/angular-hotkeys/badge.png?branch=master)](https://coveralls.io/r/chieffancypants/angular-hotkeys?branch=master)
-
+![Build Status](https://magnum-ci.com/status/89743485de3e7311dfc9793e26f39b41.png)
 
 ### Features:
 - Define hotkeys on an entire route, automatically binding and unbinding them as you navigate
