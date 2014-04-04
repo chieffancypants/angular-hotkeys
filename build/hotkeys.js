@@ -158,6 +158,15 @@
        */
       function toggleHelp() {
         scope.helpVisible = !scope.helpVisible;
+
+        // Bind to esc to remove the cheat sheet.  Ideally, this would be done
+        // as a directive in the template, but that would create a nasty
+        // circular dependency issue that I don't feel like sorting out.
+        if (scope.helpVisible) {
+          _add('esc', toggleHelp);
+        } else {
+          _del('esc');
+        }
       }
 
       /**

@@ -80,11 +80,11 @@ angular.module('myApp').controller('NavbarCtrl', function($scope, hotkeys) {
 
   // Pass it an object:
   hotkeys.add({
-    hotkey: 'ctrl+up',
+    combo: 'ctrl+up',
     description: 'This one goes to 11',
     callback: function() {
       $scope.volume += 1;
-    };
+    }
   });
 
   // or pass it arguments:
