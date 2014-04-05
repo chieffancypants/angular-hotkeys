@@ -76,7 +76,7 @@ Behind the scenes, I'm using the [Mousetrap](https://github.com/ccampbell/mouset
 
 ```js
 angular.module('myApp').controller('NavbarCtrl', function($scope, hotkeys) {
-  $scope.vol = 5;
+  $scope.volume = 5;
 
   // Pass it an object:
   hotkeys.add({
