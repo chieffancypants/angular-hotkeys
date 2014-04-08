@@ -19,6 +19,23 @@
      */
     this.includeCheatSheet = true;
 
+    /**
+     * Cheat sheet template in the event you want to totally customize it.
+     * @type {String}
+     */
+    this.template = '<div class="cfp-hotkeys-container fade" ng-class="{in: helpVisible}"><div class="cfp-hotkeys">' +
+                      '<h4 class="cfp-hotkeys-title">{{ title }}</h4>' +
+                      '<table><tbody>' +
+                        '<tr ng-repeat="hotkey in hotkeys | filter:{ description: \'!$$undefined$$\' }">' +
+                          '<td class="cfp-hotkeys-keys">' +
+                            '<span ng-repeat="key in hotkey.format() track by $index" class="cfp-hotkeys-key">{{ key }}</span>' +
+                          '</td>' +
+                          '<td class="cfp-hotkeys-text">{{ hotkey.description }}</td>' +
+                        '</tr>' +
+                      '</tbody></table>' +
+                      '<div class="cfp-hotkeys-close" ng-click="helpVisible = false">×</div>' +
+                    '</div></div>';
+
 
     this.$get = ['$rootElement', '$rootScope', '$compile', '$window', function ($rootElement, $rootScope, $compile, $window) {
 
@@ -137,25 +154,11 @@
         }
       });
 
-      // TODO: Make this configurable:
-      var helpMenu = angular.element('<div class="cfp-hotkeys-container fade" ng-class="{in: helpVisible}"><div class="cfp-hotkeys">' +
-                                        '<h4 class="cfp-hotkeys-title">{{ title }}</h4>' +
-                                        '<table><tbody>' +
-                                          '<tr ng-repeat="hotkey in hotkeys | filter:{ description: \'!$$undefined$$\' }">' +
-                                            '<td class="cfp-hotkeys-keys">' +
-                                              '<span ng-repeat="key in hotkey.format() track by $index" class="cfp-hotkeys-key">{{ key }}</span>' +
-                                            '</td>' +
-                                            '<td class="cfp-hotkeys-text">{{ hotkey.description }}</td>' +
-                                          '</tr>' +
-                                        '</tbody></table>' +
-                                        '<div class="cfp-hotkeys-close" ng-click="helpVisible = false">×</div>' +
-                                      '</div></div>');
-
-
 
       // Auto-create a help menu:
       if (this.includeCheatSheet) {
-        _add('?', 'Show / hide this help menu', toggleHelp);
+        var helpMenu = angular.element(this.template);
+        _add('?', 'Show / hide this help menu', toggleCheatSheet);
         angular.element($rootElement).append($compile(helpMenu)(scope));
       }
 
@@ -167,9 +170,6 @@
        * the route is accessed.
        */
       function purgeHotkeys() {
-        // TODO: hotkey is used as an argument everywhere, but the object type
-        // is always different.  perhaps I sohuld create a hotkey object so it
-        // is consistent all the time.
         angular.forEach(scope.hotkeys, function (hotkey) {
           if (!hotkey.persistent) {
             _del(hotkey);
@@ -180,14 +180,14 @@
       /**
        * Toggles the help menu element's visiblity
        */
-      function toggleHelp() {
+      function toggleCheatSheet() {
         scope.helpVisible = !scope.helpVisible;
 
         // Bind to esc to remove the cheat sheet.  Ideally, this would be done
         // as a directive in the template, but that would create a nasty
         // circular dependency issue that I don't feel like sorting out.
         if (scope.helpVisible) {
-          _add('esc', toggleHelp);
+          _add('esc', toggleCheatSheet);
         } else {
           _del('esc');
         }
@@ -296,9 +296,11 @@
 
 
       var publicApi = {
-        add            : _add,
-        del            : _del,
-        get            : _get,
+        add               : _add,
+        del               : _del,
+        get               : _get,
+        template          : this.template,
+        toggleCheatSheet  : toggleCheatSheet,
         includeCheatSheat : this.includeCheatSheat
       };
 

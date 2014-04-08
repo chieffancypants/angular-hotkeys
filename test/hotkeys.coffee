@@ -173,3 +173,11 @@ describe 'Configuration options', ->
     inject ($rootElement, hotkeys) ->
       children = angular.element($rootElement).children()
       expect(children.length).toBe 1
+
+  it 'should accept an alternate template to inject', ->
+    module 'cfp.hotkeys', (hotkeysProvider) ->
+      hotkeysProvider.template = '<div class="little-teapot">boo</div>'
+      return
+    inject ($rootElement, hotkeys) ->
+      children = angular.element($rootElement).children()
+      expect(children.hasClass('little-teapot')).toBe true

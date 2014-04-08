@@ -121,7 +121,7 @@ Example of how directive-based hotkeys works:
 
 ### Configuration
 
-**Disable the CheatSheet**
+**Disable the cheatsheet:**
 
 Disabling the cheatsheet can be accomplished by configuring the `hotkeysProvider`:
 
@@ -129,6 +129,15 @@ Disabling the cheatsheet can be accomplished by configuring the `hotkeysProvider
 angular.module('myApp', ['cfp.hotkeys'])
   .config(function(hotkeysProvider) {
     hotkeysProvider.includeCheatSheet = false;
+  })
+```
+
+**Cheatsheet template:**
+
+```js
+angular.module('myApp', ['cfp.hotkeys'])
+  .config(function(hotkeysProvider) {
+    hotkeysProvider.template = '<div class="my-own-cheatsheet">...</div>';
   })
 ```
 
