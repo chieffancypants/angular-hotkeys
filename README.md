@@ -119,7 +119,18 @@ Example of how directive-based hotkeys works:
 <modal title="Modal Title" hotkeys="{esc: close}">
 ```
 
+### Configuration
 
+**Disable the CheatSheet**
+
+Disabling the cheatsheet can be accomplished by configuring the `hotkeysProvider`:
+
+```js
+angular.module('myApp', ['cfp.hotkeys'])
+  .config(function(hotkeysProvider) {
+    hotkeysProvider.includeCheatSheet = false;
+  })
+```
 
 ### API
 

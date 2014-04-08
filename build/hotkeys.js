@@ -19,8 +19,20 @@
 
   angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
 
+    /**
+     * Configurable setting to disable the cheatsheet entirely
+     * @type {Boolean}
+     */
+    this.includeCheatSheet = true;
+
+
     this.$get = ['$rootElement', '$rootScope', '$compile', '$window', function ($rootElement, $rootScope, $compile, $window) {
 
+      /**
+       * Convert strings like cmd into symbols like ⌘
+       * @param  {String} combo Key combination, e.g. 'mod+f'
+       * @return {String}       The key combination with symbols
+       */
       function symbolize (combo) {
         var map = {
           command   : '⌘',
@@ -50,6 +62,14 @@
         return combo.join(' + ');
       }
 
+      /**
+       * Hotkey object used internally for consistency
+       *
+       * @param {String}   combo       The keycombo
+       * @param {String}   description Description for the keycombo
+       * @param {Function} callback    function to execute when keycombo pressed
+       * @param {Boolean}  persistent  Whether the hotkey persists navigation events
+       */
       function Hotkey (combo, description, callback, persistent) {
         // TODO: Check that the values are sane because we could
         // be trying to instantiate a new Hotkey with outside dev's
@@ -60,8 +80,14 @@
         this.persistent = persistent;
       }
 
-      // TODO: this gets called a lot.  We should cache the result
+      /**
+       * Helper method to format (symbolize) the key combo
+       *
+       * @return {[Array]} An array of the key combination sequence
+       *   for example: "command+g c i" becomes ["⌘ + g", "c", "i"]
+       */
       Hotkey.prototype.format = function() {
+        // TODO: this gets called a lot.  We should cache the result
         // format the hotkey for display:
         var sequence = this.combo.split(/[\s]/);
         for (var i = 0; i < sequence.length; i++) {
@@ -71,7 +97,10 @@
         return sequence;
       };
 
-
+      /**
+       * A new scope used internally for the cheatsheet
+       * @type {$rootScope.Scope}
+       */
       var scope = $rootScope.$new();
 
       /**
@@ -109,7 +138,6 @@
             // todo: perform check to make sure not already defined:
             // this came from a route, so it's likely not meant to be persistent:
             hotkey[3] = false;
-
             _add.apply(this, hotkey);
           });
         }
@@ -132,9 +160,10 @@
 
 
       // Auto-create a help menu:
-      // TODO: Make this configurable
-      _add('?', 'Show / hide this help menu', toggleHelp);
-      angular.element($rootElement).append($compile(helpMenu)(scope));
+      if (this.includeCheatSheet) {
+        _add('?', 'Show / hide this help menu', toggleHelp);
+        angular.element($rootElement).append($compile(helpMenu)(scope));
+      }
 
 
       /**
@@ -273,11 +302,10 @@
 
 
       var publicApi = {
-        add: _add,
-        del: _del,
-        get: _get,
-        // TODO: when configurable, check this:
-        toggleHelp: toggleHelp
+        add            : _add,
+        del            : _del,
+        get            : _get,
+        includeCheatSheat : this.includeCheatSheat
       };
 
       return publicApi;

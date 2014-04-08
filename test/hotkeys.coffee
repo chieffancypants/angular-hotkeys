@@ -67,7 +67,6 @@ describe 'Angular Hotkeys', ->
     KeyEvent.simulate('?'.charCodeAt(0), 90)
     expect(hotkeys.get('esc')).toBe false
 
-
   it 'should (un)bind based on route changes', ->
     # fake a route change:
     expect(hotkeys.get('w e s')).toBe false
@@ -155,3 +154,22 @@ describe 'Platform specific things', ->
     inject (hotkeys) ->
       hotkeys.add 'mod+e', 'description'
       expect(hotkeys.get('mod+e').format()[0]).toBe 'ctrl + e'
+
+
+describe 'Configuration options', ->
+
+  it 'should disable the cheatsheet when configured', ->
+    module 'cfp.hotkeys', (hotkeysProvider) ->
+      hotkeysProvider.includeCheatSheet = false
+      return
+    inject ($rootElement, hotkeys) ->
+      children = angular.element($rootElement).children()
+      expect(children.length).toBe 0
+
+  it 'should enable the cheatsheet when configured', ->
+    module 'cfp.hotkeys', (hotkeysProvider) ->
+      hotkeysProvider.includeCheatSheet = true
+      return
+    inject ($rootElement, hotkeys) ->
+      children = angular.element($rootElement).children()
+      expect(children.length).toBe 1
