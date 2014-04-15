@@ -210,7 +210,7 @@
           });
         }
       });
-      
+
       $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
           purgeHotkeys();
       });
@@ -242,8 +242,8 @@
         var i = scope.hotkeys.length;
         while (i--) {
           var hotkey = scope.hotkeys[i];
-          if (hotkey && !hotkey.persistent) {
-            _del(hotkey);
+          if (!hotkey.persistent) {
+              _del(hotkey);
           }
         }
       }
