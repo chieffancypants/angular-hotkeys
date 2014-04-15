@@ -176,11 +176,13 @@
        * the route is accessed.
        */
       function purgeHotkeys() {
-        angular.forEach(scope.hotkeys, function (hotkey) {
-          if (!hotkey.persistent) {
-            _del(hotkey);
-          }
-        });
+        var i = scope.hotkeys.length;
+        while (i--) {
+            var hotkey = scope.hotkeys[i];
+            if (!hotkey.persistent) {
+                _del(hotkey);
+            }
+        }
       }
 
       /**
