@@ -153,6 +153,10 @@
           });
         }
       });
+      
+      $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
+          purgeHotkeys();
+      });
 
 
       // Auto-create a help menu:
