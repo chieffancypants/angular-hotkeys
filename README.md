@@ -116,7 +116,7 @@ Lastly, even though binding hotkeys in your templates/html tends to be a bad ide
 Example of how directive-based hotkeys works:
 
 ```html
-<modal title="Modal Title" hotkeys="{esc: close}">
+<modal title="Modal Title" hotkey="{esc: close}">
 ```
 
 ### Configuration
