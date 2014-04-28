@@ -16,13 +16,13 @@ Configuration-centric keyboard shortcuts for your Angular apps.
 #### via bower:
 
 ```
-$ bower install chieffancypants/angular-hotkeys
+$ bower install chieffancypants/angular-hotkeys --save
 ```
 
 #### via npm:
 
 ```
-$ npm install angular-hotkeys
+$ npm install angular-hotkeys --save
 ```
 
 
