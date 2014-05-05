@@ -79,15 +79,17 @@
        * @param {String}   combo       The keycombo
        * @param {String}   description Description for the keycombo
        * @param {Function} callback    function to execute when keycombo pressed
+       * @param {string}   action      the type of event to listen for (for mousetrap)
        * @param {Boolean}  persistent  Whether the hotkey persists navigation events
        */
-      function Hotkey (combo, description, callback, persistent) {
+      function Hotkey (combo, description, callback, action, persistent) {
         // TODO: Check that the values are sane because we could
         // be trying to instantiate a new Hotkey with outside dev's
         // supplied values
         this.combo = combo;
         this.description = description;
         this.callback = callback;
+        this.action = action;
         this.persistent = persistent;
       }
 
@@ -148,7 +150,7 @@
 
             // todo: perform check to make sure not already defined:
             // this came from a route, so it's likely not meant to be persistent:
-            hotkey[3] = false;
+            hotkey[4] = false;
             _add.apply(this, hotkey);
           });
         }
@@ -199,19 +201,22 @@
        * @param {string}   combo       mousetrap key binding
        * @param {string}   description description for the help menu
        * @param {Function} callback    method to call when key is pressed
+       * @param {string}   action      the type of event to listen for (for mousetrap)
        * @param {boolean}  persistent  if true, the binding is preserved upon route changes
        */
-      function _add (combo, description, callback, persistent) {
+      function _add (combo, description, callback, action, persistent) {
         // a config object was passed instead, so unwrap it:
         if (combo instanceof Object) {
           description = combo.description;
-          callback = combo.callback;
-          persistent = combo.persistent;
-          combo = combo.combo;
+          callback    = combo.callback;
+          action      = combo.action;
+          persistent  = combo.persistent;
+          combo       = combo.combo;
         }
 
         // description is optional:
         if (description instanceof Function) {
+          action = callback;
           callback = description;
           description = '$$undefined$$';
         } else if (angular.isUndefined(description)) {
@@ -225,8 +230,12 @@
           persistent = true;
         }
 
-        Mousetrap.bind(combo, wrapApply(callback));
-        scope.hotkeys.push(new Hotkey(combo, description, callback, persistent));
+        if (typeof(action) === 'string') {
+          Mousetrap.bind(combo, wrapApply(callback), action);
+        } else {
+          Mousetrap.bind(combo, wrapApply(callback));
+        }
+        scope.hotkeys.push(new Hotkey(combo, description, callback, action, persistent));
 
       }
 
@@ -317,7 +326,7 @@
 
         angular.forEach(scope.$eval(attrs.hotkey), function (func, hotkey) {
           key = hotkey;
-          hotkeys.add(hotkey, attrs.hotkeyDescription, func);
+          hotkeys.add(hotkey, attrs.hotkeyDescription, func, attrs.hotkeyAction);
         });
 
         // remove the hotkey if the directive is destroyed:

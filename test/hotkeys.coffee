@@ -86,6 +86,23 @@ describe 'Angular Hotkeys', ->
     KeyEvent.simulate('w'.charCodeAt(0), 90)
     expect(executed).toBe true
 
+  it 'should callback according to action', ->
+    keypressA = false;
+    keypressB = false;
+
+    hotkeys.add 'a', ->
+      keypressA = true
+    , 'keyup'
+
+    hotkeys.add 'b', ->
+      keypressB = true
+
+    KeyEvent.simulate('a'.charCodeAt(0), 90)
+    KeyEvent.simulate('b'.charCodeAt(0), 90)
+    expect(keypressA).toBe false
+    expect(keypressB).toBe true
+    expect(hotkeys.get('a').action).toBe 'keyup'
+
   it 'should run routes-defined hotkey callbacks when scope is available', ->
     executed = false
     passedArg = null
