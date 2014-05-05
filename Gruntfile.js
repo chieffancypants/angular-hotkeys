@@ -18,9 +18,18 @@ module.exports = function(grunt) {
         report: 'gzip'
       },
       build: {
-        src: ['src/hotkeys.js', 'bower_components/mousetrap/mousetrap.js'],
+        src: ['build/hotkeys.js', 'bower_components/mousetrap/mousetrap.js'],
         dest: 'build/hotkeys.min.js'
       }
+    },
+
+    ngmin: {
+      sources: {
+        expand: true,
+        cwd: 'src',
+        src: ['*.js'],
+        dest: 'build'
+      },
     },
 
     cssmin: {
@@ -100,6 +109,7 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-ngmin');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-concat');
@@ -107,7 +117,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-karma-coveralls');
 
-  grunt.registerTask('default', ['jshint', 'karma:unit', 'uglify', 'cssmin', 'concat:build', 'coveralls']);
+  grunt.registerTask('default', ['jshint', 'karma:unit', 'ngmin', 'uglify', 'cssmin', 'concat:build', 'coveralls']);
   grunt.registerTask('test', ['karma:watch']);
   grunt.registerTask('build', ['default']);
 
