@@ -79,7 +79,7 @@
        * @param {String}   combo       The keycombo
        * @param {String}   description Description for the keycombo
        * @param {Function} callback    function to execute when keycombo pressed
-       * @param {string}   action      the type of event to listen for
+       * @param {string}   action      the type of event to listen for (for mousetrap)
        * @param {Boolean}  persistent  Whether the hotkey persists navigation events
        */
       function Hotkey (combo, description, callback, action, persistent) {
@@ -201,21 +201,22 @@
        * @param {string}   combo       mousetrap key binding
        * @param {string}   description description for the help menu
        * @param {Function} callback    method to call when key is pressed
-       * @param {string}   action      the type of event to listen for
+       * @param {string}   action      the type of event to listen for (for mousetrap)
        * @param {boolean}  persistent  if true, the binding is preserved upon route changes
        */
       function _add (combo, description, callback, action, persistent) {
         // a config object was passed instead, so unwrap it:
         if (combo instanceof Object) {
           description = combo.description;
-          callback = combo.callback;
-          action   = combo.action;
-          persistent = combo.persistent;
-          combo = combo.combo;
+          callback    = combo.callback;
+          action      = combo.action;
+          persistent  = combo.persistent;
+          combo       = combo.combo;
         }
 
         // description is optional:
         if (description instanceof Function) {
+          action = callback;
           callback = description;
           description = '$$undefined$$';
         } else if (angular.isUndefined(description)) {
