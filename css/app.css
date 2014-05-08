@@ -6,8 +6,8 @@ body {
 
 @font-face {
   font-family: 'octicons';
-  src: url("https://github.global.ssl.fastly.net/assets/octicons-d014e51542f9c7898a6e803ee79e714a05d2fa9e.eot");
-  src: url("https://github.global.ssl.fastly.net/assets/octicons-d014e51542f9c7898a6e803ee79e714a05d2fa9e.eot#iefix") format("embedded-opentype"),url("https://github.global.ssl.fastly.net/assets/octicons-60ea98c9292f725220220d571a41aa049165053c.woff") format("woff"),url("https://github.global.ssl.fastly.net/assets/octicons-aa678f53582c51b4a6165519f3627d3c41763c94.ttf") format("truetype"),url("https://github.global.ssl.fastly.net/assets/octicons-cdc456dbc5906e59b8c4d1c649a4b734fb0fd97b.svg#octicons") format("svg");
+  src: url("https://github.global.ssl.fastly.net/assets/octicons-8902ec113b2d6498748e41627c803eb2b27c8433.eot");
+  src: url("https://github.global.ssl.fastly.net/assets/octicons-8902ec113b2d6498748e41627c803eb2b27c8433.eot#iefix") format("embedded-opentype"),url("https://github.global.ssl.fastly.net/assets/octicons-a87554e18586f5215a57fa67c9421a3e088aeafa.woff") format("woff"),url("https://github.global.ssl.fastly.net/assets/octicons-1a9fcfe5c5246787653e20667b04f5fd666e8884.ttf") format("truetype"),url("https://github.global.ssl.fastly.net/assets/octicons-7f259d1a5d695e9278da60392acbee4b51e8a3ec.svg#octicons") format("svg");
   font-weight: normal;
   font-style: normal
 }
