@@ -67,6 +67,22 @@ describe 'Angular Hotkeys', ->
     KeyEvent.simulate('?'.charCodeAt(0), 90)
     expect(hotkeys.get('esc')).toBe false
 
+  it 'should remember previously bound ESC when cheatsheet is shown', ->
+    expect(hotkeys.get('esc')).toBe false
+
+    # bind something to escape:
+    hotkeys.add 'esc', 'temp', () ->
+    expect(hotkeys.get('esc').description).toBe 'temp'
+
+    # show the cheat-sheet which will overwrite the esc key:
+    KeyEvent.simulate('?'.charCodeAt(0), 90)
+    expect(hotkeys.get('esc').description).not.toBe 'temp'
+
+    # hide the cheat sheet to verify the previous esc binding is back
+    KeyEvent.simulate('?'.charCodeAt(0), 90)
+    expect(hotkeys.get('esc').description).toBe 'temp'
+
+
   it 'should (un)bind based on route changes', ->
     # fake a route change:
     expect(hotkeys.get('w e s')).toBe false
@@ -119,6 +135,8 @@ describe 'Angular Hotkeys', ->
     KeyEvent.simulate('w'.charCodeAt(0), 90)
     expect(executed).toBe true
     expect(passedArg).toBe 'ishmael'
+
+
 
 describe 'hotkey directive', ->
 
