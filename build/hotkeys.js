@@ -1,5 +1,5 @@
 /*! 
- * angular-hotkeys v1.2.0
+ * angular-hotkeys v1.2.1
  * https://chieffancypants.github.io/angular-hotkeys
  * Copyright (c) 2014 Wes Cruver
  * License: MIT
@@ -188,6 +188,8 @@
       /**
        * Toggles the help menu element's visiblity
        */
+      var previousEsc = false;
+
       function toggleCheatSheet() {
         scope.helpVisible = !scope.helpVisible;
 
@@ -195,9 +197,15 @@
         // as a directive in the template, but that would create a nasty
         // circular dependency issue that I don't feel like sorting out.
         if (scope.helpVisible) {
+          previousEsc = _get('esc');
           _add('esc', toggleCheatSheet);
         } else {
           _del('esc');
+
+          // restore the previously bound ESC key
+          if (previousEsc !== false) {
+            _add(previousEsc);
+          }
         }
       }
 
@@ -235,6 +243,9 @@
         if (persistent === undefined) {
           persistent = true;
         }
+
+        // unbind any previous hotkeys on that combo:
+        _del(combo);
 
         if (typeof(action) === 'string') {
           Mousetrap.bind(combo, wrapApply(callback), action);
