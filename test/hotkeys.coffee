@@ -142,6 +142,20 @@ describe 'Angular Hotkeys', ->
       hotkeys: [['w', 'Do something Amazing!', 'callme("ishmael")']]
       scope: $rootScope
 
+
+
+  it 'should run routes-dfined hotkey callbacks for ui-router', ->
+    executed = false
+    passedArg = null
+
+    $rootScope.callme = (arg) ->
+      executed = true
+      passedArg = arg
+
+    $rootScope.$broadcast '$stateChangeSuccess',
+      hotkeys: [['w', 'Do something Amazing!', 'callme("ishmael")']]
+      name: 'about'
+
     expect(executed).toBe false
     KeyEvent.simulate('w'.charCodeAt(0), 90)
     expect(executed).toBe true
