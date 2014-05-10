@@ -136,32 +136,39 @@
 
 
       $rootScope.$on('$routeChangeSuccess', function (event, route) {
-          _routeChanged(route);
+        _routeChanged(route);
       });
 
       $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
-          _routeChanged(toState);
+        // hotkeys for ui-router are held within toState, so make a new object that includes the scope, and the hotkeys
+        event.hotkeys = toState.hotkeys;
+        _routeChanged(event);
       });
 
-      function _routeChanged(route) {
-          purgeHotkeys();
+      function _routeChanged(event) {
+        purgeHotkeys();
 
-          if (route.hotkeys) {
-              angular.forEach(route.hotkeys, function (hotkey) {
-                  // a string was given, which implies this is a function that is to be
-                  // $eval()'d within that controller's scope
-                  // TODO: hotkey here is super confusing.  sometimes a function (that gets turned into an array), sometimes a string
-                  var callback = hotkey[2];
-                  if (typeof (callback) === 'string' || callback instanceof String) {
-                      hotkey[2] = [callback, route];
-                  }
+        if (event.hotkeys) {
+          angular.forEach(event.hotkeys, function (hotkey) {
 
-                  // todo: perform check to make sure not already defined:
-                  // this came from a route, so it's likely not meant to be persistent:
-                  hotkey[4] = false;
-                  _add.apply(this, hotkey);
-              });
-          }
+            var callback = hotkey[2],
+              scope = null;
+
+            // a string was given, which implies this is a function that is to be
+            // $eval()'d within that controller's scope, so pass along the scope as well              
+            if (typeof (callback) === 'string' || callback instanceof String) {
+              // ui-router uses targetScope, ng-router uses just scope:
+              scope = event.targetScope || event.scope;
+              // console.log(scope);
+              hotkey[2] = [callback, scope];
+            }
+
+            // todo: perform check to make sure not already defined:
+            // this came from a route, so it's likely not meant to be persistent:
+            hotkey[4] = false;
+            _add.apply(this, hotkey);
+          });
+        }
       }
 
 
@@ -182,10 +189,10 @@
       function purgeHotkeys() {
         var i = scope.hotkeys.length;
         while (i--) {
-            var hotkey = scope.hotkeys[i];
-            if (!hotkey.persistent) {
-                _del(hotkey);
-            }
+          var hotkey = scope.hotkeys[i];
+          if (!hotkey.persistent) {
+            _del(hotkey);
+          }
         }
       }
 
@@ -313,9 +320,10 @@
           // now that the scope is available:
           if (callback instanceof Array) {
             var funcString = callback[0];
-            var route = callback[1];
+            var scope = callback[1];
+
             callback = function (event) {
-              route.scope.$eval(funcString);
+              scope.$eval(funcString);
             };
           }
 
