@@ -192,7 +192,11 @@
         // circular dependency issue that I don't feel like sorting out.
         if (scope.helpVisible) {
           previousEsc = _get('esc');
-          _add('esc', toggleCheatSheet);
+
+          // Here's an odd way to do this: we're going to use the original
+          // description of the hotkey on the cheat sheet so that it shows up.
+          // without it, no entry for esc will ever show up (#22)
+          _add('esc', previousEsc.description, toggleCheatSheet);
         } else {
           _del('esc');
 

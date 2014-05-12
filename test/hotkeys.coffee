@@ -73,15 +73,18 @@ describe 'Angular Hotkeys', ->
     # bind something to escape:
     hotkeys.add 'esc', 'temp', () ->
     expect(hotkeys.get('esc').description).toBe 'temp'
+    originalCallback = hotkeys.get('esc').callback
 
-    # show the cheat-sheet which will overwrite the esc key:
+    # show the cheat-sheet which will overwrite the esc key. however, we want to
+    # show the original combo description in the callback, yet have the new
+    # callback bound to remove the cheatsheet from view.
     KeyEvent.simulate('?'.charCodeAt(0), 90)
-    expect(hotkeys.get('esc').description).not.toBe 'temp'
+    expect(hotkeys.get('esc').description).toBe 'temp'
+    expect(hotkeys.get('esc').callback).not.toBe originalCallback
 
     # hide the cheat sheet to verify the previous esc binding is back
     KeyEvent.simulate('?'.charCodeAt(0), 90)
     expect(hotkeys.get('esc').description).toBe 'temp'
-
 
   it 'should (un)bind based on route changes', ->
     # fake a route change:
