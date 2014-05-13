@@ -1,5 +1,5 @@
 /*! 
- * angular-hotkeys v1.2.2
+ * angular-hotkeys v1.2.3
  * https://chieffancypants.github.io/angular-hotkeys
  * Copyright (c) 2014 Wes Cruver
  * License: MIT
@@ -356,6 +356,11 @@
         });
       }
     };
+  })
+
+  .run(function(hotkeys) {
+    // force hotkeys to run by injecting it. Without this, hotkeys only runs
+    // when a controller or something else asks for it via DI.
   });
 
 })();
