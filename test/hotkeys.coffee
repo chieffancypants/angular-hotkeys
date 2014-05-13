@@ -47,6 +47,8 @@ describe 'Angular Hotkeys', ->
       combo: 'e'
       callback: ->
 
+    expect(hotkeys.get('e').description).toBe '$$undefined$$'
+
   it 'del()', ->
     hotkeys.add 'w', ->
     expect(hotkeys.get('w').description).toBe '$$undefined$$'
