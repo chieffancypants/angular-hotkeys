@@ -221,3 +221,10 @@ describe 'Configuration options', ->
     inject ($rootElement, hotkeys) ->
       children = angular.element($rootElement).children()
       expect(children.hasClass('little-teapot')).toBe true
+
+  it 'should run and inject itself so it is always available', ->
+    module 'cfp.hotkeys'
+
+    inject ($rootElement) ->
+      children = angular.element($rootElement).children()
+      expect(children.hasClass('cfp-hotkeys-container')).toBe true
