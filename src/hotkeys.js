@@ -325,7 +325,8 @@
         get               : _get,
         template          : this.template,
         toggleCheatSheet  : toggleCheatSheet,
-        includeCheatSheat : this.includeCheatSheat
+        includeCheatSheat : this.includeCheatSheat,
+        purgeHotkeys      : purgeHotkeys
       };
 
       return publicApi;
