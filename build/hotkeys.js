@@ -178,11 +178,13 @@
        * the route is accessed.
        */
       function purgeHotkeys() {
-        angular.forEach(scope.hotkeys, function (hotkey) {
-          if (!hotkey.persistent) {
-            _del(hotkey);
-          }
-        });
+        var i = scope.hotkeys.length;
+        while (i--) {
+            var hotkey = scope.hotkeys[i];
+            if (hotkey && !hotkey.persistent) {
+                _del(hotkey);
+            }
+        }
       }
 
       /**
@@ -198,6 +200,7 @@
         // circular dependency issue that I don't feel like sorting out.
         if (scope.helpVisible) {
           previousEsc = _get('esc');
+          _del('esc');
 
           // Here's an odd way to do this: we're going to use the original
           // description of the hotkey on the cheat sheet so that it shows up.
@@ -247,9 +250,6 @@
         if (persistent === undefined) {
           persistent = true;
         }
-
-        // unbind any previous hotkeys on that combo:
-        _del(combo);
 
         if (typeof(action) === 'string') {
           Mousetrap.bind(combo, wrapApply(callback), action);
@@ -331,7 +331,8 @@
         get               : _get,
         template          : this.template,
         toggleCheatSheet  : toggleCheatSheet,
-        includeCheatSheat : this.includeCheatSheat
+        includeCheatSheat : this.includeCheatSheat,
+        purgeHotkeys      : purgeHotkeys
       };
 
       return publicApi;
