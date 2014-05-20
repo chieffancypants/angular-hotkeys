@@ -175,7 +175,7 @@ describe 'Platform specific things', ->
 
   it 'should display mac key combos', ->
     module ($provide) ->
-      $provide.value '$window',
+      $provide.value '$window', angular.extend window,
         navigator:
           platform: 'Macintosh'
       return
@@ -186,7 +186,7 @@ describe 'Platform specific things', ->
 
   it 'should display win/linux key combos', ->
     module ($provide) ->
-      $provide.value '$window',
+      $provide.value '$window', angular.extend window,
         navigator:
           platform: 'Linux x86_64'
       return

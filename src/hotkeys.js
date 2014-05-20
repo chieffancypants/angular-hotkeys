@@ -37,7 +37,7 @@
                     '</div></div>';
 
 
-    this.$get = ['$rootElement', '$rootScope', '$compile', '$window', function ($rootElement, $rootScope, $compile, $window) {
+    this.$get = ['$rootElement', '$rootScope', '$compile', '$window', '$document', function ($rootElement, $rootScope, $compile, $window, $document) {
 
       /**
        * Convert strings like cmd into symbols like ⌘
@@ -159,9 +159,17 @@
 
       // Auto-create a help menu:
       if (this.includeCheatSheet) {
+        var document = $document[0];
+        var element = $rootElement[0];
         var helpMenu = angular.element(this.template);
         _add('?', 'Show / hide this help menu', toggleCheatSheet);
-        angular.element($rootElement).append($compile(helpMenu)(scope));
+        
+        // If $rootElement is document or documentElement, then body must be used
+        if (element === document || element === document.documentElement) {
+          element = document.body;
+        }
+
+        angular.element(element).append($compile(helpMenu)(scope));
       }
 
 
