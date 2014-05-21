@@ -102,7 +102,7 @@
       Hotkey.prototype.format = function() {
         // TODO: this gets called a lot.  We should cache the result
         // format the hotkey for display:
-        var sequence = this.combo.split(/[\s]/);
+        var sequence = (this.combo instanceof Array) ? this.combo : this.combo.split(/[\s]/);
         for (var i = 0; i < sequence.length; i++) {
           sequence[i] = symbolize(sequence[i]);
         }
