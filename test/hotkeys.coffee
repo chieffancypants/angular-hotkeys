@@ -228,3 +228,13 @@ describe 'Configuration options', ->
     inject ($rootElement) ->
       children = angular.element($rootElement).children()
       expect(children.hasClass('cfp-hotkeys-container')).toBe true
+
+  it 'should attach to body if $rootElement is document (#8)', inject ($rootElement) ->
+
+    injected = angular.element(document.body).find('div')
+    expect(injected.length).toBe 0
+
+    injector = angular.bootstrap(document, ['cfp.hotkeys'])
+    injected = angular.element(document.body).find('div')
+    expect(injected.length).toBe 3
+    expect(injected.hasClass('cfp-hotkeys-container')).toBe true
