@@ -42,6 +42,17 @@
                       '<div class="cfp-hotkeys-close" ng-click="helpVisible = false">×</div>' +
                     '</div></div>';
 
+    /**
+     * Configurable setting of cheat sheet hotkey
+     * @type {String}
+     */
+    this.cheatSheetHotkey = '?';
+
+    /**
+     * Configurable setting of cheat sheet hotkey description
+     * @type {String}
+     */
+    this.cheatSheetDescription = 'Show / hide this help menu';
 
     this.$get = ['$rootElement', '$rootScope', '$compile', '$window', '$document', function ($rootElement, $rootScope, $compile, $window, $document) {
 
@@ -168,8 +179,8 @@
         var document = $document[0];
         var element = $rootElement[0];
         var helpMenu = angular.element(this.template);
-        _add('?', 'Show / hide this help menu', toggleCheatSheet);
-        
+        _add(this.cheatSheetHotkey, this.cheatSheetDescription, toggleCheatSheet);
+
         // If $rootElement is document or documentElement, then body must be used
         if (element === document || element === document.documentElement) {
           element = document.body;
@@ -340,6 +351,8 @@
         template          : this.template,
         toggleCheatSheet  : toggleCheatSheet,
         includeCheatSheat : this.includeCheatSheat,
+        cheatSheetHotkey  : this.cheatSheetHotkey,
+        cheatSheetDescription : this.cheatSheetDescription,
         purgeHotkeys      : purgeHotkeys
       };
 
