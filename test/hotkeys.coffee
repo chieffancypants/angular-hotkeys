@@ -238,3 +238,19 @@ describe 'Configuration options', ->
     injected = angular.element(document.body).find('div')
     expect(injected.length).toBe 3
     expect(injected.hasClass('cfp-hotkeys-container')).toBe true
+
+  it 'should have a configurable hotkey and description', ->
+    module 'cfp.hotkeys', (hotkeysProvider) ->
+      hotkeysProvider.cheatSheetHotkey = 'h'
+      hotkeysProvider.cheatSheetDescription = 'Alternate description'
+      return
+
+    inject ($rootElement, hotkeys) ->
+      expect(hotkeys.get('h')).not.toBe false
+      expect(angular.element($rootElement).children().hasClass('in')).toBe false
+      KeyEvent.simulate('?'.charCodeAt(0), 90)
+      expect(angular.element($rootElement).children().hasClass('in')).toBe false
+      KeyEvent.simulate('h'.charCodeAt(0), 90)
+      expect(angular.element($rootElement).children().hasClass('in')).toBe true
+
+      expect(hotkeys.get('h').description).toBe 'Alternate description'

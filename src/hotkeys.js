@@ -37,13 +37,13 @@
                     '</div></div>';
 
     /**
-     * Configurable setting of cheat sheet hotkey
+     * Configurable setting for the cheat sheet hotkey
      * @type {String}
      */
     this.cheatSheetHotkey = '?';
 
     /**
-     * Configurable setting of cheat sheet hotkey description
+     * Configurable setting for the cheat sheet description
      * @type {String}
      */
     this.cheatSheetDescription = 'Show / hide this help menu';
@@ -339,15 +339,15 @@
 
 
       var publicApi = {
-        add               : _add,
-        del               : _del,
-        get               : _get,
-        template          : this.template,
-        toggleCheatSheet  : toggleCheatSheet,
-        includeCheatSheat : this.includeCheatSheat,
-        cheatSheetHotkey  : this.cheatSheetHotkey,
+        add                   : _add,
+        del                   : _del,
+        get                   : _get,
+        template              : this.template,
+        toggleCheatSheet      : toggleCheatSheet,
+        includeCheatSheat     : this.includeCheatSheat,
+        cheatSheetHotkey      : this.cheatSheetHotkey,
         cheatSheetDescription : this.cheatSheetDescription,
-        purgeHotkeys      : purgeHotkeys
+        purgeHotkeys          : purgeHotkeys
       };
 
       return publicApi;
