@@ -105,15 +105,26 @@
       }
 
       /**
-       * Helper method to format (symbolize) the key combo
+       * Helper method to format (symbolize) the key combo for display
        *
        * @return {[Array]} An array of the key combination sequence
        *   for example: "command+g c i" becomes ["⌘ + g", "c", "i"]
+       *
+       * TODO: this gets called a lot.  We should cache the result
        */
       Hotkey.prototype.format = function() {
-        // TODO: this gets called a lot.  We should cache the result
-        // format the hotkey for display:
-        var sequence = this.combo.split(/[\s]/);
+
+        var combo = this.combo;
+
+        // if the combo is an array, it means the there are multiple bindings to
+        // the same callback. Don't show all the possible key combos, just the
+        // first one.  Not sure of usecase here, so open a ticket if my
+        // assumptions are wrong
+        if (combo instanceof Array) {
+          combo = combo[0];
+        }
+
+        var sequence = combo.split(/[\s]/);
         for (var i = 0; i < sequence.length; i++) {
           sequence[i] = symbolize(sequence[i]);
         }
@@ -160,7 +171,7 @@
             }
 
             // todo: perform check to make sure not already defined:
-            // this came from a route, so it's likely not meant to be persistent:
+            // this came from a route, so it's likely not meant to be persistent
             hotkey[4] = false;
             _add.apply(this, hotkey);
           });
@@ -239,8 +250,10 @@
        * @param {boolean}  persistent  if true, the binding is preserved upon route changes
        */
       function _add (combo, description, callback, action, persistent) {
-        // a config object was passed instead, so unwrap it:
-        if (combo instanceof Object) {
+        // Determine if object format was given:
+        var objType = Object.prototype.toString.call(combo);
+
+        if (objType === '[object Object]') {
           description = combo.description;
           callback    = combo.callback;
           action      = combo.action;

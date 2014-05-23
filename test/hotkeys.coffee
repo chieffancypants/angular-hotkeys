@@ -141,6 +141,16 @@ describe 'Angular Hotkeys', ->
     expect(executed).toBe true
     expect(passedArg).toBe 'ishmael'
 
+  it 'should support multiple hotkeys to the same function', ->
+    executeCount = 0
+
+    hotkeys.add ['a', 'b'], ->
+      executeCount++
+
+    KeyEvent.simulate('a'.charCodeAt(0), 90)
+    expect(executeCount).toBe 1
+    KeyEvent.simulate('b'.charCodeAt(0), 90)
+    expect(executeCount).toBe 2
 
 
 describe 'hotkey directive', ->
