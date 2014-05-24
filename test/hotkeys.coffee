@@ -140,6 +140,93 @@ describe 'Angular Hotkeys', ->
     KeyEvent.simulate('w'.charCodeAt(0), 90)
     expect(executed).toBe true
     expect(passedArg).toBe 'ishmael'
+  
+  it 'should callback when hotkey is pressed in input feild and allowIn is configured', ->
+    executed = no
+    
+    $body = angular.element document.body
+    $input = angular.element '<input/>'
+    $body.prepend $input
+    
+    hotkeys.add
+      combo: 'w'
+      allowIn: ['INPUT']
+      callback: -> executed = yes
+    
+    KeyEvent.simulate('w'.charCodeAt(0), 90, undefined, $input[0])
+    expect(executed).toBe yes
+  
+  it 'should callback when hotkey is pressed in select feild and allowIn is configured', ->
+    executed = no
+    
+    $body = angular.element document.body
+    $select = angular.element '<select/>'
+    $body.prepend $select
+    
+    hotkeys.add
+      combo: 'w'
+      allowIn: ['SELECT']
+      callback: -> executed = yes
+    
+    KeyEvent.simulate('w'.charCodeAt(0), 90, undefined, $select[0])
+    expect(executed).toBe yes
+  
+  it 'should callback when hotkey is pressed in textarea feild and allowIn is configured', ->
+    executed = no
+    
+    $body = angular.element document.body
+    $textarea = angular.element '<textarea/>'
+    $body.prepend $textarea
+    
+    hotkeys.add
+      combo: 'w'
+      allowIn: ['TEXTAREA']
+      callback: -> executed = yes
+    
+    KeyEvent.simulate('w'.charCodeAt(0), 90, undefined, $textarea[0])
+    expect(executed).toBe yes
+  
+  it 'should not callback when hotkey is pressed in input feild', ->
+    executed = no
+    
+    $body = angular.element document.body
+    $input = angular.element '<input/>'
+    $body.prepend $input
+    
+    hotkeys.add
+      combo: 'w'
+      callback: -> executed = yes
+    
+    KeyEvent.simulate('w'.charCodeAt(0), 90, undefined, $input[0])
+    expect(executed).toBe no
+  
+  it 'should not callback when hotkey is pressed in select feild', ->
+    executed = no
+    
+    $body = angular.element document.body
+    $select = angular.element '<select/>'
+    $body.prepend $select
+    
+    hotkeys.add
+      combo: 'w'
+      callback: -> executed = yes
+    
+    KeyEvent.simulate('w'.charCodeAt(0), 90, undefined, $select[0])
+    expect(executed).toBe no
+  
+  it 'should not callback when hotkey is pressed in textarea feild', ->
+    executed = no
+    
+    $body = angular.element document.body
+    $textarea = angular.element '<textarea/>'
+    $body.prepend $textarea
+    
+    hotkeys.add
+      combo: 'w'
+      callback: -> executed = yes
+    
+    KeyEvent.simulate('w'.charCodeAt(0), 90, undefined, $textarea[0])
+    expect(executed).toBe no
 
   it 'should support multiple hotkeys to the same function', ->
     executeCount = 0

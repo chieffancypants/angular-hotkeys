@@ -50,6 +50,18 @@
 
     this.$get = ['$rootElement', '$rootScope', '$compile', '$window', '$document', function ($rootElement, $rootScope, $compile, $window, $document) {
 
+      // alter Mousetrap's stopCallback() function
+      // this version doesn't return true when the element is an INPUT, SELECT, or TEXTAREA
+      // (instead we will perform this check per-key in the _add() method)
+      Mousetrap.stopCallback = function(event, element, combo) {
+        // if the element has the class "mousetrap" then no need to stop
+        if ((' ' + element.className + ' ').indexOf(' mousetrap ') > -1) {
+          return false;
+        }
+
+        return (element.contentEditable && element.contentEditable == 'true');
+      };
+
       /**
        * Convert strings like cmd into symbols like ⌘
        * @param  {String} combo Key combination, e.g. 'mod+f'
@@ -247,17 +259,23 @@
        * @param {string}   description description for the help menu
        * @param {Function} callback    method to call when key is pressed
        * @param {string}   action      the type of event to listen for (for mousetrap)
+       * @param {array}    allowIn     an array of tag names to allow this combo in ('INPUT', 'SELECT', and/or 'TEXTAREA')
        * @param {boolean}  persistent  if true, the binding is preserved upon route changes
        */
-      function _add (combo, description, callback, action, persistent) {
+      function _add (combo, description, callback, action, allowIn, persistent) {
+        
         // Determine if object format was given:
         var objType = Object.prototype.toString.call(combo);
+
+        var _callback; // used to save original callback for "allowIn" wrapping
+        var preventIn = ['INPUT', 'SELECT', 'TEXTAREA']; // these elements are prevented by the default Mousetrap.stopCallback()
 
         if (objType === '[object Object]') {
           description = combo.description;
           callback    = combo.callback;
           action      = combo.action;
           persistent  = combo.persistent;
+          allowIn     = combo.allowIn;
           combo       = combo.combo;
         }
 
@@ -277,12 +295,59 @@
           persistent = true;
         }
 
+        // if callback is defined, then wrap it in a function
+        // that checks if the event originated from a form element.
+        // the function blocks the callback from executing unless the element is specified
+        // in allowIn (emulates Mousetrap.stopCallback() on a per-key level)
+        if (typeof callback === 'function') {
+
+          // save the original callback
+          _callback = callback;
+
+          // make sure allowIn is an array
+          if (!(allowIn instanceof Array)) {
+            allowIn = [];
+          }
+
+          // remove anything from preventIn that's present in allowIn
+          for (var i=0; i<allowIn.length; i++) {
+            var index;
+            allowIn[i] = allowIn[i].toUpperCase();
+            index = preventIn.indexOf(allowIn[i]);
+            if (index !== -1) {
+              preventIn.splice(index, 1);
+            }
+          }
+
+          // create the new wrapper callback
+          callback = function(event) {
+
+            var should_execute = true;
+            var target = event.target || event.srcElement;
+            var nodeName = target.nodeName.toUpperCase();
+
+            // don't execute callback if the event was fired from inside an element listed in preventIn
+            for (var i=0; i<preventIn.length; i++) {
+              if (preventIn[i] === nodeName) {
+                should_execute = false;
+                break;
+              }
+            }
+
+            if (should_execute) {
+              wrapApply(_callback.apply(this, arguments));
+            }
+
+          };
+
+        }
+
         if (typeof(action) === 'string') {
           Mousetrap.bind(combo, wrapApply(callback), action);
         } else {
           Mousetrap.bind(combo, wrapApply(callback));
         }
-        scope.hotkeys.push(new Hotkey(combo, description, callback, action, persistent));
+        scope.hotkeys.push(new Hotkey(combo, description, callback, action, allowIn, persistent));
 
       }
 
