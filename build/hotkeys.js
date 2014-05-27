@@ -1,5 +1,5 @@
 /*! 
- * angular-hotkeys v1.2.5
+ * angular-hotkeys v1.3.0
  * https://chieffancypants.github.io/angular-hotkeys
  * Copyright (c) 2014 Wes Cruver
  * License: MIT
@@ -56,6 +56,18 @@
 
     this.$get = ['$rootElement', '$rootScope', '$compile', '$window', '$document', function ($rootElement, $rootScope, $compile, $window, $document) {
 
+      // monkeypatch Mousetrap's stopCallback() function
+      // this version doesn't return true when the element is an INPUT, SELECT, or TEXTAREA
+      // (instead we will perform this check per-key in the _add() method)
+      Mousetrap.stopCallback = function(event, element) {
+        // if the element has the class "mousetrap" then no need to stop
+        if ((' ' + element.className + ' ').indexOf(' mousetrap ') > -1) {
+          return false;
+        }
+
+        return (element.contentEditable && element.contentEditable == 'true');
+      };
+
       /**
        * Convert strings like cmd into symbols like ⌘
        * @param  {String} combo Key combination, e.g. 'mod+f'
@@ -111,15 +123,26 @@
       }
 
       /**
-       * Helper method to format (symbolize) the key combo
+       * Helper method to format (symbolize) the key combo for display
        *
        * @return {[Array]} An array of the key combination sequence
        *   for example: "command+g c i" becomes ["⌘ + g", "c", "i"]
+       *
+       * TODO: this gets called a lot.  We should cache the result
        */
       Hotkey.prototype.format = function() {
-        // TODO: this gets called a lot.  We should cache the result
-        // format the hotkey for display:
-        var sequence = this.combo.split(/[\s]/);
+
+        var combo = this.combo;
+
+        // if the combo is an array, it means the there are multiple bindings to
+        // the same callback. Don't show all the possible key combos, just the
+        // first one.  Not sure of usecase here, so open a ticket if my
+        // assumptions are wrong
+        if (combo instanceof Array) {
+          combo = combo[0];
+        }
+
+        var sequence = combo.split(/[\s]/);
         for (var i = 0; i < sequence.length; i++) {
           sequence[i] = symbolize(sequence[i]);
         }
@@ -166,7 +189,7 @@
             }
 
             // todo: perform check to make sure not already defined:
-            // this came from a route, so it's likely not meant to be persistent:
+            // this came from a route, so it's likely not meant to be persistent
             hotkey[4] = false;
             _add.apply(this, hotkey);
           });
@@ -199,10 +222,10 @@
       function purgeHotkeys() {
         var i = scope.hotkeys.length;
         while (i--) {
-            var hotkey = scope.hotkeys[i];
-            if (hotkey && !hotkey.persistent) {
-                _del(hotkey);
-            }
+          var hotkey = scope.hotkeys[i];
+          if (hotkey && !hotkey.persistent) {
+            _del(hotkey);
+          }
         }
       }
 
@@ -242,15 +265,26 @@
        * @param {string}   description description for the help menu
        * @param {Function} callback    method to call when key is pressed
        * @param {string}   action      the type of event to listen for (for mousetrap)
+       * @param {array}    allowIn     an array of tag names to allow this combo in ('INPUT', 'SELECT', and/or 'TEXTAREA')
        * @param {boolean}  persistent  if true, the binding is preserved upon route changes
        */
-      function _add (combo, description, callback, action, persistent) {
-        // a config object was passed instead, so unwrap it:
-        if (combo instanceof Object) {
+      function _add (combo, description, callback, action, allowIn, persistent) {
+
+        // used to save original callback for "allowIn" wrapping:
+        var _callback;
+
+        // these elements are prevented by the default Mousetrap.stopCallback():
+        var preventIn = ['INPUT', 'SELECT', 'TEXTAREA'];
+
+        // Determine if object format was given:
+        var objType = Object.prototype.toString.call(combo);
+
+        if (objType === '[object Object]') {
           description = combo.description;
           callback    = combo.callback;
           action      = combo.action;
           persistent  = combo.persistent;
+          allowIn     = combo.allowIn;
           combo       = combo.combo;
         }
 
@@ -270,12 +304,61 @@
           persistent = true;
         }
 
+        // if callback is defined, then wrap it in a function
+        // that checks if the event originated from a form element.
+        // the function blocks the callback from executing unless the element is specified
+        // in allowIn (emulates Mousetrap.stopCallback() on a per-key level)
+        if (typeof callback === 'function') {
+
+          // save the original callback
+          _callback = callback;
+
+          // make sure allowIn is an array
+          if (!(allowIn instanceof Array)) {
+            allowIn = [];
+          }
+
+          // remove anything from preventIn that's present in allowIn
+          var index;
+          for (var i=0; i < allowIn.length; i++) {
+            allowIn[i] = allowIn[i].toUpperCase();
+            index = preventIn.indexOf(allowIn[i]);
+            if (index !== -1) {
+              preventIn.splice(index, 1);
+            }
+          }
+
+          // create the new wrapper callback
+          callback = function(event) {
+            var shouldExecute = true;
+            var target = event.target || event.srcElement; // srcElement is IE only
+            var nodeName = target.nodeName.toUpperCase();
+
+            // check if the input has a mousetrap class, and skip checking preventIn if so
+            if ((' ' + target.className + ' ').indexOf(' mousetrap ') > -1) {
+              shouldExecute = true;
+            } else {
+              // don't execute callback if the event was fired from inside an element listed in preventIn
+              for (var i=0; i<preventIn.length; i++) {
+                if (preventIn[i] === nodeName) {
+                  shouldExecute = false;
+                  break;
+                }
+              }
+            }
+
+            if (shouldExecute) {
+              wrapApply(_callback.apply(this, arguments));
+            }
+          };
+        }
+
         if (typeof(action) === 'string') {
           Mousetrap.bind(combo, wrapApply(callback), action);
         } else {
           Mousetrap.bind(combo, wrapApply(callback));
         }
-        scope.hotkeys.push(new Hotkey(combo, description, callback, action, persistent));
+        scope.hotkeys.push(new Hotkey(combo, description, callback, action, allowIn, persistent));
 
       }
 
