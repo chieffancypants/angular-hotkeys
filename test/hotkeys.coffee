@@ -13,6 +13,12 @@ describe 'Angular Hotkeys', ->
       $rootScope = _$rootScope_
       scope = $rootScope.$new()
 
+  afterEach ->
+    hotkeys.del('w')
+    t = document.getElementById('cfp-test')
+    if t
+      t.parentNode.removeChild(t)
+
   it 'should insert the help menu into the dom', ->
     children = angular.element($rootElement).children()
     expect(children.hasClass('cfp-hotkeys-container')).toBe true
@@ -140,93 +146,110 @@ describe 'Angular Hotkeys', ->
     KeyEvent.simulate('w'.charCodeAt(0), 90)
     expect(executed).toBe true
     expect(passedArg).toBe 'ishmael'
-  
-  it 'should callback when hotkey is pressed in input feild and allowIn is configured', ->
+
+  it 'should callback when hotkey is pressed in input field and allowIn INPUT is configured', ->
     executed = no
-    
+
     $body = angular.element document.body
-    $input = angular.element '<input/>'
+    $input = angular.element '<input id="cfp-test"/>'
     $body.prepend $input
-    
+
     hotkeys.add
       combo: 'w'
       allowIn: ['INPUT']
       callback: -> executed = yes
-    
+
     KeyEvent.simulate('w'.charCodeAt(0), 90, undefined, $input[0])
     expect(executed).toBe yes
-  
-  it 'should callback when hotkey is pressed in select feild and allowIn is configured', ->
+
+  it 'should callback when hotkey is pressed in select field and allowIn SELECT is configured', ->
     executed = no
-    
+
     $body = angular.element document.body
-    $select = angular.element '<select/>'
+    $select = angular.element '<select id="cfp-test"/>'
     $body.prepend $select
-    
+
     hotkeys.add
       combo: 'w'
       allowIn: ['SELECT']
       callback: -> executed = yes
-    
+
     KeyEvent.simulate('w'.charCodeAt(0), 90, undefined, $select[0])
     expect(executed).toBe yes
-  
-  it 'should callback when hotkey is pressed in textarea feild and allowIn is configured', ->
+
+  it 'should callback when hotkey is pressed in textarea field and allowIn TEXTAREA is configured', ->
     executed = no
-    
+
     $body = angular.element document.body
-    $textarea = angular.element '<textarea/>'
+    $textarea = angular.element '<textarea id="cfp-test"/>'
     $body.prepend $textarea
-    
+
     hotkeys.add
       combo: 'w'
       allowIn: ['TEXTAREA']
       callback: -> executed = yes
-    
+
     KeyEvent.simulate('w'.charCodeAt(0), 90, undefined, $textarea[0])
     expect(executed).toBe yes
-  
-  it 'should not callback when hotkey is pressed in input feild', ->
+
+  it 'should not callback when hotkey is pressed in input field without allowIn INPUT', ->
     executed = no
-    
+
     $body = angular.element document.body
-    $input = angular.element '<input/>'
+    $input = angular.element '<input id="cfp-test"/>'
     $body.prepend $input
-    
+
     hotkeys.add
       combo: 'w'
       callback: -> executed = yes
-    
+
     KeyEvent.simulate('w'.charCodeAt(0), 90, undefined, $input[0])
     expect(executed).toBe no
-  
-  it 'should not callback when hotkey is pressed in select feild', ->
+
+  it 'should not callback when hotkey is pressed in select field without allowIn SELECT', ->
     executed = no
-    
+
     $body = angular.element document.body
-    $select = angular.element '<select/>'
+    $select = angular.element '<select id="cfp-test"/>'
     $body.prepend $select
-    
+
     hotkeys.add
       combo: 'w'
       callback: -> executed = yes
-    
+
     KeyEvent.simulate('w'.charCodeAt(0), 90, undefined, $select[0])
     expect(executed).toBe no
-  
-  it 'should not callback when hotkey is pressed in textarea feild', ->
+
+  it 'should not callback when hotkey is pressed in textarea field without allowIn TEXTAREA', ->
     executed = no
-    
+
     $body = angular.element document.body
-    $textarea = angular.element '<textarea/>'
+    $textarea = angular.element '<textarea id="cfp-test"/>'
     $body.prepend $textarea
-    
+
     hotkeys.add
       combo: 'w'
       callback: -> executed = yes
-    
+
     KeyEvent.simulate('w'.charCodeAt(0), 90, undefined, $textarea[0])
     expect(executed).toBe no
+
+  it 'should callback when the mousetrap class is present', ->
+    executed = no
+
+    $body = angular.element document.body
+    $input = angular.element '<input class="mousetrap" id="cfp-test"/>'
+    $body.prepend $input
+
+    hotkeys.add
+      combo: 'a'
+      callback: -> executed = yes
+
+    KeyEvent.simulate('a'.charCodeAt(0), 90, undefined, $input[0])
+    expect(executed).toBe yes
+
+
+
 
   it 'should support multiple hotkeys to the same function', ->
     executeCount = 0

@@ -50,10 +50,10 @@
 
     this.$get = ['$rootElement', '$rootScope', '$compile', '$window', '$document', function ($rootElement, $rootScope, $compile, $window, $document) {
 
-      // alter Mousetrap's stopCallback() function
+      // monkeypatch Mousetrap's stopCallback() function
       // this version doesn't return true when the element is an INPUT, SELECT, or TEXTAREA
       // (instead we will perform this check per-key in the _add() method)
-      Mousetrap.stopCallback = function(event, element, combo) {
+      Mousetrap.stopCallback = function(event, element) {
         // if the element has the class "mousetrap" then no need to stop
         if ((' ' + element.className + ' ').indexOf(' mousetrap ') > -1) {
           return false;
@@ -216,10 +216,10 @@
       function purgeHotkeys() {
         var i = scope.hotkeys.length;
         while (i--) {
-            var hotkey = scope.hotkeys[i];
-            if (hotkey && !hotkey.persistent) {
-                _del(hotkey);
-            }
+          var hotkey = scope.hotkeys[i];
+          if (hotkey && !hotkey.persistent) {
+            _del(hotkey);
+          }
         }
       }
 
@@ -263,12 +263,15 @@
        * @param {boolean}  persistent  if true, the binding is preserved upon route changes
        */
       function _add (combo, description, callback, action, allowIn, persistent) {
-        
+
+        // used to save original callback for "allowIn" wrapping:
+        var _callback;
+
+        // these elements are prevented by the default Mousetrap.stopCallback():
+        var preventIn = ['INPUT', 'SELECT', 'TEXTAREA'];
+
         // Determine if object format was given:
         var objType = Object.prototype.toString.call(combo);
-
-        var _callback; // used to save original callback for "allowIn" wrapping
-        var preventIn = ['INPUT', 'SELECT', 'TEXTAREA']; // these elements are prevented by the default Mousetrap.stopCallback()
 
         if (objType === '[object Object]') {
           description = combo.description;
@@ -310,8 +313,8 @@
           }
 
           // remove anything from preventIn that's present in allowIn
-          for (var i=0; i<allowIn.length; i++) {
-            var index;
+          var index;
+          for (var i=0; i < allowIn.length; i++) {
             allowIn[i] = allowIn[i].toUpperCase();
             index = preventIn.indexOf(allowIn[i]);
             if (index !== -1) {
@@ -321,25 +324,27 @@
 
           // create the new wrapper callback
           callback = function(event) {
-
-            var should_execute = true;
-            var target = event.target || event.srcElement;
+            var shouldExecute = true;
+            var target = event.target || event.srcElement; // srcElement is IE only
             var nodeName = target.nodeName.toUpperCase();
 
-            // don't execute callback if the event was fired from inside an element listed in preventIn
-            for (var i=0; i<preventIn.length; i++) {
-              if (preventIn[i] === nodeName) {
-                should_execute = false;
-                break;
+            // check if the input has a mousetrap class, and skip checking preventIn if so
+            if ((' ' + target.className + ' ').indexOf(' mousetrap ') > -1) {
+              shouldExecute = true;
+            } else {
+              // don't execute callback if the event was fired from inside an element listed in preventIn
+              for (var i=0; i<preventIn.length; i++) {
+                if (preventIn[i] === nodeName) {
+                  shouldExecute = false;
+                  break;
+                }
               }
             }
 
-            if (should_execute) {
+            if (shouldExecute) {
               wrapApply(_callback.apply(this, arguments));
             }
-
           };
-
         }
 
         if (typeof(action) === 'string') {
