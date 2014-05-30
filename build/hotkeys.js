@@ -49,6 +49,15 @@
     this.cheatSheetHotkey = '?';
 
     /**
+     * Configurable indication if the default action should be prevented
+     * using defaultPrevent()
+     * @type {Boolean}
+     */
+    this.preventDefault = true;
+    // Keep 'thḯs' in 'self' variable to be able to use it in functions
+    var self = this;
+
+    /**
      * Configurable setting for the cheat sheet description
      * @type {String}
      */
@@ -348,15 +357,15 @@
             }
 
             if (shouldExecute) {
-              wrapApply(_callback.apply(this, arguments));
+              wrapApply(_callback.apply(this, arguments), self.preventDefault);
             }
           };
         }
 
         if (typeof(action) === 'string') {
-          Mousetrap.bind(combo, wrapApply(callback), action);
+          Mousetrap.bind(combo, wrapApply(callback, self.preventDefault), action);
         } else {
-          Mousetrap.bind(combo, wrapApply(callback));
+          Mousetrap.bind(combo, wrapApply(callback, self.preventDefault));
         }
         scope.hotkeys.push(new Hotkey(combo, description, callback, action, allowIn, persistent));
 
@@ -400,9 +409,10 @@
        * so that we can force a $scope.$apply()
        *
        * @param  {Function} callback [description]
+       * @param  {Boolean} preventDefault [description]
        * @return {[type]}            [description]
        */
-      function wrapApply (callback) {
+      function wrapApply (callback, preventDefault) {
         // return mousetrap a function to call
         return function (event, combo) {
 
@@ -423,6 +433,8 @@
             // call the original hotkey callback with the keyboard event
             callback(event, _get(combo));
           });
+          // prevent the default action and stop propagation if required
+          return !preventDefault;
         };
       }
 
