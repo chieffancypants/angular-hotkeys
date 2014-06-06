@@ -374,3 +374,22 @@ describe 'Configuration options', ->
       expect(angular.element($rootElement).children().hasClass('in')).toBe true
 
       expect(hotkeys.get('h').description).toBe 'Alternate description'
+
+  it 'should callback when hotkey is pressed in input when preventIn does not include INPUT', ->
+    module 'cfp.hotkeys', (hotkeysProvider) ->
+      hotkeysProvider.preventIn = ['SELECT', 'TEXTAREA']
+      return
+
+    inject ($rootElement, hotkeys) ->
+      executed = no
+
+      $body = angular.element document.body
+      $input = angular.element '<input id="cfp-test"/>'
+      $body.prepend $input
+
+      hotkeys.add
+        combo: 'w'
+        callback: -> executed = yes
+
+      KeyEvent.simulate('w'.charCodeAt(0), 90, undefined, $input[0])
+      expect(executed).toBe yes

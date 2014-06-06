@@ -54,7 +54,17 @@
      */
     this.cheatSheetDescription = 'Show / hide this help menu';
 
+    /**
+     * Configurable setting for the default blocked elements
+     * @type {Array.<string>}
+     */
+    this.preventIn = ['INPUT', 'SELECT', 'TEXTAREA'];
+
+
     this.$get = ['$rootElement', '$rootScope', '$compile', '$window', '$document', function ($rootElement, $rootScope, $compile, $window, $document) {
+
+      // We need a local variable to prevent strict violation
+      var defaultPreventIn = this.preventIn;
 
       // monkeypatch Mousetrap's stopCallback() function
       // this version doesn't return true when the element is an INPUT, SELECT, or TEXTAREA
@@ -273,8 +283,7 @@
         // used to save original callback for "allowIn" wrapping:
         var _callback;
 
-        // these elements are prevented by the default Mousetrap.stopCallback():
-        var preventIn = ['INPUT', 'SELECT', 'TEXTAREA'];
+        var preventIn = angular.copy(defaultPreventIn || []);
 
         // Determine if object format was given:
         var objType = Object.prototype.toString.call(combo);
