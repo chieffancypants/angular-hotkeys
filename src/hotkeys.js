@@ -103,9 +103,10 @@
        * @param {String}   description Description for the keycombo
        * @param {Function} callback    function to execute when keycombo pressed
        * @param {string}   action      the type of event to listen for (for mousetrap)
+       * @param {array}    allowIn     an array of tag names to allow this combo in ('INPUT', 'SELECT', and/or 'TEXTAREA')
        * @param {Boolean}  persistent  Whether the hotkey persists navigation events
        */
-      function Hotkey (combo, description, callback, action, persistent) {
+      function Hotkey (combo, description, callback, action, allowIn, persistent) {
         // TODO: Check that the values are sane because we could
         // be trying to instantiate a new Hotkey with outside dev's
         // supplied values
@@ -113,6 +114,7 @@
         this.description = description;
         this.callback = callback;
         this.action = action;
+        this.allowIn = allowIn;
         this.persistent = persistent;
       }
 
@@ -184,7 +186,7 @@
 
             // todo: perform check to make sure not already defined:
             // this came from a route, so it's likely not meant to be persistent
-            hotkey[4] = false;
+            hotkey[5] = false;
             _add.apply(this, hotkey);
           });
         }
@@ -352,8 +354,8 @@
         } else {
           Mousetrap.bind(combo, wrapApply(callback));
         }
-        scope.hotkeys.push(new Hotkey(combo, description, callback, action, allowIn, persistent));
 
+        scope.hotkeys.push(new Hotkey(combo, description, callback, action, allowIn, persistent));
       }
 
       /**

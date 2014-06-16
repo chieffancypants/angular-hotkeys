@@ -104,6 +104,32 @@ describe 'Angular Hotkeys', ->
     $rootScope.$broadcast('$routeChangeSuccess', {});
     expect(hotkeys.get('w e s')).toBe false
 
+
+  # allowIn arguments were not aligned (issue #40 and #36) so test to prevent regressions:
+  it 'should unbind hotkeys that have also set allowIn (#36, #40)', ->
+
+    # func argument style should be deprecated soon
+    hotkeys.add 't', 'testing', () ->
+      test = true
+    , undefined, undefined, false
+
+    hotkeys.add
+      combo: 'w'
+      description: 'description'
+      callback: () ->
+      persistent: false
+
+    expect(hotkeys.get('t').combo).toBe 't'
+    expect(hotkeys.get('w').combo).toBe 'w'
+    expect(hotkeys.get('t').persistent).toBe false
+    expect(hotkeys.get('w').persistent).toBe false
+
+    $rootScope.$broadcast('$routeChangeSuccess', {});
+    expect(hotkeys.get('t')).toBe false
+    expect(hotkeys.get('w')).toBe false
+
+
+
   it 'should callback when the hotkey is pressed', ->
     executed = false
 
