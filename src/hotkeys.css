@@ -21,7 +21,7 @@
 }
 
 .cfp-hotkeys-container.fade.in {
-  z-index: 1024;
+  z-index: 10002;
   visibility: visible;
   opacity: 1;
 }
