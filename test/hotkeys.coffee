@@ -104,7 +104,6 @@ describe 'Angular Hotkeys', ->
     $rootScope.$broadcast('$routeChangeSuccess', {});
     expect(hotkeys.get('w e s')).toBe false
 
-
   # allowIn arguments were not aligned (issue #40 and #36) so test to prevent regressions:
   it 'should unbind hotkeys that have also set allowIn (#36, #40)', ->
 
@@ -127,8 +126,6 @@ describe 'Angular Hotkeys', ->
     $rootScope.$broadcast('$routeChangeSuccess', {});
     expect(hotkeys.get('t')).toBe false
     expect(hotkeys.get('w')).toBe false
-
-
 
   it 'should callback when the hotkey is pressed', ->
     executed = false
@@ -342,6 +339,28 @@ describe 'Angular Hotkeys', ->
       hotkeys.del(['1','2','3','4','5','6','7','8','9'])
       expect(hotkeys.get('1')).toBe false
 
+  it 'should be capable of binding to a scope and auto-destroy itself', ->
+    hotkeys.bindTo(scope)
+    .add
+      combo: 'w'
+      description: 'description for w'
+      callback: () ->
+      persistent: false
+    .add
+      combo: 'e'
+      description: 'description for e',
+      callback: () ->
+    .add 's', 'description for s', () ->
+
+
+    expect(hotkeys.get('w').combo).toEqual ['w']
+    expect(hotkeys.get('e').combo).toEqual ['e']
+    expect(hotkeys.get('s').combo).toEqual ['s']
+    scope.$destroy()
+    expect(hotkeys.get('w')).toBe false
+    expect(hotkeys.get('e')).toBe false
+    expect(hotkeys.get('s')).toBe false
+
 
 describe 'hotkey directive', ->
 
@@ -379,6 +398,9 @@ describe 'hotkey directive', ->
     expect(hotkeys.get('w').allowIn).toEqual ['INPUT', 'TEXTAREA']
 
   it 'should unbind the hotkey when the directive is destroyed', ->
+    expect(hotkeys.get('w').combo).toEqual ['w']
+    el.remove()
+    expect(hotkeys.get('w')).toBe no
 
 
 describe 'Platform specific things', ->
