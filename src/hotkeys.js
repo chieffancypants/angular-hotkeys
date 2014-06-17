@@ -171,6 +171,16 @@
       scope.title = 'Keyboard Shortcuts:';
 
 
+      /**
+       * Holds references to the different scopes that have bound hotkeys
+       * attached.  This is useful to catch when the scopes are `$destroy`d and
+       * then automatically unbind the hotkey.
+       *
+       * @type {Array}
+       */
+      var boundScopes = [];
+
+
       $rootScope.$on('$routeChangeSuccess', function (event, route) {
         purgeHotkeys();
 
@@ -355,7 +365,9 @@
           Mousetrap.bind(combo, wrapApply(callback));
         }
 
-        scope.hotkeys.push(new Hotkey(combo, description, callback, action, allowIn, persistent));
+        var hotkey = new Hotkey(combo, description, callback, action, allowIn, persistent);
+        scope.hotkeys.push(hotkey);
+        return hotkey;
       }
 
       /**
@@ -389,6 +401,42 @@
           }
         }
         return false;
+      }
+
+      /**
+       * Binds the hotkey to a particular scope.  Useful if the scope is
+       * destroyed, we can automatically destroy the hotkey binding.
+       *
+       * @param  {Object} scope The scope to bind to
+       */
+      function bindTo (scope) {
+        // Add the scope to the list of bound scopes
+        boundScopes[scope.$id] = [];
+
+        scope.$on('$destroy', function () {
+          var i = boundScopes[scope.$id].length;
+          while (i--) {
+            _del(boundScopes[scope.$id][i]);
+            delete boundScopes[scope.$id][i];
+          }
+        });
+
+        // return an object with an add function so we can keep track of the
+        // hotkeys and their scope that we added via this chaining method
+        return {
+          add: function (args) {
+            var hotkey;
+
+            if (arguments.length > 1) {
+              hotkey = _add.apply(this, arguments);
+            } else {
+              hotkey = _add(args);
+            }
+
+            boundScopes[scope.$id].push(hotkey);
+            return this;
+          }
+        };
       }
 
       /**
@@ -427,6 +475,7 @@
         add                   : _add,
         del                   : _del,
         get                   : _get,
+        bindTo                : bindTo,
         template              : this.template,
         toggleCheatSheet      : toggleCheatSheet,
         includeCheatSheat     : this.includeCheatSheat,
