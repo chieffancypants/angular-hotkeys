@@ -444,11 +444,21 @@
     return {
       restrict: 'A',
       link: function (scope, el, attrs) {
-        var key;
+        var key, allowIn;
 
         angular.forEach(scope.$eval(attrs.hotkey), function (func, hotkey) {
+          // split and trim the hotkeys string into array
+          allowIn = attrs.hotkeyAllowIn.split(/[\s,]+/);
+
           key = hotkey;
-          hotkeys.add(hotkey, attrs.hotkeyDescription, func, attrs.hotkeyAction);
+
+          hotkeys.add({
+            combo: hotkey,
+            description: attrs.hotkeyDescription,
+            callback: func,
+            action: attrs.hotkeyAction,
+            allowIn: allowIn
+          });
         });
 
         // remove the hotkey if the directive is destroyed:

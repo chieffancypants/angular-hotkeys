@@ -291,24 +291,40 @@ describe 'Angular Hotkeys', ->
 
 describe 'hotkey directive', ->
 
-  el = scope = hotkeys = $compile = $document = null
+  el = scope = hotkeys = $compile = $document = executed = null
 
   beforeEach ->
     module('cfp.hotkeys')
+    executed = no
+
     inject ($rootScope, _$compile_, _$document_, _hotkeys_) ->
       hotkeys = _hotkeys_
       $compile = _$compile_
       # el = angular.element()
       scope = $rootScope.$new()
-      el = $compile('<div hotkey="{dir: callme}"></div>')(scope)
+      scope.callme = () ->
+        executed = yes
+      el = $compile('<div hotkey="{w: callme}" hotkey-description="testing" hotkey-allow-in="INPUT, TEXTAREA"></div>')(scope)
       scope.$digest()
 
   it 'should allow hotkey binding via directive', ->
-    expect(hotkeys.get('dir').combo).toBe 'dir'
+    expect(hotkeys.get('w').combo).toBe 'w'
+    expect(executed).toBe no
+    KeyEvent.simulate('w'.charCodeAt(0), 90)
+    expect(executed).toBe yes
+
+  it 'should accept allowIn arguments', ->
+
+    $body = angular.element document.body
+    $input = angular.element '<input id="cfp-test"/>'
+    $body.prepend $input
+
+    expect(executed).toBe no
+    KeyEvent.simulate('w'.charCodeAt(0), 90)
+    expect(executed).toBe yes
+    expect(hotkeys.get('w').allowIn).toEqual ['INPUT', 'TEXTAREA']
 
   it 'should unbind the hotkey when the directive is destroyed', ->
-
-
 
 
 describe 'Platform specific things', ->
