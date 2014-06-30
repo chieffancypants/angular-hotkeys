@@ -99,7 +99,7 @@
       /**
        * Hotkey object used internally for consistency
        *
-       * @param {String}   combo       The keycombo
+       * @param {array}    combo       The keycombo. it's an array to support multiple combos
        * @param {String}   description Description for the keycombo
        * @param {Function} callback    function to execute when keycombo pressed
        * @param {string}   action      the type of event to listen for (for mousetrap)
@@ -110,7 +110,8 @@
         // TODO: Check that the values are sane because we could
         // be trying to instantiate a new Hotkey with outside dev's
         // supplied values
-        this.combo = combo;
+
+        this.combo = combo instanceof Array ? combo : [combo];
         this.description = description;
         this.callback = callback;
         this.action = action;
@@ -128,15 +129,9 @@
        */
       Hotkey.prototype.format = function() {
 
-        var combo = this.combo;
-
-        // if the combo is an array, it means the there are multiple bindings to
-        // the same callback. Don't show all the possible key combos, just the
-        // first one.  Not sure of usecase here, so open a ticket if my
-        // assumptions are wrong
-        if (combo instanceof Array) {
-          combo = combo[0];
-        }
+        // Don't show all the possible key combos, just the first one.  Not sure
+        // of usecase here, so open a ticket if my assumptions are wrong
+        var combo = this.combo[0];
 
         var sequence = combo.split(/[\s]/);
         for (var i = 0; i < sequence.length; i++) {
@@ -369,11 +364,28 @@
 
         Mousetrap.unbind(combo);
 
-        for (var i = 0; i < scope.hotkeys.length; i++) {
-          if (scope.hotkeys[i].combo === combo) {
-            scope.hotkeys.splice(i, 1);
+        if (combo instanceof Array) {
+          var retStatus = true;
+          for (var i = 0; i < combo.length; i++) {
+            retStatus = _del(combo[i]) && retStatus;
+          }
+          return retStatus;
+        } else {
+          var index = scope.hotkeys.indexOf(_get(combo));
+
+          if (index > -1) {
+            // if the combo has other combos bound, don't unbind the whole thing, just the one combo:
+            if (scope.hotkeys[index].combo.length > 1) {
+              scope.hotkeys[index].combo.splice(scope.hotkeys[index].combo.indexOf(combo), 1);
+            } else {
+              scope.hotkeys.splice(index, 1);
+            }
+            return true;
           }
         }
+
+        return false;
+
       }
 
       /**
@@ -383,11 +395,17 @@
        * @return {Hotkey}          The Hotkey object
        */
       function _get (combo) {
+
+        var hotkey;
+
         for (var i = 0; i < scope.hotkeys.length; i++) {
-          if (scope.hotkeys[i].combo === combo) {
-            return scope.hotkeys[i];
+          hotkey = scope.hotkeys[i];
+
+          if (hotkey.combo.indexOf(combo) > -1) {
+            return hotkey;
           }
         }
+
         return false;
       }
 

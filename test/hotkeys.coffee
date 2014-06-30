@@ -71,7 +71,7 @@ describe 'Angular Hotkeys', ->
     expect(angular.element($rootElement).children().hasClass('in')).toBe false
     KeyEvent.simulate('?'.charCodeAt(0), 90)
     expect(angular.element($rootElement).children().hasClass('in')).toBe true
-    expect(hotkeys.get('esc').combo).toBe 'esc'
+    expect(hotkeys.get('esc').combo).toEqual ['esc']
     KeyEvent.simulate('?'.charCodeAt(0), 90)
     expect(hotkeys.get('esc')).toBe false
 
@@ -98,7 +98,7 @@ describe 'Angular Hotkeys', ->
     # fake a route change:
     expect(hotkeys.get('w e s')).toBe false
     $rootScope.$broadcast('$routeChangeSuccess', { hotkeys: [['w e s', 'Do something Amazing!', 'callme("ishmael")']] });
-    expect(hotkeys.get('w e s').combo).toBe 'w e s'
+    expect(hotkeys.get('w e s').combo).toEqual ['w e s']
 
     # ensure hotkey is unbound when the route changes
     $rootScope.$broadcast('$routeChangeSuccess', {});
@@ -119,8 +119,8 @@ describe 'Angular Hotkeys', ->
       callback: () ->
       persistent: false
 
-    expect(hotkeys.get('t').combo).toBe 't'
-    expect(hotkeys.get('w').combo).toBe 'w'
+    expect(hotkeys.get('t').combo).toEqual ['t']
+    expect(hotkeys.get('w').combo).toEqual ['w']
     expect(hotkeys.get('t').persistent).toBe false
     expect(hotkeys.get('w').persistent).toBe false
 
@@ -276,17 +276,71 @@ describe 'Angular Hotkeys', ->
 
 
 
+  describe 'multiple bindings', ->
 
-  it 'should support multiple hotkeys to the same function', ->
-    executeCount = 0
+    it 'get()', ->
 
-    hotkeys.add ['a', 'b'], ->
-      executeCount++
+      hotkeys.add ['a', 'b', 'c'], ->
 
-    KeyEvent.simulate('a'.charCodeAt(0), 90)
-    expect(executeCount).toBe 1
-    KeyEvent.simulate('b'.charCodeAt(0), 90)
-    expect(executeCount).toBe 2
+      # Make sure they were added:
+      expect(hotkeys.get('a').combo).toEqual ['a', 'b', 'c']
+      expect(hotkeys.get('b').combo).toEqual ['a', 'b', 'c']
+      expect(hotkeys.get('c').combo).toEqual ['a', 'b', 'c']
+      expect(hotkeys.get('w')).toBe false
+      # expect(hotkeys.get(['a', 'b'])).toEqual ['a', 'b', 'c']
+
+    it 'should callback', ->
+      executeCount = 0
+
+      hotkeys.add ['a', 'b', 'c'], ->
+        executeCount++
+
+      # Make sure they work:
+      KeyEvent.simulate('a'.charCodeAt(0), 90)
+      expect(executeCount).toBe 1
+      KeyEvent.simulate('b'.charCodeAt(0), 90)
+      expect(executeCount).toBe 2
+      KeyEvent.simulate('c'.charCodeAt(0), 90)
+      expect(executeCount).toBe 3
+      KeyEvent.simulate('w'.charCodeAt(0), 90)
+      expect(executeCount).toBe 3
+
+    it 'should delete', ->
+
+      hotkeys.add ['w', 'e', 's'], ->
+
+      expect(hotkeys.get('w').combo).toEqual ['w', 'e', 's']
+      expect(hotkeys.del(['w', 'f'])).toBe false
+      expect(hotkeys.get('w')).toBe false
+      expect(hotkeys.get('e').combo).toEqual ['e', 's']
+      expect(hotkeys.del(['e', 's'])).toBe true
+
+    it 'should still callback when some combos remain', ->
+
+      executeCount = 0
+      hotkeys.add ['a', 'b', 'c'], ->
+        executeCount++
+
+      # Delete, but leave a hotkey:
+      hotkeys.del ['a', 'b']
+      KeyEvent.simulate('b'.charCodeAt(0), 90)
+      expect(executeCount).toBe 0
+      KeyEvent.simulate('c'.charCodeAt(0), 90)
+      expect(executeCount).toBe 1
+
+      expect(hotkeys.get('a')).toBe false
+      expect(hotkeys.get('b')).toBe false
+      expect(hotkeys.get('c').combo).toEqual ['c']
+
+    it '#49 regression test', ->
+      hotkeys.add
+        combo: ['1','2','3','4','5','6','7','8','9']
+        description: 'ensure no regressions'
+        callback: () ->
+
+      expect(hotkeys.get('1').combo).toEqual ['1','2','3','4','5','6','7','8','9']
+      hotkeys.del(['1','2','3','4','5','6','7','8','9'])
+      expect(hotkeys.get('1')).toBe false
 
 
 describe 'hotkey directive', ->
@@ -308,7 +362,7 @@ describe 'hotkey directive', ->
       scope.$digest()
 
   it 'should allow hotkey binding via directive', ->
-    expect(hotkeys.get('w').combo).toBe 'w'
+    expect(hotkeys.get('w').combo).toEqual ['w']
     expect(executed).toBe no
     KeyEvent.simulate('w'.charCodeAt(0), 90)
     expect(executed).toBe yes
