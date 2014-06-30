@@ -73,12 +73,21 @@ Behind the scenes, I'm using the [Mousetrap](https://github.com/ccampbell/mouset
 
 
 #### Binding hotkeys in controllers:
+It is important to note that by default, hotkeys bound using the `hotkeys.add()`
+method are persistent, meaning they will continue to exist through route
+changes, DOM manipulation, or anything else.
+
+However, it is possible to bind the hotkey to a particular scope, and when that
+scope is destroyed, the hotkey is automatically removed. This should be
+considered the best practice when binding hotkeys from a controller. For this
+usage example, see the `hotkeys.bindTo()` method below:
 
 ```js
 angular.module('myApp').controller('NavbarCtrl', function($scope, hotkeys) {
   $scope.volume = 5;
 
-  // Pass it an object:
+  // You can pass it an object.  This hotkey will not be unbound unless manually removed
+  // using the hotkeys.del() method
   hotkeys.add({
     combo: 'ctrl+up',
     description: 'This one goes to 11',
@@ -87,10 +96,16 @@ angular.module('myApp').controller('NavbarCtrl', function($scope, hotkeys) {
     }
   });
 
-  // or pass it arguments:
-  hotkeys.add('ctrl+down', 'Turn the volume down on this hotness', function() {
-    $scope.volume -= 1;
-  });
+  // when you bind it to the controller's scope, it will automatically unbind
+  // the hotkey when the scope is destroyed (due to ng-if or something that changes the DOM)
+  hotkeys.bindTo($scope)
+    .add({
+      combo: 'w',
+      description: 'blah blah',
+      callback: function() {}
+    })
+    // you can chain these methods for ease of use:
+    .add ({...});
 
 });
 ```
@@ -143,25 +158,13 @@ angular.module('myApp', ['cfp.hotkeys'])
 
 ### API
 
-#### hotkeys.add(combo, description, callback)
-
+#### hotkeys.add(object)
+`object`: An object with the following parameters:
 - `combo`: They keyboard combo (shortcut) you want to bind to
 - `description`: [OPTIONAL] The description for what the combo does and is only used for the Cheat Sheet.  If it is not supplied, it will not show up, and in effect, allows you to have unlisted hotkeys.
 - `callback`: The function to execute when the key(s) are pressed.  Passes along two arguments, `event` and `hotkey`
-
-```js
-hotkeys.add('ctrl+w', 'Description goes here', function (event, hotkey) {
-  event.preventDefault();
-});
-
-// this hotkey will not show up on the cheat sheet:
-hotkeys.add('ctrl+y', function (event, hotkey) {
-  event.preventDefault();
-});
-```
-
-#### hotkeys.add(object)
-- `object`: An object version of the above parameters.
+- `action`: [OPTIONAL] The type of event to listen for, such as `keypress`, `keydown` or `keyup`
+- `allowIn`: [OPTIONAL] an array of tag names to allow this combo in ('INPUT', 'SELECT', and/or 'TEXTAREA')
 
 ```js
 hotkeys.add({
@@ -171,6 +174,12 @@ hotkeys.add({
     event.preventDefault();
   }
 });
+
+// this hotkey will not show up on the cheat sheet:
+hotkeys.add({
+  combo: 'ctrl+x',
+  callback: function(event, hotkey) {...}
+});
 ```
 
 #### hotkeys.get(key)
@@ -178,7 +187,7 @@ Returns the Hotkey object
 
 ```js
 hotkeys.get('ctrl+w');
-// -> Hotkey { combo: 'ctrl+w', description: 'Description goes here', callback: function (event, hotkey) }
+// -> Hotkey { combo: ['ctrl+w'], description: 'Description goes here', callback: function (event, hotkey) }
 ```
 
 #### hotkeys.del(key)
