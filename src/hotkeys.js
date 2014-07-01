@@ -33,7 +33,7 @@
                           '<td class="cfp-hotkeys-text">{{ hotkey.description }}</td>' +
                         '</tr>' +
                       '</tbody></table>' +
-                      '<div class="cfp-hotkeys-close" ng-click="helpVisible = false">×</div>' +
+                      '<div class="cfp-hotkeys-close" ng-click="toggleCheatSheet()">×</div>' +
                     '</div></div>';
 
     /**
@@ -164,6 +164,13 @@
        * @type {String}
        */
       scope.title = 'Keyboard Shortcuts:';
+
+      /**
+       * Expose toggleCheatSheet to hotkeys scope so we can call it using
+       * ng-click from the template
+       * @type {function}
+       */
+      scope.toggleCheatSheet = toggleCheatSheet;
 
 
       /**

@@ -104,29 +104,6 @@ describe 'Angular Hotkeys', ->
     $rootScope.$broadcast('$routeChangeSuccess', {});
     expect(hotkeys.get('w e s')).toBe false
 
-  # allowIn arguments were not aligned (issue #40 and #36) so test to prevent regressions:
-  it 'should unbind hotkeys that have also set allowIn (#36, #40)', ->
-
-    # func argument style should be deprecated soon
-    hotkeys.add 't', 'testing', () ->
-      test = true
-    , undefined, undefined, false
-
-    hotkeys.add
-      combo: 'w'
-      description: 'description'
-      callback: () ->
-      persistent: false
-
-    expect(hotkeys.get('t').combo).toEqual ['t']
-    expect(hotkeys.get('w').combo).toEqual ['w']
-    expect(hotkeys.get('t').persistent).toBe false
-    expect(hotkeys.get('w').persistent).toBe false
-
-    $rootScope.$broadcast('$routeChangeSuccess', {});
-    expect(hotkeys.get('t')).toBe false
-    expect(hotkeys.get('w')).toBe false
-
   it 'should callback when the hotkey is pressed', ->
     executed = false
 
@@ -271,6 +248,62 @@ describe 'Angular Hotkeys', ->
     KeyEvent.simulate('a'.charCodeAt(0), 90, undefined, $input[0])
     expect(executed).toBe yes
 
+  it 'should be capable of binding to a scope and auto-destroy itself', ->
+    hotkeys.bindTo(scope)
+    .add
+      combo: 'w'
+      description: 'description for w'
+      callback: () ->
+      persistent: false
+    .add
+      combo: 'e'
+      description: 'description for e',
+      callback: () ->
+    .add 's', 'description for s', () ->
+
+    expect(hotkeys.get('w').combo).toEqual ['w']
+    expect(hotkeys.get('e').combo).toEqual ['e']
+    expect(hotkeys.get('s').combo).toEqual ['s']
+    scope.$destroy()
+    expect(hotkeys.get('w')).toBe false
+    expect(hotkeys.get('e')).toBe false
+    expect(hotkeys.get('s')).toBe false
+
+  describe 'misc regression tests', ->
+
+    # allowIn arguments were not aligned (issue #40 and #36) so test to prevent regressions:
+    it 'should unbind hotkeys that have also set allowIn (#36, #40)', ->
+      # func argument style should be deprecated soon
+      hotkeys.add 't', 'testing', () ->
+        test = true
+      , undefined, undefined, false
+
+      hotkeys.add
+        combo: 'w'
+        description: 'description'
+        callback: () ->
+        persistent: false
+
+      expect(hotkeys.get('t').combo).toEqual ['t']
+      expect(hotkeys.get('w').combo).toEqual ['w']
+      expect(hotkeys.get('t').persistent).toBe false
+      expect(hotkeys.get('w').persistent).toBe false
+
+      $rootScope.$broadcast('$routeChangeSuccess', {});
+      expect(hotkeys.get('t')).toBe false
+      expect(hotkeys.get('w')).toBe false
+
+    it '#42 closing cheatsheet with x should use toggleCheatSheet so esc is unbound', ->
+      expect(hotkeys.get('esc')).toBe false
+
+      expect(angular.element($rootElement).children().hasClass('in')).toBe false
+      KeyEvent.simulate('?'.charCodeAt(0), 90)
+      expect(angular.element($rootElement).children().hasClass('in')).toBe true
+
+      expect(hotkeys.get('esc').combo).toEqual ['esc']
+      # hotkeys.toggleCheatSheet()
+      scope.$$prevSibling.toggleCheatSheet()
+      expect(hotkeys.get('esc')).toBe false
 
 
   describe 'multiple bindings', ->
@@ -339,27 +372,6 @@ describe 'Angular Hotkeys', ->
       hotkeys.del(['1','2','3','4','5','6','7','8','9'])
       expect(hotkeys.get('1')).toBe false
 
-  it 'should be capable of binding to a scope and auto-destroy itself', ->
-    hotkeys.bindTo(scope)
-    .add
-      combo: 'w'
-      description: 'description for w'
-      callback: () ->
-      persistent: false
-    .add
-      combo: 'e'
-      description: 'description for e',
-      callback: () ->
-    .add 's', 'description for s', () ->
-
-
-    expect(hotkeys.get('w').combo).toEqual ['w']
-    expect(hotkeys.get('e').combo).toEqual ['e']
-    expect(hotkeys.get('s').combo).toEqual ['s']
-    scope.$destroy()
-    expect(hotkeys.get('w')).toBe false
-    expect(hotkeys.get('e')).toBe false
-    expect(hotkeys.get('s')).toBe false
 
 
 describe 'hotkey directive', ->
