@@ -376,27 +376,35 @@ describe 'Angular Hotkeys', ->
 
 describe 'hotkey directive', ->
 
-  el = scope = hotkeys = $compile = $document = executed = null
+  elSimple = elAllowIn = scope = hotkeys = $compile = $document = executedSimple = executedAllowIn = null
 
   beforeEach ->
     module('cfp.hotkeys')
-    executed = no
+    executedSimple = no
+    executedAllowIn = no
 
     inject ($rootScope, _$compile_, _$document_, _hotkeys_) ->
       hotkeys = _hotkeys_
       $compile = _$compile_
       # el = angular.element()
       scope = $rootScope.$new()
-      scope.callme = () ->
-        executed = yes
-      el = $compile('<div hotkey="{w: callme}" hotkey-description="testing" hotkey-allow-in="INPUT, TEXTAREA"></div>')(scope)
+      scope.callmeSimple = () ->
+        executedSimple = yes
+      scope.callmeAllowIn = () ->
+        executedAllowIn = yes
+      elSimple = $compile('<div hotkey="{e: callmeSimple}" hotkey-description="testing simple case"></div>')(scope)
+      elAllowIn = $compile('<div hotkey="{w: callmeAllowIn}" hotkey-description="testing with allowIn" hotkey-allow-in="INPUT, TEXTAREA"></div>')(scope)
       scope.$digest()
 
   it 'should allow hotkey binding via directive', ->
+    expect(hotkeys.get('e').combo).toEqual ['e']
     expect(hotkeys.get('w').combo).toEqual ['w']
-    expect(executed).toBe no
+    expect(executedSimple).toBe no
+    expect(executedAllowIn).toBe no
+    KeyEvent.simulate('e'.charCodeAt(0), 90)
     KeyEvent.simulate('w'.charCodeAt(0), 90)
-    expect(executed).toBe yes
+    expect(executedSimple).toBe yes
+    expect(executedAllowIn).toBe yes
 
   it 'should accept allowIn arguments', ->
 
@@ -404,14 +412,17 @@ describe 'hotkey directive', ->
     $input = angular.element '<input id="cfp-test"/>'
     $body.prepend $input
 
-    expect(executed).toBe no
+    expect(executedAllowIn).toBe no
     KeyEvent.simulate('w'.charCodeAt(0), 90)
-    expect(executed).toBe yes
+    expect(executedAllowIn).toBe yes
     expect(hotkeys.get('w').allowIn).toEqual ['INPUT', 'TEXTAREA']
 
   it 'should unbind the hotkey when the directive is destroyed', ->
+    expect(hotkeys.get('e').combo).toEqual ['e']
     expect(hotkeys.get('w').combo).toEqual ['w']
-    el.remove()
+    elSimple.remove()
+    elAllowIn.remove()
+    expect(hotkeys.get('e')).toBe no
     expect(hotkeys.get('w')).toBe no
 
 
