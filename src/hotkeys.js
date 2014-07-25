@@ -503,7 +503,7 @@
         bindTo                : bindTo,
         template              : this.template,
         toggleCheatSheet      : toggleCheatSheet,
-        includeCheatSheat     : this.includeCheatSheat,
+        includeCheatSheet     : this.includeCheatSheet,
         cheatSheetHotkey      : this.cheatSheetHotkey,
         cheatSheetDescription : this.cheatSheetDescription,
         purgeHotkeys          : purgeHotkeys
