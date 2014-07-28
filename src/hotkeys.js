@@ -522,7 +522,7 @@
 
         angular.forEach(scope.$eval(attrs.hotkey), function (func, hotkey) {
           // split and trim the hotkeys string into array
-          allowIn = attrs.hotkeyAllowIn.split(/[\s,]+/);
+          allowIn = typeof attrs.hotkeyAllowIn === "string" ? attrs.hotkeyAllowIn.split(/[\s,]+/) : [];
 
           key = hotkey;
 
