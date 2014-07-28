@@ -1,11 +1,11 @@
 /*! 
- * angular-hotkeys v1.4.0
+ * angular-hotkeys v1.4.1
  * https://chieffancypants.github.io/angular-hotkeys
  * Copyright (c) 2014 Wes Cruver
  * License: MIT
  */
 .cfp-hotkeys-container {
-  display: table;
+  display: table !important;
   position: fixed;
   width: 100%;
   height: 100%;
