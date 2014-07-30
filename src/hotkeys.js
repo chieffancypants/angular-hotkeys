@@ -186,7 +186,7 @@
       $rootScope.$on('$routeChangeSuccess', function (event, route) {
         purgeHotkeys();
 
-        if (route.hotkeys) {
+        if (route && route.hotkeys) {
           angular.forEach(route.hotkeys, function (hotkey) {
             // a string was given, which implies this is a function that is to be
             // $eval()'d within that controller's scope
