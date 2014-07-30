@@ -48,7 +48,7 @@
      */
     this.cheatSheetDescription = 'Show / hide this help menu';
 
-    this.$get = ['$rootElement', '$rootScope', '$compile', '$window', '$document', function ($rootElement, $rootScope, $compile, $window, $document) {
+    this.$get = function ($rootElement, $rootScope, $compile, $window, $document) {
 
       // monkeypatch Mousetrap's stopCallback() function
       // this version doesn't return true when the element is an INPUT, SELECT, or TEXTAREA
@@ -511,7 +511,7 @@
 
       return publicApi;
 
-    }];
+    };
   })
 
   .directive('hotkey', function (hotkeys) {
