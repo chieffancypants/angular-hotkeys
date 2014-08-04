@@ -1,5 +1,5 @@
 /*! 
- * angular-hotkeys v1.4.1
+ * angular-hotkeys v1.4.2
  * https://chieffancypants.github.io/angular-hotkeys
  * Copyright (c) 2014 Wes Cruver
  * License: MIT
