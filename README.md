@@ -26,6 +26,8 @@ $ npm install angular-hotkeys --save
 ```
 
 
+*please use either the minified or unminified file in the `build` directory*
+
 ### Why I made this:
 Other projects out there rely too heavily on HTML markup for keyboard shortcuts.  For example:
 
