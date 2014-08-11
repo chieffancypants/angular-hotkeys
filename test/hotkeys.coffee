@@ -257,6 +257,7 @@ describe 'Angular Hotkeys', ->
       persistent: false
     .add
       combo: 'e'
+      action: 'keyup'
       description: 'description for e',
       callback: () ->
     .add 's', 'description for s', () ->
