@@ -1,5 +1,5 @@
 /*! 
- * angular-hotkeys v1.4.2
+ * angular-hotkeys v1.4.3
  * https://chieffancypants.github.io/angular-hotkeys
  * Copyright (c) 2014 Wes Cruver
  * License: MIT
@@ -24,6 +24,13 @@
      * @type {Boolean}
      */
     this.includeCheatSheet = true;
+
+    /**
+     * Configurable setting for the cheat sheet title
+     * @type {String}
+     */
+
+    this.templateTitle = 'Keyboard Shortcuts:';
 
     /**
      * Cheat sheet template in the event you want to totally customize it.
@@ -169,7 +176,7 @@
        * Holds the title string for the help menu
        * @type {String}
        */
-      scope.title = 'Keyboard Shortcuts:';
+      scope.title = this.templateTitle;
 
       /**
        * Expose toggleCheatSheet to hotkeys scope so we can call it using
@@ -512,7 +519,8 @@
         includeCheatSheet     : this.includeCheatSheet,
         cheatSheetHotkey      : this.cheatSheetHotkey,
         cheatSheetDescription : this.cheatSheetDescription,
-        purgeHotkeys          : purgeHotkeys
+        purgeHotkeys          : purgeHotkeys,
+        templateTitle         : this.templateTitle
       };
 
       return publicApi;
