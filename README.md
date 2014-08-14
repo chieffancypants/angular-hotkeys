@@ -71,7 +71,7 @@ You can either define hotkeys in your Controller, or in your Route configuration
 angular.module('myApp', ['ngRoute', 'cfp.hotkeys']);
 ```
 
-Behind the scenes, I'm using the [Mousetrap](https://github.com/ccampbell/mousetrap) library to manage the key bindings.  Check out the docs there for more information on what kind of key combinations can be used.
+Behind the scenes, I'm using the [Mousetrap](https://github.com/ccampbell/mousetrap) library to manage the key bindings.  Check out the docs there for more information on what kind of key combinations can be used.  This library is included in the files from the `build` directory, so there is no need to install and include Mousetrap separately.
 
 
 #### Binding hotkeys in controllers:
