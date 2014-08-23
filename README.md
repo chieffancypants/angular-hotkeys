@@ -214,4 +214,4 @@ hotkeys.add({
 
 ## Credits:
 
-Muchos gracias to Craig Campbell for his [Mousetrap](https://github.com/ccampbell/mousetrap) library, which provides the underlying library for handling keyboard shortcuts.
+Muchas gracias to Craig Campbell for his [Mousetrap](https://github.com/ccampbell/mousetrap) library, which provides the underlying library for handling keyboard shortcuts.
