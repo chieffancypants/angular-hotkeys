@@ -220,7 +220,7 @@
 
             // todo: perform check to make sure not already defined:
             // this came from a route, so it's likely not meant to be persistent:
-            hotkey[4] = false;
+            hotkey[5] = false;
             _add.apply(this, hotkey);
           });
         }
