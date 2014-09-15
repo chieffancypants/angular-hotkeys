@@ -1,5 +1,5 @@
 /*! 
- * angular-hotkeys v1.4.3
+ * angular-hotkeys v1.4.4
  * https://chieffancypants.github.io/angular-hotkeys
  * Copyright (c) 2014 Wes Cruver
  * License: MIT
@@ -396,9 +396,10 @@
 
         Mousetrap.unbind(combo);
 
-        if (combo instanceof Array) {
+        if (angular.isArray(combo)) {
           var retStatus = true;
-          for (var i = 0; i < combo.length; i++) {
+          var i = combo.length;
+          while (i--) {
             retStatus = _del(combo[i]) && retStatus;
           }
           return retStatus;
