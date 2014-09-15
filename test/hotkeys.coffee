@@ -251,24 +251,33 @@ describe 'Angular Hotkeys', ->
   it 'should be capable of binding to a scope and auto-destroy itself', ->
     hotkeys.bindTo(scope)
     .add
-      combo: 'w'
+      combo: ['w', 'e', 's']
       description: 'description for w'
       callback: () ->
       persistent: false
     .add
-      combo: 'e'
+      combo: 'a'
       action: 'keyup'
-      description: 'description for e',
+      description: 'description for a',
       callback: () ->
-    .add 's', 'description for s', () ->
+    .add('b', 'description for b', () ->)
+    .add('c', 'description for c', () ->)
 
-    expect(hotkeys.get('w').combo).toEqual ['w']
-    expect(hotkeys.get('e').combo).toEqual ['e']
-    expect(hotkeys.get('s').combo).toEqual ['s']
+
+    expect(hotkeys.get('w').combo).toEqual ['w', 'e', 's']
+    expect(hotkeys.get('e').combo).toEqual ['w', 'e', 's']
+    expect(hotkeys.get('a').combo).toEqual ['a']
+    expect(hotkeys.get('b').combo).toEqual ['b']
+    expect(hotkeys.get('c').combo).toEqual ['c']
+
     scope.$destroy()
     expect(hotkeys.get('w')).toBe false
     expect(hotkeys.get('e')).toBe false
     expect(hotkeys.get('s')).toBe false
+    expect(hotkeys.get('a')).toBe false
+    expect(hotkeys.get('b')).toBe false
+    expect(hotkeys.get('c')).toBe false
+
 
   describe 'misc regression tests', ->
 

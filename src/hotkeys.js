@@ -390,9 +390,10 @@
 
         Mousetrap.unbind(combo);
 
-        if (combo instanceof Array) {
+        if (angular.isArray(combo)) {
           var retStatus = true;
-          for (var i = 0; i < combo.length; i++) {
+          var i = combo.length;
+          while (i--) {
             retStatus = _del(combo[i]) && retStatus;
           }
           return retStatus;
