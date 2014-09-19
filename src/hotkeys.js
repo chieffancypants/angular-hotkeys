@@ -443,16 +443,23 @@
        * @param  {Object} scope The scope to bind to
        */
       function bindTo (scope) {
-        // Add the scope to the list of bound scopes
-        boundScopes[scope.$id] = [];
 
-        scope.$on('$destroy', function () {
-          var i = boundScopes[scope.$id].length;
-          while (i--) {
-            _del(boundScopes[scope.$id][i]);
-            delete boundScopes[scope.$id][i];
-          }
-        });
+        // Add the scope if the scope if it's not already there
+        if (boundScopes[scope.$id] === undefined) {
+
+          // Add the scope to the list of bound scopes
+          boundScopes[scope.$id] = [];
+
+          // Bind to $destroy only once
+          scope.$on('$destroy', function () {
+            var i = boundScopes[scope.$id].length;
+            while (i--) {
+              _del(boundScopes[scope.$id][i]);
+              delete boundScopes[scope.$id][i];
+            }
+          });
+        }
+
 
         // return an object with an add function so we can keep track of the
         // hotkeys and their scope that we added via this chaining method
