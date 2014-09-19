@@ -278,6 +278,31 @@ describe 'Angular Hotkeys', ->
     expect(hotkeys.get('b')).toBe false
     expect(hotkeys.get('c')).toBe false
 
+  it 'should allow for bindTo to be called twice on the same scope', ->
+    hotkeys.bindTo(scope)
+    .add
+      combo: ['w', 'e', 's']
+      description: 'description for w'
+      callback: () ->
+      persistent: false
+
+    hotkeys.bindTo(scope)
+    .add
+      combo: 'a'
+      action: 'keyup'
+      description: 'description for a',
+      callback: () ->
+
+    expect(hotkeys.get('w').combo).toEqual ['w', 'e', 's']
+    expect(hotkeys.get('e').combo).toEqual ['w', 'e', 's']
+    expect(hotkeys.get('a').combo).toEqual ['a']
+
+    scope.$destroy()
+    expect(hotkeys.get('w')).toBe false
+    expect(hotkeys.get('e')).toBe false
+    expect(hotkeys.get('s')).toBe false
+    expect(hotkeys.get('a')).toBe false
+
 
   describe 'misc regression tests', ->
 
