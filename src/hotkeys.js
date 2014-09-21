@@ -444,8 +444,8 @@
        */
       function bindTo (scope) {
         // Only initialize once to allow multiple calls for same scope.
-        if(!(scope.$id in boundScopes)){
-          
+        if (!(scope.$id in boundScopes)) {
+
           // Add the scope to the list of bound scopes
           boundScopes[scope.$id] = [];
 
