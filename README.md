@@ -201,6 +201,13 @@ Removes and unbinds a hotkey
 hotkeys.del('ctrl+w');
 ```
 
+#### hotkeys.trigger(combo)
+Triggers the combo and executes all registered callback functions
+
+```js
+hotkeys.trigger('left');
+```
+
 ### Allowing hotkeys in form elements
 By default, Mousetrap prevents hotkey callbacks from firing when their event originates from an `input`, `select`, or `textarea` element. To enable hotkeys in these elements, specify them in the `allowIn` parameter:
 ```js
