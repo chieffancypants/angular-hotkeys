@@ -61,6 +61,23 @@ describe 'Angular Hotkeys', ->
     hotkeys.del 'w'
     expect(hotkeys.get('w')).toBe false
 
+  it 'trigger()', ->
+    triggered = false
+    hotkeys.add 
+      combo: 'w'
+      callback: () ->
+        triggered = true
+
+    hotkeys.trigger('w')
+    $rootScope.$digest()
+    expect(triggered).toBe true
+
+    triggered = false
+    hotkeys.del('w')
+    hotkeys.trigger('w')
+    $rootScope.$digest()
+    expect(triggered).toBe false
+
   it 'should toggle help when ? is pressed', ->
     expect(angular.element($rootElement).children().hasClass('in')).toBe false
     KeyEvent.simulate('?'.charCodeAt(0), 90)
