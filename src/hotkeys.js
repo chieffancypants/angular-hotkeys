@@ -262,7 +262,7 @@
           // Here's an odd way to do this: we're going to use the original
           // description of the hotkey on the cheat sheet so that it shows up.
           // without it, no entry for esc will ever show up (#22)
-          _add('esc', previousEsc.description, toggleCheatSheet, null, ['INPUT', 'SELECT', 'TEXTAREA'])
+          _add('esc', previousEsc.description, toggleCheatSheet, null, ['INPUT', 'SELECT', 'TEXTAREA']);
         } else {
           _del('esc');
 
@@ -347,21 +347,22 @@
           callback = function(event) {
             var shouldExecute = true;
             var target = event.target || event.srcElement; // srcElement is IE only
-            var nodeName = target.nodeName.toUpperCase();
+            if( target) {
+              var nodeName = target.nodeName.toUpperCase();
 
-            // check if the input has a mousetrap class, and skip checking preventIn if so
-            if ((' ' + target.className + ' ').indexOf(' mousetrap ') > -1) {
-              shouldExecute = true;
-            } else {
-              // don't execute callback if the event was fired from inside an element listed in preventIn
-              for (var i=0; i<preventIn.length; i++) {
-                if (preventIn[i] === nodeName) {
-                  shouldExecute = false;
-                  break;
+              // check if the input has a mousetrap class, and skip checking preventIn if so
+              if ((' ' + target.className + ' ').indexOf(' mousetrap ') > -1) {
+                shouldExecute = true;
+              } else {
+                // don't execute callback if the event was fired from inside an element listed in preventIn
+                for (var i=0; i<preventIn.length; i++) {
+                  if (preventIn[i] === nodeName) {
+                    shouldExecute = false;
+                    break;
+                  }
                 }
               }
             }
-
             if (shouldExecute) {
               wrapApply(_callback.apply(this, arguments));
             }
