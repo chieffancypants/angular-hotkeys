@@ -548,7 +548,7 @@
     };
   })
 
-  .directive('hotkeys', function (hotkeys) {
+  .directive('hotkey', function (hotkeys) {
     return {
       restrict: 'A',
       link: function (scope, el, attrs) {
