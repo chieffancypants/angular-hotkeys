@@ -545,7 +545,7 @@
 
       return publicApi;
 
-    }];
+    };
   })
 
   .directive('hotkey', ['hotkeys', function (hotkeys) {
