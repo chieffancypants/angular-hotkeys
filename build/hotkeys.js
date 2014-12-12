@@ -268,7 +268,7 @@
           // Here's an odd way to do this: we're going to use the original
           // description of the hotkey on the cheat sheet so that it shows up.
           // without it, no entry for esc will ever show up (#22)
-          _add('esc', previousEsc.description, toggleCheatSheet);
+          _add('esc', previousEsc.description, toggleCheatSheet, null, ['INPUT', 'SELECT', 'TEXTAREA']);
         } else {
           _del('esc');
 
@@ -458,8 +458,7 @@
           scope.$on('$destroy', function () {
             var i = boundScopes[scope.$id].length;
             while (i--) {
-              _del(boundScopes[scope.$id][i]);
-              delete boundScopes[scope.$id][i];
+              _del(boundScopes[scope.$id].pop());
             }
           });
         }
@@ -532,11 +531,13 @@
     }];
   })
 
-  .directive('hotkey', ['hotkeys', function (hotkeys) {
+  .directive('hotkey', ['hotkeys', '$parse', function (hotkeys, $parse) {
     return {
       restrict: 'A',
       link: function (scope, el, attrs) {
-        var key, allowIn;
+        var key, allowIn,
+          disabledFn = $parse(attrs.ngDisabled),
+          beforeCombo;
 
         angular.forEach(scope.$eval(attrs.hotkey), function (func, hotkey) {
           // split and trim the hotkeys string into array
@@ -544,10 +545,16 @@
 
           key = hotkey;
 
+          beforeCombo = function beforeCombo() {
+            if (!disabledFn(scope)) {
+              func();
+            }
+          };
+
           hotkeys.add({
             combo: hotkey,
             description: attrs.hotkeyDescription,
-            callback: func,
+            callback: beforeCombo,
             action: attrs.hotkeyAction,
             allowIn: allowIn
           });
