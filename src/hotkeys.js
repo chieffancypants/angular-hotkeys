@@ -525,11 +525,13 @@
     };
   })
 
-  .directive('hotkey', function (hotkeys) {
+  .directive('hotkey', function (hotkeys, $parse) {
     return {
       restrict: 'A',
       link: function (scope, el, attrs) {
-        var key, allowIn;
+        var key, allowIn,
+          disabledFn = $parse(attrs.ngDisabled),
+          beforeCombo;
 
         angular.forEach(scope.$eval(attrs.hotkey), function (func, hotkey) {
           // split and trim the hotkeys string into array
@@ -537,10 +539,16 @@
 
           key = hotkey;
 
+          beforeCombo = function beforeCombo() {
+            if (!disabledFn(scope)) {
+              func();
+            }
+          };
+
           hotkeys.add({
             combo: hotkey,
             description: attrs.hotkeyDescription,
-            callback: func,
+            callback: beforeCombo,
             action: attrs.hotkeyAction,
             allowIn: allowIn
           });
