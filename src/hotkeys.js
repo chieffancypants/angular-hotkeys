@@ -27,11 +27,20 @@
     this.templateTitle = 'Keyboard Shortcuts:';
 
     /**
+     * Configurable settings for the cheat sheet header and footer.  Both are HTML, and the header
+     * overrides the normal title if specified.
+     * @type {String}
+     */
+    this.templateHeader = null;
+    this.templateFooter = null;
+
+    /**
      * Cheat sheet template in the event you want to totally customize it.
      * @type {String}
      */
     this.template = '<div class="cfp-hotkeys-container fade" ng-class="{in: helpVisible}" style="display: none;"><div class="cfp-hotkeys">' +
-                      '<h4 class="cfp-hotkeys-title">{{ title }}</h4>' +
+                      '<h4 class="cfp-hotkeys-title" ng-if="!header">{{ title }}</h4>' +
+                      '<div ng-bind-html="header" ng-if="header"></div>' +
                       '<table><tbody>' +
                         '<tr ng-repeat="hotkey in hotkeys | filter:{ description: \'!$$undefined$$\' }">' +
                           '<td class="cfp-hotkeys-keys">' +
@@ -40,6 +49,7 @@
                           '<td class="cfp-hotkeys-text">{{ hotkey.description }}</td>' +
                         '</tr>' +
                       '</tbody></table>' +
+                      '<div ng-bind-html="footer" ng-if="footer"></div>' +
                       '<div class="cfp-hotkeys-close" ng-click="toggleCheatSheet()">×</div>' +
                     '</div></div>';
 
@@ -173,6 +183,18 @@
       scope.title = this.templateTitle;
 
       /**
+       * Holds the header HTML for the help menu
+       * @type {String}
+       */
+      scope.header = this.templateHeader;
+
+      /**
+       * Holds the footer HTML for the help menu
+       * @type {String}
+       */
+      scope.footer = this.templateFooter;
+
+      /**
        * Expose toggleCheatSheet to hotkeys scope so we can call it using
        * ng-click from the template
        * @type {function}
@@ -262,7 +284,7 @@
           // Here's an odd way to do this: we're going to use the original
           // description of the hotkey on the cheat sheet so that it shows up.
           // without it, no entry for esc will ever show up (#22)
-          _add('esc', previousEsc.description, toggleCheatSheet, null, ['INPUT', 'SELECT', 'TEXTAREA'])
+          _add('esc', previousEsc.description, toggleCheatSheet, null, ['INPUT', 'SELECT', 'TEXTAREA']);
         } else {
           _del('esc');
 
