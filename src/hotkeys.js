@@ -35,7 +35,9 @@
                       '<table><tbody>' +
                         '<tr ng-repeat="hotkey in hotkeys | filter:{ description: \'!$$undefined$$\' }">' +
                           '<td class="cfp-hotkeys-keys">' +
-                            '<span ng-repeat="key in hotkey.format() track by $index" class="cfp-hotkeys-key">{{ key }}</span>' +
+                            '<span ng-repeat="sequence in hotkey.formatAll() track by sequence.source" class="cfp-hotkeys-group">' +
+                              '<span ng-repeat="key in sequence track by $index" class="cfp-hotkeys-key">{{ key }}</span>' +
+                            '</span>' +
                           '</td>' +
                           '<td class="cfp-hotkeys-text">{{ hotkey.description }}</td>' +
                         '</tr>' +
@@ -146,6 +148,34 @@
         }
 
         return sequence;
+      };
+
+      /**
+       * Helper method to format the key combos for display.
+       *
+       * @return {[Array]} An array of arrays of key combination sequences.
+       */
+      Hotkey.prototype.formatAll = function() {
+        if (this.formattedCombo && this.formattedCombo.length === this.combo.length) {
+          for (var k = 0; k < this.combo.length; k++) {
+            if (this.combo[k] !== this.formattedCombo[k].source) {
+              break;
+            }
+          }
+          if (k === this.combo.length) {
+            return this.formattedCombo;
+          }
+        }
+        this.formattedCombo = [];
+        for (var i = 0; i < this.combo.length; i++) {
+          var sequence = this.combo[i].split(/[\s]/);
+          for (var j = 0; j < sequence.length; j++) {
+            sequence[j] = symbolize(sequence[j]);
+          }
+          sequence.source = this.combo[i];
+          this.formattedCombo.push(sequence);
+        }
+        return this.formattedCombo;
       };
 
       /**
@@ -262,7 +292,7 @@
           // Here's an odd way to do this: we're going to use the original
           // description of the hotkey on the cheat sheet so that it shows up.
           // without it, no entry for esc will ever show up (#22)
-          _add('esc', previousEsc.description, toggleCheatSheet, null, ['INPUT', 'SELECT', 'TEXTAREA'])
+          _add('esc', previousEsc.description, toggleCheatSheet, null, ['INPUT', 'SELECT', 'TEXTAREA']);
         } else {
           _del('esc');
 
