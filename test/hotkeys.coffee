@@ -277,7 +277,7 @@ describe 'Angular Hotkeys', ->
     expect(hotkeys.get('a')).toBe false
     expect(hotkeys.get('b')).toBe false
     expect(hotkeys.get('c')).toBe false
-    
+
   it 'should allow multiple calls to bindTo for same scope and still be auto-destroying', ->
     hotkeys.bindTo(scope)
     .add
@@ -285,7 +285,7 @@ describe 'Angular Hotkeys', ->
       description: 'description for w'
       callback: () ->
       persistent: false
-      
+
     hotkeys.bindTo(scope)
     .add
       combo: 'a'
@@ -539,7 +539,7 @@ describe 'Configuration options', ->
 
     injector = angular.bootstrap(document, ['cfp.hotkeys'])
     injected = angular.element(document.body).find('div')
-    expect(injected.length).toBe 3
+    expect(injected.length).toBe 4
     expect(injected.hasClass('cfp-hotkeys-container')).toBe true
 
   it 'should have a configurable hotkey and description', ->
