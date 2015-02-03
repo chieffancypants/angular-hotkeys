@@ -91,6 +91,13 @@
   cursor: pointer;
 }
 
+.cfp-hotkeys-noscroll {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
 @media all and (max-width: 500px) {
   .cfp-hotkeys {
     font-size: 0.8em;
