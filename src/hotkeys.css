@@ -26,27 +26,34 @@
   opacity: 1;
 }
 
+.cfp-hotkeys {
+  width: 100%;
+  height: 100%;
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.cfp-hotkeys-dialog {
+  display: inline-block;
+  position: relative;
+  text-align: left;
+  background-color: white;
+  padding: 0.66em 2em 2em;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 1px 1px 1px #eee;
+}
+
 .cfp-hotkeys-title {
   font-weight: bold;
   text-align: center;
   font-size: 1.2em;
 }
 
-.cfp-hotkeys {
-  width: 100%;
-  height: 100%;
-  display: table-cell;
-  vertical-align: middle;
-}
-
 .cfp-hotkeys table {
   margin: auto;
   color: #333;
-}
-
-.cfp-content {
-  display: table-cell;
-  vertical-align: middle;
 }
 
 .cfp-hotkeys-keys {
@@ -69,21 +76,25 @@
 
 .cfp-hotkeys-text {
   padding-left: 10px;
+  padding-right: 40px;
   font-size: 1em;
 }
 
+td.cfp-hotkeys-text:last-child {
+  padding-right: 0;
+}
+
 .cfp-hotkeys-close {
-  position: fixed;
-  top: 20px;
-  right: 20px;
+  position: absolute;
+  top: 5px;
+  right: 15px;
   font-size: 2em;
   font-weight: bold;
-  padding: 5px 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  min-height: 45px;
-  min-width: 45px;
-  text-align: center;
+  color: #ccc;
+}
+
+.cfp-hotkeys-close:hover {
+  color: black;
 }
 
 .cfp-hotkeys-close:hover {

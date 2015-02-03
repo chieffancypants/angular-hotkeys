@@ -20,6 +20,12 @@
     this.includeCheatSheet = true;
 
     /**
+     * Configurable number of columns in the cheat sheet
+     * @type {Number}
+     */
+    this.cheatSheetColumns = 1;
+
+    /**
      * Configurable setting for the cheat sheet title
      * @type {String}
      */
@@ -30,18 +36,18 @@
      * Cheat sheet template in the event you want to totally customize it.
      * @type {String}
      */
-    this.template = '<div class="cfp-hotkeys-container fade" ng-class="{in: helpVisible}" style="display: none;"><div class="cfp-hotkeys">' +
+    this.template = '<div class="cfp-hotkeys-container fade" ng-class="{in: helpVisible}" style="display: none;"><div class="cfp-hotkeys"><div class="cfp-hotkeys-dialog">' +
                       '<h4 class="cfp-hotkeys-title">{{ title }}</h4>' +
                       '<table><tbody>' +
-                        '<tr ng-repeat="hotkey in hotkeys | filter:{ description: \'!$$undefined$$\' }">' +
-                          '<td class="cfp-hotkeys-keys">' +
+                        '<tr ng-repeat="row in rows track by $index">' +
+                          '<td class="cfp-hotkeys-keys" ng-repeat-start="hotkey in row">' +
                             '<span ng-repeat="key in hotkey.format() track by $index" class="cfp-hotkeys-key">{{ key }}</span>' +
                           '</td>' +
-                          '<td class="cfp-hotkeys-text">{{ hotkey.description }}</td>' +
+                          '<td class="cfp-hotkeys-text" ng-repeat-end>{{ hotkey.description }}</td>' +
                         '</tr>' +
                       '</tbody></table>' +
-                      '<div class="cfp-hotkeys-close" ng-click="toggleCheatSheet()">×</div>' +
-                    '</div></div>';
+                      '<div class="cfp-hotkeys-close" ng-click="toggleCheatSheet()"> × </div>' +
+                    '</div></div></div>';
 
     /**
      * Configurable setting for the cheat sheet hotkey
@@ -161,6 +167,12 @@
       scope.hotkeys = [];
 
       /**
+       * Holds an array of arrays of Hotkey objects currently bound
+       * @type {Array}
+       */
+      scope.rows = [];
+
+      /**
        * Contains the state of the help's visibility
        * @type {Boolean}
        */
@@ -188,6 +200,12 @@
        * @type {Array}
        */
       var boundScopes = [];
+
+      /**
+       * Number of columns for cheat sheet layout.
+       * @type {Number}
+       */
+      var numColumns = this.cheatSheetColumns;
 
 
       $rootScope.$on('$routeChangeSuccess', function (event, route) {
@@ -262,7 +280,7 @@
           // Here's an odd way to do this: we're going to use the original
           // description of the hotkey on the cheat sheet so that it shows up.
           // without it, no entry for esc will ever show up (#22)
-          _add('esc', previousEsc.description, toggleCheatSheet, null, ['INPUT', 'SELECT', 'TEXTAREA'])
+          _add('esc', previousEsc.description, toggleCheatSheet, null, ['INPUT', 'SELECT', 'TEXTAREA']);
         } else {
           _del('esc');
 
@@ -376,6 +394,7 @@
 
         var hotkey = new Hotkey(combo, description, callback, action, allowIn, persistent);
         scope.hotkeys.push(hotkey);
+        divideColumns();
         return hotkey;
       }
 
@@ -406,6 +425,7 @@
               scope.hotkeys[index].combo.splice(scope.hotkeys[index].combo.indexOf(combo), 1);
             } else {
               scope.hotkeys.splice(index, 1);
+              divideColumns();
             }
             return true;
           }
@@ -434,6 +454,29 @@
         }
 
         return false;
+      }
+
+      function divideColumns() {
+        var visibleHotkeys = [];
+        var hotkey;
+        for (var i = 0; i < scope.hotkeys.length; i++) {
+          hotkey = scope.hotkeys[i];
+          if (hotkey.description !== '$$undefined$$') {
+            visibleHotkeys.push(hotkey);
+          }
+        }
+        scope.rows = [];
+        var numRows = Math.ceil(visibleHotkeys.length / numColumns);
+        for (var j = 0; j < numRows; j++) {
+          var row = [];
+          for (var k = 0; k < numColumns; k++) {
+            hotkey = visibleHotkeys[j + k * numRows];
+            if (hotkey) {
+              row.push(hotkey);
+            }
+          }
+          scope.rows.push(row);
+        }
       }
 
       /**
