@@ -500,7 +500,7 @@
           // $apply() to make sure angular's digest happens
           $rootScope.$apply(function() {
             // call the original hotkey callback with the keyboard event
-            callback(event, _get(combo));
+            callback(event, combo);
           });
         };
       }
