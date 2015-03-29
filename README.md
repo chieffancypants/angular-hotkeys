@@ -1,4 +1,4 @@
-angular-hotkeys 
+angular-hotkeys
 ================
 Configuration-centric keyboard shortcuts for your Angular apps.
 
@@ -157,6 +157,18 @@ angular.module('myApp', ['cfp.hotkeys'])
 angular.module('myApp', ['cfp.hotkeys'])
   .config(function(hotkeysProvider) {
     hotkeysProvider.template = '<div class="my-own-cheatsheet">...</div>';
+  })
+```
+
+**Header and footer:**
+
+You can specify a custom header and footer for the cheatsheet.  Both are HTML, and if the header is set it will override the normal title.
+
+```js
+angular.module('myApp', ['cfp.hotkeys'])
+  .config(function(hotkeysProvider) {
+    hotkeysProvider.templateHeader = '<div class="my-own-header">...</div>';
+    hotkeysProvider.templateFooter = '<div class="my-own-footer">...</div>';
   })
 ```
 
