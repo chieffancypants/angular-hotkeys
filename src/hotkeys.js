@@ -145,17 +145,18 @@
        * TODO: this gets called a lot.  We should cache the result
        */
       Hotkey.prototype.format = function() {
+        var sequences = [];
+        for(var n=0;n<this.combo.length;n++) {
+          var combo = this.combo[n];
 
-        // Don't show all the possible key combos, just the first one.  Not sure
-        // of usecase here, so open a ticket if my assumptions are wrong
-        var combo = this.combo[0];
-
-        var sequence = combo.split(/[\s]/);
-        for (var i = 0; i < sequence.length; i++) {
-          sequence[i] = symbolize(sequence[i]);
+          var sequence = combo.split(/[\s]/);
+          for (var i = 0; i < sequence.length; i++) {
+            sequence[i] = symbolize(sequence[i]);
+          }
+          sequences = sequences.concat(sequence);
         }
 
-        return sequence;
+        return sequences;
       };
 
       /**
