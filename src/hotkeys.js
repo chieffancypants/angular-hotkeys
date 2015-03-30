@@ -547,7 +547,7 @@
     };
   })
 
-  .directive('hotkey', function (hotkeys) {
+  .directive('hotkey', ['hotkeys', function (hotkeys) {
     return {
       restrict: 'A',
       link: function (scope, el, attrs) {
@@ -574,7 +574,7 @@
         });
       }
     };
-  })
+  }])
 
   .run(function(hotkeys) {
     // force hotkeys to run by injecting it. Without this, hotkeys only runs
