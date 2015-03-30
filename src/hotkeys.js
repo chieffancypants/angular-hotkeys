@@ -65,7 +65,7 @@
      */
     this.cheatSheetDescription = 'Show / hide this help menu';
 
-    this.$get = function ($rootElement, $rootScope, $compile, $window, $document) {
+    this.$get = ['$rootElement', '$rootScope', '$compile', '$window', '$document', function ($rootElement, $rootScope, $compile, $window, $document) {
 
       // monkeypatch Mousetrap's stopCallback() function
       // this version doesn't return true when the element is an INPUT, SELECT, or TEXTAREA
@@ -544,10 +544,10 @@
 
       return publicApi;
 
-    };
+    }];
   })
 
-  .directive('hotkey', function (hotkeys) {
+  .directive('hotkey', ['hotkeys', function (hotkeys) {
     return {
       restrict: 'A',
       link: function (scope, el, attrs) {
@@ -574,11 +574,11 @@
         });
       }
     };
-  })
+  }])
 
-  .run(function(hotkeys) {
+  .run(['hotkeys', function(hotkeys) {
     // force hotkeys to run by injecting it. Without this, hotkeys only runs
     // when a controller or something else asks for it via DI.
-  });
+  }]);
 
 })();
