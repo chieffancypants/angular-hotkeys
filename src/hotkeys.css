@@ -67,6 +67,12 @@
   font-size: 1em;
 }
 
+.cfp-hotkeys-key-separator {
+  display: inline-block;
+  padding: 5px 10px 5px 0;
+  font-size: 1em;
+}
+
 .cfp-hotkeys-text {
   padding-left: 10px;
   font-size: 1em;
