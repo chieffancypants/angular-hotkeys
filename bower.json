@@ -15,5 +15,8 @@
   "devDependencies": {
     "mousetrap": "~1.4.6",
     "angular-mocks": "~1.2.15"
+  },
+  "dependencies": {
+    "mousetrap": "~1.4.6"
   }
 }
