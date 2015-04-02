@@ -204,15 +204,16 @@
             // a string was given, which implies this is a function that is to be
             // $eval()'d within that controller's scope
             // TODO: hotkey here is super confusing.  sometimes a function (that gets turned into an array), sometimes a string
-            var callback = hotkey[2];
+            var h = angular.copy(hotkey);
+            var callback = h[2];
             if (typeof(callback) === 'string' || callback instanceof String) {
-              hotkey[2] = [callback, route];
+              h[2] = [callback, route];
             }
 
             // todo: perform check to make sure not already defined:
             // this came from a route, so it's likely not meant to be persistent
-            hotkey[5] = false;
-            _add.apply(this, hotkey);
+            h[5] = false;
+            _add.apply(this, h);
           });
         }
       });
@@ -268,7 +269,7 @@
           // Here's an odd way to do this: we're going to use the original
           // description of the hotkey on the cheat sheet so that it shows up.
           // without it, no entry for esc will ever show up (#22)
-          _add('esc', previousEsc.description, toggleCheatSheet);
+          _add('esc', previousEsc.description, toggleCheatSheet, null, ['INPUT', 'SELECT', 'TEXTAREA']);
         } else {
           _del('esc');
 
@@ -458,8 +459,7 @@
           scope.$on('$destroy', function () {
             var i = boundScopes[scope.$id].length;
             while (i--) {
-              _del(boundScopes[scope.$id][i]);
-              delete boundScopes[scope.$id][i];
+              _del(boundScopes[scope.$id].pop());
             }
           });
         }
