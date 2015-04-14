@@ -1,6 +1,7 @@
 .cfp-hotkeys-container {
-  display: table !important;
+  display: block !important;
   position: fixed;
+  overflow: auto;
   width: 100%;
   height: 100%;
   top: 0;
@@ -33,10 +34,11 @@
 }
 
 .cfp-hotkeys {
-  width: 100%;
-  height: 100%;
-  display: table-cell;
+  width: 90%;
   vertical-align: middle;
+  margin-left: auto;  
+  margin-right: auto;
+
 }
 
 .cfp-hotkeys table {
