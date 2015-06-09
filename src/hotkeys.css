@@ -98,6 +98,10 @@
   height: 100%;
 }
 
+.cfp-hotkeys-scrollbar {
+  overflow-y: scroll;
+}
+
 @media all and (max-width: 500px) {
   .cfp-hotkeys {
     font-size: 0.8em;

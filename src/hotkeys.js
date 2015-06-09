@@ -273,6 +273,7 @@
           previousTop = body.css('top');
           if (previousTop === 'auto') previousTop = '';
           previousScrollTop = body[0].scrollTop;
+          if (body[0].scrollHeight > $window.innerHeight) body.addClass('cfp-hotkeys-scrollbar');
           body.css('top', -previousScrollTop + 'px').addClass('cfp-hotkeys-noscroll');
         } else {
           _del('esc');
@@ -282,7 +283,7 @@
             _add(previousEsc);
           }
 
-          body.css('top', previousTop).removeClass('cfp-hotkeys-noscroll');
+          body.css('top', previousTop).removeClass('cfp-hotkeys-noscroll cfp-hotkeys-scrollbar');
           body[0].scrollTop = previousScrollTop;
         }
       }
