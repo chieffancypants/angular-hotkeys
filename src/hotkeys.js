@@ -68,7 +68,7 @@
     this.$get = function ($rootElement, $rootScope, $compile, $window, $document) {
 
       // monkeypatch Mousetrap's stopCallback() function
-      // this version doesn't return true when the element is an INPUT, SELECT, or TEXTAREA
+      // this version doesn't return true when the element is an INPUT, SELECT, TEXTAREA or contentEditable tag
       // (instead we will perform this check per-key in the _add() method)
       Mousetrap.stopCallback = function(event, element) {
         // if the element has the class "mousetrap" then no need to stop
@@ -76,7 +76,7 @@
           return false;
         }
 
-        return (element.contentEditable && element.contentEditable == 'true');
+        return (element.contentEditable && element.contentEditable == 'false');
       };
 
       /**
@@ -120,7 +120,7 @@
        * @param {String}   description Description for the keycombo
        * @param {Function} callback    function to execute when keycombo pressed
        * @param {string}   action      the type of event to listen for (for mousetrap)
-       * @param {array}    allowIn     an array of tag names to allow this combo in ('INPUT', 'SELECT', and/or 'TEXTAREA')
+       * @param {array}    allowIn     an array of tag names to allow this combo in ('INPUT', 'SELECT', 'TEXTAREA' or 'CONTENTEDITABLE')
        * @param {Boolean}  persistent  Whether the hotkey persists navigation events
        */
       function Hotkey (combo, description, callback, action, allowIn, persistent) {
@@ -284,7 +284,7 @@
           // Here's an odd way to do this: we're going to use the original
           // description of the hotkey on the cheat sheet so that it shows up.
           // without it, no entry for esc will ever show up (#22)
-          _add('esc', previousEsc.description, toggleCheatSheet, null, ['INPUT', 'SELECT', 'TEXTAREA']);
+          _add('esc', previousEsc.description, toggleCheatSheet, null, ['INPUT', 'SELECT', 'TEXTAREA', 'CONTENTEDITABLE']);
         } else {
           _del('esc');
 
@@ -302,7 +302,7 @@
        * @param {string}   description description for the help menu
        * @param {Function} callback    method to call when key is pressed
        * @param {string}   action      the type of event to listen for (for mousetrap)
-       * @param {array}    allowIn     an array of tag names to allow this combo in ('INPUT', 'SELECT', and/or 'TEXTAREA')
+       * @param {array}    allowIn     an array of tag names to allow this combo in ('INPUT', 'SELECT', 'TEXTAREA', and/or 'CONTENTEDITABLE')
        * @param {boolean}  persistent  if true, the binding is preserved upon route changes
        */
       function _add (combo, description, callback, action, allowIn, persistent) {
@@ -311,7 +311,7 @@
         var _callback;
 
         // these elements are prevented by the default Mousetrap.stopCallback():
-        var preventIn = ['INPUT', 'SELECT', 'TEXTAREA'];
+        var preventIn = ['INPUT', 'SELECT', 'TEXTAREA', 'CONTENTEDITABLE'];
 
         // Determine if object format was given:
         var objType = Object.prototype.toString.call(combo);
@@ -370,11 +370,16 @@
             var shouldExecute = true;
             var target = event.target || event.srcElement; // srcElement is IE only
             var nodeName = target.nodeName.toUpperCase();
-
+            var isContentEditable = target.contentEditable && target.contentEditable == 'true';
             // check if the input has a mousetrap class, and skip checking preventIn if so
             if ((' ' + target.className + ' ').indexOf(' mousetrap ') > -1) {
               shouldExecute = true;
-            } else {
+            }
+            else if (isContentEditable) {
+              // in contentEditable tag execute only if we allowed to do so
+              shouldExecute = allowIn.indexOf('CONTENTEDITABLE') > -1;
+            }
+            else {
               // don't execute callback if the event was fired from inside an element listed in preventIn
               for (var i=0; i<preventIn.length; i++) {
                 if (preventIn[i] === nodeName) {
