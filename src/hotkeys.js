@@ -143,7 +143,6 @@
        * @return {[Array]} An array of the key combination sequence
        *   for example: "command+g c i" becomes ["⌘ + g", "c", "i"]
        *
-       * TODO: this gets called a lot.  We should cache the result
        */
       Hotkey.prototype.format = function() {
         if(this._formated === null) {
