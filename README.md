@@ -151,6 +151,18 @@ angular.module('myApp', ['cfp.hotkeys'])
   })
 ```
 
+**Disable ngRoute integration:**
+
+To prevent listening for $routeChangeSuccess events use `hotkeysProvider`.
+This option defaults to false if ngRoute module is not loaded:
+
+```js
+angular.module('myApp', ['cfp.hotkeys'])
+  .config(function(hotkeysProvider) {
+    hotkeysProvider.useNgRoute = false;
+  })
+```
+
 **Cheatsheet template:**
 
 ```js

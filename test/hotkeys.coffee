@@ -4,7 +4,9 @@ describe 'Angular Hotkeys', ->
   hotkeys = scope = $rootScope = $rootElement = $window = null
 
   beforeEach ->
-    module 'cfp.hotkeys'
+    module 'cfp.hotkeys', (hotkeysProvider) ->
+      hotkeysProvider.useNgRoute = true
+      return
 
     result = null
     inject (_$rootElement_, _$rootScope_, _hotkeys_) ->
@@ -277,7 +279,7 @@ describe 'Angular Hotkeys', ->
     expect(hotkeys.get('a')).toBe false
     expect(hotkeys.get('b')).toBe false
     expect(hotkeys.get('c')).toBe false
-    
+
   it 'should allow multiple calls to bindTo for same scope and still be auto-destroying', ->
     hotkeys.bindTo(scope)
     .add
@@ -285,7 +287,7 @@ describe 'Angular Hotkeys', ->
       description: 'description for w'
       callback: () ->
       persistent: false
-      
+
     hotkeys.bindTo(scope)
     .add
       combo: 'a'
@@ -557,3 +559,16 @@ describe 'Configuration options', ->
       expect(angular.element($rootElement).children().hasClass('in')).toBe true
 
       expect(hotkeys.get('h').description).toBe 'Alternate description'
+
+  it 'should have a configurable useNgRoute defaulted to false if ngRoute is not loaded', ->
+    module 'cfp.hotkeys'
+    inject (hotkeys) ->
+      expect(hotkeys.useNgRoute).toBe false
+
+  it 'should have a configurable useNgRoute defaulted to true if ngRoute is loaded', ->
+    module 'ngRoute'
+    module 'cfp.hotkeys'
+    inject (hotkeys) ->
+      expect(hotkeys.useNgRoute).toBe true
+
+
