@@ -11,13 +11,19 @@
 
   'use strict';
 
-  angular.module('cfp.hotkeys', []).provider('hotkeys', function() {
+  angular.module('cfp.hotkeys', []).provider('hotkeys', function($injector) {
 
     /**
      * Configurable setting to disable the cheatsheet entirely
      * @type {Boolean}
      */
     this.includeCheatSheet = true;
+
+    /**
+     * Configurable setting to disable ngRoute hooks
+     * @type {Boolean}
+     */
+    this.useNgRoute = $injector.has('ngViewDirective');
 
     /**
      * Configurable setting for the cheat sheet title
@@ -211,27 +217,29 @@
        */
       var boundScopes = [];
 
+      if (this.useNgRoute) {
+        $rootScope.$on('$routeChangeSuccess', function (event, route) {
+          purgeHotkeys();
 
-      $rootScope.$on('$routeChangeSuccess', function (event, route) {
-        purgeHotkeys();
+          if (route && route.hotkeys) {
+            angular.forEach(route.hotkeys, function (hotkey) {
+              // a string was given, which implies this is a function that is to be
+              // $eval()'d within that controller's scope
+              // TODO: hotkey here is super confusing.  sometimes a function (that gets turned into an array), sometimes a string
+              var callback = hotkey[2];
+              if (typeof(callback) === 'string' || callback instanceof String) {
+                hotkey[2] = [callback, route];
+              }
 
-        if (route && route.hotkeys) {
-          angular.forEach(route.hotkeys, function (hotkey) {
-            // a string was given, which implies this is a function that is to be
-            // $eval()'d within that controller's scope
-            // TODO: hotkey here is super confusing.  sometimes a function (that gets turned into an array), sometimes a string
-            var callback = hotkey[2];
-            if (typeof(callback) === 'string' || callback instanceof String) {
-              hotkey[2] = [callback, route];
-            }
+              // todo: perform check to make sure not already defined:
+              // this came from a route, so it's likely not meant to be persistent
+              hotkey[5] = false;
+              _add.apply(this, hotkey);
+            });
+          }
+        });
+      }
 
-            // todo: perform check to make sure not already defined:
-            // this came from a route, so it's likely not meant to be persistent
-            hotkey[5] = false;
-            _add.apply(this, hotkey);
-          });
-        }
-      });
 
 
       // Auto-create a help menu:
@@ -538,6 +546,7 @@
         includeCheatSheet     : this.includeCheatSheet,
         cheatSheetHotkey      : this.cheatSheetHotkey,
         cheatSheetDescription : this.cheatSheetDescription,
+        useNgRoute            : this.useNgRoute,
         purgeHotkeys          : purgeHotkeys,
         templateTitle         : this.templateTitle
       };
@@ -545,6 +554,8 @@
       return publicApi;
 
     };
+
+
   })
 
   .directive('hotkey', function (hotkeys) {
