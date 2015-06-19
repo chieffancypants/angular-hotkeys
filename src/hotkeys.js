@@ -140,6 +140,7 @@
         this.action = action;
         this.allowIn = allowIn;
         this.persistent = persistent;
+        this._formated = null;
       }
 
       /**
@@ -148,20 +149,21 @@
        * @return {[Array]} An array of the key combination sequence
        *   for example: "command+g c i" becomes ["⌘ + g", "c", "i"]
        *
-       * TODO: this gets called a lot.  We should cache the result
        */
       Hotkey.prototype.format = function() {
+        if(this._formated === null) {
+          // Don't show all the possible key combos, just the first one.  Not sure
+          // of usecase here, so open a ticket if my assumptions are wrong
+          var combo = this.combo[0];
 
-        // Don't show all the possible key combos, just the first one.  Not sure
-        // of usecase here, so open a ticket if my assumptions are wrong
-        var combo = this.combo[0];
-
-        var sequence = combo.split(/[\s]/);
-        for (var i = 0; i < sequence.length; i++) {
-          sequence[i] = symbolize(sequence[i]);
+          var sequence = combo.split(/[\s]/);
+          for (var i = 0; i < sequence.length; i++) {
+            sequence[i] = symbolize(sequence[i]);
+          }
+          this._formated = sequence;
         }
 
-        return sequence;
+        return this._formated;
       };
 
       /**
