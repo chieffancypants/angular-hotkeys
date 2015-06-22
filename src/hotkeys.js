@@ -581,8 +581,8 @@
           });
         });
 
-        // remove the hotkey if the directive is destroyed:
-        el.bind('$destroy', function() {
+        // remove the hotkey when the directive-scope gets destroyed:
+        scope.$on('$destroy', function() {
           hotkeys.del(key);
         });
       }
