@@ -76,7 +76,7 @@
       // monkeypatch Mousetrap's stopCallback() function
       // this version doesn't return true when the element is an INPUT, SELECT, or TEXTAREA
       // (instead we will perform this check per-key in the _add() method)
-      Mousetrap.stopCallback = function(event, element) {
+      Mousetrap.prototype.stopCallback = function(event, element) {
         // if the element has the class "mousetrap" then no need to stop
         if ((' ' + element.className + ' ').indexOf(' mousetrap ') > -1) {
           return false;
@@ -350,7 +350,6 @@
         if (persistent === undefined) {
           persistent = true;
         }
-
         // if callback is defined, then wrap it in a function
         // that checks if the event originated from a form element.
         // the function blocks the callback from executing unless the element is specified
