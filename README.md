@@ -192,7 +192,7 @@ angular.module('myApp', ['cfp.hotkeys'])
 - `description`: [OPTIONAL] The description for what the combo does and is only used for the Cheat Sheet.  If it is not supplied, it will not show up, and in effect, allows you to have unlisted hotkeys.
 - `callback`: The function to execute when the key(s) are pressed.  Passes along two arguments, `event` and `hotkey`
 - `action`: [OPTIONAL] The type of event to listen for, such as `keypress`, `keydown` or `keyup`. Usage of this parameter is discouraged as the underlying library will pick the most suitable option automatically. This should only be necessary in advanced situations.
-- `allowIn`: [OPTIONAL] an array of tag names to allow this combo in ('INPUT', 'SELECT', and/or 'TEXTAREA')
+- `allowIn`: [OPTIONAL] an array of tag names to allow this combo in ('INPUT', 'SELECT', 'CONTENTEDITABLE', and/or 'TEXTAREA')
 
 ```js
 hotkeys.add({
@@ -226,12 +226,12 @@ hotkeys.del('ctrl+w');
 ```
 
 ### Allowing hotkeys in form elements
-By default, Mousetrap prevents hotkey callbacks from firing when their event originates from an `input`, `select`, or `textarea` element. To enable hotkeys in these elements, specify them in the `allowIn` parameter:
+By default, Mousetrap prevents hotkey callbacks from firing when their event originates from an `input`, `select`, `textarea` elements and tags with `contenteditable=true` attributes. To enable hotkeys in these elements, specify them in the `allowIn` parameter:
 ```js
 hotkeys.add({
   combo: 'ctrl+w',
   description: 'Description goes here',
-  allowIn: ['INPUT', 'SELECT', 'TEXTAREA'],
+  allowIn: ['INPUT', 'SELECT', 'TEXTAREA', 'CONTENTEDITABLE'],
   callback: function(event, hotkey) {
     event.preventDefault();
   }

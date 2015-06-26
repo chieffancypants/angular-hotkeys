@@ -194,6 +194,21 @@ describe 'Angular Hotkeys', ->
     KeyEvent.simulate('w'.charCodeAt(0), 90, undefined, $textarea[0])
     expect(executed).toBe yes
 
+  it 'should callback when hotkey is pressed in div contenteditable div and allowIn CONTENTEDITABLE is configured', ->
+    executed = no
+
+    $body = angular.element document.body
+    $div = angular.element '<div id="cfp-test" contenteditable="true"/>'
+    $body.prepend $div
+    hotkeys.add
+      combo: 'w'
+      allowIn: ['CONTENTEDITABLE']
+      callback: -> executed = yes
+
+    KeyEvent.simulate('w'.charCodeAt(0), 90, undefined, $div[0])
+    expect(executed).toBe yes
+
+
   it 'should not callback when hotkey is pressed in input field without allowIn INPUT', ->
     executed = no
 
@@ -235,6 +250,21 @@ describe 'Angular Hotkeys', ->
 
     KeyEvent.simulate('w'.charCodeAt(0), 90, undefined, $textarea[0])
     expect(executed).toBe no
+
+  it 'should not callback when hotkey is pressed in contenteditable div without allowIn CONTENTEDITABLE', ->
+    executed = no
+
+    $body = angular.element document.body
+    $div = angular.element '<div id="cfp-test" contenteditable="false"/>'
+    $body.prepend $div
+
+    hotkeys.add
+      combo: 'w'
+      callback: -> executed = yes
+
+    KeyEvent.simulate('w'.charCodeAt(0), 90, undefined, $div[0])
+    expect(executed).toBe no
+
 
   it 'should callback when the mousetrap class is present', ->
     executed = no
