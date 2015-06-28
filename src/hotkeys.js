@@ -272,7 +272,7 @@
 
           previousTop = body.css('top');
           if (previousTop === 'auto') previousTop = '';
-          previousScrollTop = body[0].parentNode.scrollTop;
+          previousScrollTop = document.documentElement.scrollTop || document.body.scrollTop;
           if (body[0].scrollWidth > $window.innerWidth) body.addClass('cfp-hotkeys-x-scrollbar');
           if (body[0].scrollHeight > $window.innerHeight) body.addClass('cfp-hotkeys-y-scrollbar');
           body.css('top', -previousScrollTop + 'px').addClass('cfp-hotkeys-noscroll');
@@ -286,7 +286,8 @@
 
           body.css('top', previousTop);
           body.removeClass('cfp-hotkeys-noscroll cfp-hotkeys-x-scrollbar cfp-hotkeys-y-scrollbar');
-          body[0].parentNode.scrollTop = previousScrollTop;
+          document.documentElement.scrollTop = previousScrollTop;
+          document.body.scrollTop = previousScrollTop;
         }
       }
 
