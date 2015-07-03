@@ -1,7 +1,7 @@
 /*! 
  * angular-hotkeys v1.4.5
  * https://chieffancypants.github.io/angular-hotkeys
- * Copyright (c) 2014 Wes Cruver
+ * Copyright (c) 2015 Wes Cruver
  * License: MIT
  */
 /*
@@ -49,6 +49,8 @@
                       '<div class="cfp-hotkeys-close" ng-click="toggleCheatSheet()">×</div>' +
                     '</div></div>';
 
+    this.templateUrl = null;
+
     /**
      * Configurable setting for the cheat sheet hotkey
      * @type {String}
@@ -61,7 +63,7 @@
      */
     this.cheatSheetDescription = 'Show / hide this help menu';
 
-    this.$get = ['$rootElement', '$rootScope', '$compile', '$window', '$document', function ($rootElement, $rootScope, $compile, $window, $document) {
+    this.$get = ['$rootElement', '$rootScope', '$compile', '$window', '$document', '$templateCache', '$http', function ($rootElement, $rootScope, $compile, $window, $document, $templateCache, $http) {
 
       // monkeypatch Mousetrap's stopCallback() function
       // this version doesn't return true when the element is an INPUT, SELECT, or TEXTAREA
@@ -222,15 +224,31 @@
       if (this.includeCheatSheet) {
         var document = $document[0];
         var element = $rootElement[0];
-        var helpMenu = angular.element(this.template);
-        _add(this.cheatSheetHotkey, this.cheatSheetDescription, toggleCheatSheet);
+        var self = this;
 
-        // If $rootElement is document or documentElement, then body must be used
-        if (element === document || element === document.documentElement) {
-          element = document.body;
-        }
+        var setup = function (template) {
+          var helpMenu = angular.element(template);
+          _add(self.cheatSheetHotkey, self.cheatSheetDescription, toggleCheatSheet);
 
-        angular.element(element).append($compile(helpMenu)(scope));
+          // If $rootElement is document or documentElement, then body must be used
+          if (element === document || element === document.documentElement) {
+            element = document.body;
+          }
+
+          angular.element(element).append($compile(helpMenu)(scope));
+        };
+
+        if (this.templateUrl) {
+          var template = $templateCache.get(this.templateUrl);
+          if (!template) {
+            $http.get(this.templateUrl).then(function (r) {
+              setup(r.data);
+            });
+          }
+          else
+            setup(template);
+        } else
+          setup(this.template);
       }
 
 
