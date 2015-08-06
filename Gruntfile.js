@@ -111,7 +111,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-karma');
 
-  grunt.registerTask('default', ['jshint', 'karma:unit', 'ngAnnotate', 'uglify', 'cssmin', 'concat:build']);
+  grunt.registerTask('default', ['jshint', 'ngAnnotate', 'uglify', 'cssmin', 'concat:build']);
   grunt.registerTask('test', ['karma:watch']);
   grunt.registerTask('build', ['default']);
 

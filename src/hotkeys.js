@@ -12,12 +12,19 @@
   'use strict';
 
   angular.module('cfp.hotkeys', []).provider('hotkeys', function($injector) {
+    var self = this;
 
     /**
      * Configurable setting to disable the cheatsheet entirely
      * @type {Boolean}
      */
     this.includeCheatSheet = true;
+
+    /**
+     * Configurable setting to set the number of cheatsheet columns
+     * @type {Number}
+     */
+    this.cheatSheetColumnsCount = 3;
 
     /**
      * Configurable setting to disable ngRoute hooks
@@ -48,11 +55,11 @@
                       '<h4 class="cfp-hotkeys-title" ng-if="!header">{{ title }}</h4>' +
                       '<div ng-bind-html="header" ng-if="header"></div>' +
                       '<table><tbody>' +
-                        '<tr ng-repeat="hotkey in hotkeys | filter:{ description: \'!$$undefined$$\' }">' +
-                          '<td class="cfp-hotkeys-keys">' +
+                        '<tr ng-repeat="row in cheatSheetColumns">' +
+                          '<td class="cfp-hotkeys-keys" ng-repeat-start="hotkey in row | filter:{ description: \'!$$undefined$$\' }">' +
                             '<span ng-repeat="key in hotkey.format() track by $index" class="cfp-hotkeys-key">{{ key }}</span>' +
                           '</td>' +
-                          '<td class="cfp-hotkeys-text">{{ hotkey.description }}</td>' +
+                          '<td class="cfp-hotkeys-text" ng-repeat-end>{{ hotkey.description }}</td>' +
                         '</tr>' +
                       '</tbody></table>' +
                       '<div ng-bind-html="footer" ng-if="footer"></div>' +
@@ -209,6 +216,10 @@
        */
       scope.toggleCheatSheet = toggleCheatSheet;
 
+      // An event to set the number of columns dynamically
+      $rootScope.$on('set-cheat-sheet-columns-count', function (event, num) {
+        self.cheatSheetColumnsCount = num;
+      });
 
       /**
        * Holds references to the different scopes that have bound hotkeys
@@ -407,6 +418,7 @@
 
         var hotkey = new Hotkey(combo, description, callback, action, allowIn, persistent);
         scope.hotkeys.push(hotkey);
+        refreshColumns();
         return hotkey;
       }
 
@@ -441,9 +453,24 @@
             return true;
           }
         }
-
+        refreshColumns();
         return false;
+      }
 
+      // Split the hotkeys to equal columns
+      function refreshColumns() {
+          scope.cheatSheetColumns = [];
+          var numRows = Math.ceil(scope.hotkeys.length / self.cheatSheetColumnsCount);
+          for (var i = 0; i < numRows; i++) {
+              var row = [];
+              for (var j = 0; j < self.cheatSheetColumnsCount; j++) {
+                  var hotkey = scope.hotkeys[i + j * numRows];
+                  if (hotkey && hotkey.description !== '$$undefined$$') {
+                      row.push(hotkey);
+                  }
+              }
+              scope.cheatSheetColumns.push(row);
+          }
       }
 
       /**
