@@ -449,10 +449,14 @@
       /**
        * Get a Hotkey object by key binding
        *
-       * @param  {[string]} combo  the key the Hotkey is bound to
+       * @param  {[string]} [combo]  the key the Hotkey is bound to. Returns all key bindings if no key is passed
        * @return {Hotkey}          The Hotkey object
        */
       function _get (combo) {
+
+        if (!combo) {
+          return scope.hotkeys;
+        }
 
         var hotkey;
 
