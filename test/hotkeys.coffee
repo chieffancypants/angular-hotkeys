@@ -132,6 +132,17 @@ describe 'Angular Hotkeys', ->
     expect(keypressB).toBe true
     expect(hotkeys.get('a').action).toBe 'keyup'
 
+  it 'should allow to invoke hotkey.callback programmatically without event object', ->
+    called = false;
+
+    hotkeys.add 'a', ->
+      called = true
+    , 'keyup'
+
+    hotkeys.get('a').callback()
+    expect(called).toBe true
+
+
   it 'should run routes-defined hotkey callbacks when scope is available', ->
     executed = false
     passedArg = null
