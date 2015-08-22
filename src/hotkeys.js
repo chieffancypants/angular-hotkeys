@@ -377,18 +377,20 @@
           // create the new wrapper callback
           callback = function(event) {
             var shouldExecute = true;
-            var target = event.target || event.srcElement; // srcElement is IE only
-            var nodeName = target.nodeName.toUpperCase();
+            if(event) {
+              var target = event.target || event.srcElement; // srcElement is IE only
+              var nodeName = target.nodeName.toUpperCase();
 
-            // check if the input has a mousetrap class, and skip checking preventIn if so
-            if ((' ' + target.className + ' ').indexOf(' mousetrap ') > -1) {
-              shouldExecute = true;
-            } else {
-              // don't execute callback if the event was fired from inside an element listed in preventIn
-              for (var i=0; i<preventIn.length; i++) {
-                if (preventIn[i] === nodeName) {
-                  shouldExecute = false;
-                  break;
+              // check if the input has a mousetrap class, and skip checking preventIn if so
+              if ((' ' + target.className + ' ').indexOf(' mousetrap ') > -1) {
+                shouldExecute = true;
+              } else {
+                // don't execute callback if the event was fired from inside an element listed in preventIn
+                for (var i=0; i<preventIn.length; i++) {
+                  if (preventIn[i] === nodeName) {
+                    shouldExecute = false;
+                    break;
+                  }
                 }
               }
             }
