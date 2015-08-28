@@ -335,6 +335,9 @@
           combo       = combo.combo;
         }
 
+        // no duplicates please
+        _del(combo);
+
         // description is optional:
         if (description instanceof Function) {
           action = callback;
@@ -436,6 +439,15 @@
             if (scope.hotkeys[index].combo.length > 1) {
               scope.hotkeys[index].combo.splice(scope.hotkeys[index].combo.indexOf(combo), 1);
             } else {
+
+              // remove hotkey from bound scopes
+              angular.forEach(boundScopes, function (boundScope) {
+                var scopeIndex = boundScope.indexOf(scope.hotkeys[index]);
+                if (scopeIndex !== -1) {
+                    boundScope.splice(scopeIndex, 1);
+                }
+              });
+
               scope.hotkeys.splice(index, 1);
             }
             return true;
