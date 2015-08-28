@@ -139,7 +139,9 @@ Example of how directive-based hotkeys works:
 <modal title="Modal Title" hotkey="{esc: close}">
 ```
 
-### Configuration
+#### Cheatsheet
+
+I have inclued a nice template that shows your enabled hotkeys, called a "cheatsheet." The default binding to show the cheatsheet is `?`. Be sure to include the `build/hotkeys.css` stylesheet. [Cheatsheet demo](http://chieffancypants.github.io/angular-hotkeys/#features)
 
 **Disable the cheatsheet:**
 
@@ -151,6 +153,8 @@ angular.module('myApp', ['cfp.hotkeys'])
     hotkeysProvider.includeCheatSheet = false;
   })
 ```
+
+### Configuration
 
 **Disable ngRoute integration:**
 
