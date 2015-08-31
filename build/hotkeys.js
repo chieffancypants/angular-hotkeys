@@ -466,12 +466,15 @@
       // Split the hotkeys to equal columns
       function refreshColumns() {
           scope.cheatSheetColumns = [];
+          var hotkeys = _.filter(scope.hotkeys, function(hotkey) {
+              return hotkey.description !== '$$undefined$$';
+          });
           var numRows = Math.ceil(scope.hotkeys.length / self.cheatSheetColumnsCount);
           for (var i = 0; i < numRows; i++) {
               var row = [];
               for (var j = 0; j < self.cheatSheetColumnsCount; j++) {
-                  var hotkey = scope.hotkeys[i + j * numRows];
-                  if (hotkey && hotkey.description !== '$$undefined$$') {
+                  var hotkey = hotkeys[i + j * numRows];
+                  if (hotkey) {
                       row.push(hotkey);
                   }
               }
