@@ -23,13 +23,16 @@ module.exports = function(grunt) {
       }
     },
 
-    ngmin: {
-      sources: {
+    ngAnnotate: {
+      options: {
+        singleQuotes: true,
+      },
+      source: {
         expand: true,
         cwd: 'src',
         src: ['*.js'],
         dest: 'build'
-      },
+      }
     },
 
     cssmin: {
@@ -48,7 +51,7 @@ module.exports = function(grunt) {
         configFile: 'test/karma.conf.js',
         singleRun: true,
         coverageReporter: {
-          type: 'lcov',
+          type: 'text',
           dir: 'coverage/'
         }
       },
@@ -76,7 +79,7 @@ module.exports = function(grunt) {
         },
         files: {
           'build/hotkeys.css': 'src/hotkeys.css',
-          'build/hotkeys.js':  ['src/hotkeys.js', 'bower_components/mousetrap/mousetrap.js'],
+          'build/hotkeys.js':  ['build/hotkeys.js', 'bower_components/mousetrap/mousetrap.js'],
         }
       }
     },
@@ -98,26 +101,17 @@ module.exports = function(grunt) {
       }
     },
 
-    coveralls: {
-      options: {
-          debug: true,
-          coverage_dir: 'test/coverage',
-          // force: true
-      }
-    }
-
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-ngmin');
+  grunt.loadNpmTasks('grunt-ng-annotate');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-karma');
-  grunt.loadNpmTasks('grunt-karma-coveralls');
 
-  grunt.registerTask('default', ['jshint', 'karma:unit', 'ngmin', 'uglify', 'cssmin', 'concat:build', 'coveralls']);
+  grunt.registerTask('default', ['jshint', 'karma:unit', 'ngAnnotate', 'uglify', 'cssmin', 'concat:build']);
   grunt.registerTask('test', ['karma:watch']);
   grunt.registerTask('build', ['default']);
 

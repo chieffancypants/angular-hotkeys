@@ -1,7 +1,6 @@
 .cfp-hotkeys-container {
-  display: table;
+  display: table !important;
   position: fixed;
-  z-index: -1024;
   width: 100%;
   height: 100%;
   top: 0;
@@ -11,8 +10,20 @@
   background-color: rgba(255,255,255,0.9);
 }
 
+.cfp-hotkeys-container.fade {
+  z-index: -1024;
+  visibility: hidden;
+  opacity: 0;
+  -webkit-transition: opacity 0.15s linear;
+  -moz-transition: opacity 0.15s linear;
+  -o-transition: opacity 0.15s linear;
+  transition: opacity 0.15s linear;
+}
+
 .cfp-hotkeys-container.fade.in {
-  z-index: 1024;
+  z-index: 10002;
+  visibility: visible;
+  opacity: 1;
 }
 
 .cfp-hotkeys-title {

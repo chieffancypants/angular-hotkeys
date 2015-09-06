@@ -4,7 +4,9 @@ describe 'Angular Hotkeys', ->
   hotkeys = scope = $rootScope = $rootElement = $window = null
 
   beforeEach ->
-    module 'cfp.hotkeys'
+    module 'cfp.hotkeys', (hotkeysProvider) ->
+      hotkeysProvider.useNgRoute = true
+      return
 
     result = null
     inject (_$rootElement_, _$rootScope_, _hotkeys_) ->
@@ -71,7 +73,7 @@ describe 'Angular Hotkeys', ->
     expect(angular.element($rootElement).children().hasClass('in')).toBe false
     KeyEvent.simulate('?'.charCodeAt(0), 90)
     expect(angular.element($rootElement).children().hasClass('in')).toBe true
-    expect(hotkeys.get('esc').combo).toBe 'esc'
+    expect(hotkeys.get('esc').combo).toEqual ['esc']
     KeyEvent.simulate('?'.charCodeAt(0), 90)
     expect(hotkeys.get('esc')).toBe false
 
@@ -98,7 +100,7 @@ describe 'Angular Hotkeys', ->
     # fake a route change:
     expect(hotkeys.get('w e s')).toBe false
     $rootScope.$broadcast('$routeChangeSuccess', { hotkeys: [['w e s', 'Do something Amazing!', 'callme("ishmael")']] });
-    expect(hotkeys.get('w e s').combo).toBe 'w e s'
+    expect(hotkeys.get('w e s').combo).toEqual ['w e s']
 
     # ensure hotkey is unbound when the route changes
     $rootScope.$broadcast('$routeChangeSuccess', {});
@@ -248,41 +250,224 @@ describe 'Angular Hotkeys', ->
     KeyEvent.simulate('a'.charCodeAt(0), 90, undefined, $input[0])
     expect(executed).toBe yes
 
+  it 'should be capable of binding to a scope and auto-destroy itself', ->
+    hotkeys.bindTo(scope)
+    .add
+      combo: ['w', 'e', 's']
+      description: 'description for w'
+      callback: () ->
+      persistent: false
+    .add
+      combo: 'a'
+      action: 'keyup'
+      description: 'description for a',
+      callback: () ->
+    .add('b', 'description for b', () ->)
+    .add('c', 'description for c', () ->)
 
 
+    expect(hotkeys.get('w').combo).toEqual ['w', 'e', 's']
+    expect(hotkeys.get('e').combo).toEqual ['w', 'e', 's']
+    expect(hotkeys.get('a').combo).toEqual ['a']
+    expect(hotkeys.get('b').combo).toEqual ['b']
+    expect(hotkeys.get('c').combo).toEqual ['c']
 
-  it 'should support multiple hotkeys to the same function', ->
-    executeCount = 0
+    scope.$destroy()
+    expect(hotkeys.get('w')).toBe false
+    expect(hotkeys.get('e')).toBe false
+    expect(hotkeys.get('s')).toBe false
+    expect(hotkeys.get('a')).toBe false
+    expect(hotkeys.get('b')).toBe false
+    expect(hotkeys.get('c')).toBe false
 
-    hotkeys.add ['a', 'b'], ->
-      executeCount++
+  it 'should allow multiple calls to bindTo for same scope and still be auto-destroying', ->
+    hotkeys.bindTo(scope)
+    .add
+      combo: ['w', 'e', 's']
+      description: 'description for w'
+      callback: () ->
+      persistent: false
 
-    KeyEvent.simulate('a'.charCodeAt(0), 90)
-    expect(executeCount).toBe 1
-    KeyEvent.simulate('b'.charCodeAt(0), 90)
-    expect(executeCount).toBe 2
+    hotkeys.bindTo(scope)
+    .add
+      combo: 'a'
+      action: 'keyup'
+      description: 'description for a',
+      callback: () ->
+    .add('b', 'description for b', () ->)
+    .add('c', 'description for c', () ->)
+
+
+    expect(hotkeys.get('w').combo).toEqual ['w', 'e', 's']
+    expect(hotkeys.get('e').combo).toEqual ['w', 'e', 's']
+    expect(hotkeys.get('a').combo).toEqual ['a']
+    expect(hotkeys.get('b').combo).toEqual ['b']
+    expect(hotkeys.get('c').combo).toEqual ['c']
+
+    scope.$destroy()
+    expect(hotkeys.get('w')).toBe false
+    expect(hotkeys.get('e')).toBe false
+    expect(hotkeys.get('s')).toBe false
+    expect(hotkeys.get('a')).toBe false
+    expect(hotkeys.get('b')).toBe false
+    expect(hotkeys.get('c')).toBe false
+
+
+  describe 'misc regression tests', ->
+
+    # allowIn arguments were not aligned (issue #40 and #36) so test to prevent regressions:
+    it 'should unbind hotkeys that have also set allowIn (#36, #40)', ->
+      # func argument style should be deprecated soon
+      hotkeys.add 't', 'testing', () ->
+        test = true
+      , undefined, undefined, false
+
+      hotkeys.add
+        combo: 'w'
+        description: 'description'
+        callback: () ->
+        persistent: false
+
+      expect(hotkeys.get('t').combo).toEqual ['t']
+      expect(hotkeys.get('w').combo).toEqual ['w']
+      expect(hotkeys.get('t').persistent).toBe false
+      expect(hotkeys.get('w').persistent).toBe false
+
+      $rootScope.$broadcast('$routeChangeSuccess', {});
+      expect(hotkeys.get('t')).toBe false
+      expect(hotkeys.get('w')).toBe false
+
+    it '#42 closing cheatsheet with x should use toggleCheatSheet so esc is unbound', ->
+      expect(hotkeys.get('esc')).toBe false
+
+      expect(angular.element($rootElement).children().hasClass('in')).toBe false
+      KeyEvent.simulate('?'.charCodeAt(0), 90)
+      expect(angular.element($rootElement).children().hasClass('in')).toBe true
+
+      expect(hotkeys.get('esc').combo).toEqual ['esc']
+      # hotkeys.toggleCheatSheet()
+      scope.$$prevSibling.toggleCheatSheet()
+      expect(hotkeys.get('esc')).toBe false
+
+
+  describe 'multiple bindings', ->
+
+    it 'get()', ->
+
+      hotkeys.add ['a', 'b', 'c'], ->
+
+      # Make sure they were added:
+      expect(hotkeys.get('a').combo).toEqual ['a', 'b', 'c']
+      expect(hotkeys.get('b').combo).toEqual ['a', 'b', 'c']
+      expect(hotkeys.get('c').combo).toEqual ['a', 'b', 'c']
+      expect(hotkeys.get('w')).toBe false
+      # expect(hotkeys.get(['a', 'b'])).toEqual ['a', 'b', 'c']
+
+    it 'should callback', ->
+      executeCount = 0
+
+      hotkeys.add ['a', 'b', 'c'], ->
+        executeCount++
+
+      # Make sure they work:
+      KeyEvent.simulate('a'.charCodeAt(0), 90)
+      expect(executeCount).toBe 1
+      KeyEvent.simulate('b'.charCodeAt(0), 90)
+      expect(executeCount).toBe 2
+      KeyEvent.simulate('c'.charCodeAt(0), 90)
+      expect(executeCount).toBe 3
+      KeyEvent.simulate('w'.charCodeAt(0), 90)
+      expect(executeCount).toBe 3
+
+    it 'should delete', ->
+
+      hotkeys.add ['w', 'e', 's'], ->
+
+      expect(hotkeys.get('w').combo).toEqual ['w', 'e', 's']
+      expect(hotkeys.del(['w', 'f'])).toBe false
+      expect(hotkeys.get('w')).toBe false
+      expect(hotkeys.get('e').combo).toEqual ['e', 's']
+      expect(hotkeys.del(['e', 's'])).toBe true
+
+    it 'should still callback when some combos remain', ->
+
+      executeCount = 0
+      hotkeys.add ['a', 'b', 'c'], ->
+        executeCount++
+
+      # Delete, but leave a hotkey:
+      hotkeys.del ['a', 'b']
+      KeyEvent.simulate('b'.charCodeAt(0), 90)
+      expect(executeCount).toBe 0
+      KeyEvent.simulate('c'.charCodeAt(0), 90)
+      expect(executeCount).toBe 1
+
+      expect(hotkeys.get('a')).toBe false
+      expect(hotkeys.get('b')).toBe false
+      expect(hotkeys.get('c').combo).toEqual ['c']
+
+    it '#49 regression test', ->
+      hotkeys.add
+        combo: ['1','2','3','4','5','6','7','8','9']
+        description: 'ensure no regressions'
+        callback: () ->
+
+      expect(hotkeys.get('1').combo).toEqual ['1','2','3','4','5','6','7','8','9']
+      hotkeys.del(['1','2','3','4','5','6','7','8','9'])
+      expect(hotkeys.get('1')).toBe false
+
 
 
 describe 'hotkey directive', ->
 
-  el = scope = hotkeys = $compile = $document = null
+  elSimple = elAllowIn = scope = hotkeys = $compile = $document = executedSimple = executedAllowIn = null
 
   beforeEach ->
     module('cfp.hotkeys')
+    executedSimple = no
+    executedAllowIn = no
+
     inject ($rootScope, _$compile_, _$document_, _hotkeys_) ->
       hotkeys = _hotkeys_
       $compile = _$compile_
       # el = angular.element()
       scope = $rootScope.$new()
-      el = $compile('<div hotkey="{dir: callme}"></div>')(scope)
+      scope.callmeSimple = () ->
+        executedSimple = yes
+      scope.callmeAllowIn = () ->
+        executedAllowIn = yes
+      elSimple = $compile('<div hotkey="{e: callmeSimple}" hotkey-description="testing simple case"></div>')(scope)
+      elAllowIn = $compile('<div hotkey="{w: callmeAllowIn}" hotkey-description="testing with allowIn" hotkey-allow-in="INPUT, TEXTAREA"></div>')(scope)
       scope.$digest()
 
   it 'should allow hotkey binding via directive', ->
-    expect(hotkeys.get('dir').combo).toBe 'dir'
+    expect(hotkeys.get('e').combo).toEqual ['e']
+    expect(hotkeys.get('w').combo).toEqual ['w']
+    expect(executedSimple).toBe no
+    expect(executedAllowIn).toBe no
+    KeyEvent.simulate('e'.charCodeAt(0), 90)
+    KeyEvent.simulate('w'.charCodeAt(0), 90)
+    expect(executedSimple).toBe yes
+    expect(executedAllowIn).toBe yes
+
+  it 'should accept allowIn arguments', ->
+
+    $body = angular.element document.body
+    $input = angular.element '<input id="cfp-test"/>'
+    $body.prepend $input
+
+    expect(executedAllowIn).toBe no
+    KeyEvent.simulate('w'.charCodeAt(0), 90)
+    expect(executedAllowIn).toBe yes
+    expect(hotkeys.get('w').allowIn).toEqual ['INPUT', 'TEXTAREA']
 
   it 'should unbind the hotkey when the directive is destroyed', ->
-
-
+    expect(hotkeys.get('e').combo).toEqual ['e']
+    expect(hotkeys.get('w').combo).toEqual ['w']
+    elSimple.remove()
+    elAllowIn.remove()
+    expect(hotkeys.get('e')).toBe no
+    expect(hotkeys.get('w')).toBe no
 
 
 describe 'Platform specific things', ->
@@ -374,3 +559,16 @@ describe 'Configuration options', ->
       expect(angular.element($rootElement).children().hasClass('in')).toBe true
 
       expect(hotkeys.get('h').description).toBe 'Alternate description'
+
+  it 'should have a configurable useNgRoute defaulted to false if ngRoute is not loaded', ->
+    module 'cfp.hotkeys'
+    inject (hotkeys) ->
+      expect(hotkeys.useNgRoute).toBe false
+
+  it 'should have a configurable useNgRoute defaulted to true if ngRoute is loaded', ->
+    module 'ngRoute'
+    module 'cfp.hotkeys'
+    inject (hotkeys) ->
+      expect(hotkeys.useNgRoute).toBe true
+
+
