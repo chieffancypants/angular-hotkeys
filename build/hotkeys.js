@@ -385,6 +385,7 @@
             var shouldExecute = true;
             var target = event.target || event.srcElement; // srcElement is IE only
             var nodeName = target.nodeName.toUpperCase();
+            var rc = true
 
             // check if the input has a mousetrap class, and skip checking preventIn if so
             if ((' ' + target.className + ' ').indexOf(' mousetrap ') > -1) {
@@ -400,8 +401,9 @@
             }
 
             if (shouldExecute) {
-              wrapApply(_callback.apply(this, arguments));
+              rc = _callback.apply(this, arguments);
             }
+            return rc
           };
         }
 
@@ -525,7 +527,6 @@
       function wrapApply (callback) {
         // return mousetrap a function to call
         return function (event, combo) {
-
           // if this is an array, it means we provided a route object
           // because the scope wasn't available yet, so rewrap the callback
           // now that the scope is available:
@@ -533,15 +534,15 @@
             var funcString = callback[0];
             var route = callback[1];
             callback = function (event) {
-              route.scope.$eval(funcString);
+              return route.scope.$eval(funcString);
             };
           }
 
           // this takes place outside angular, so we'll have to call
           // $apply() to make sure angular's digest happens
-          $rootScope.$apply(function() {
+          return $rootScope.$apply(function() {
             // call the original hotkey callback with the keyboard event
-            callback(event, _get(combo));
+            return callback(event, _get(combo));
           });
         };
       }
