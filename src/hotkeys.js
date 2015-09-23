@@ -151,7 +151,7 @@
        *
        */
       Hotkey.prototype.format = function() {
-        if(this._formated === null) {
+        if (this._formated === null) {
           // Don't show all the possible key combos, just the first one.  Not sure
           // of usecase here, so open a ticket if my assumptions are wrong
           var combo = this.combo[0];
@@ -377,7 +377,10 @@
           // create the new wrapper callback
           callback = function(event) {
             var shouldExecute = true;
-            if(event) {
+
+            // if the callback is executed directly `hotkey.get('w').callback()`
+            // there will be no event, so just execute the callback.
+            if (event) {
               var target = event.target || event.srcElement; // srcElement is IE only
               var nodeName = target.nodeName.toUpperCase();
 
