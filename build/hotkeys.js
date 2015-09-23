@@ -1,5 +1,5 @@
 /*! 
- * angular-hotkeys v1.5.0
+ * angular-hotkeys v1.6.0
  * https://chieffancypants.github.io/angular-hotkeys
  * Copyright (c) 2015 Wes Cruver
  * License: MIT
@@ -157,7 +157,7 @@
        *
        */
       Hotkey.prototype.format = function() {
-        if(this._formated === null) {
+        if (this._formated === null) {
           // Don't show all the possible key combos, just the first one.  Not sure
           // of usecase here, so open a ticket if my assumptions are wrong
           var combo = this.combo[0];
@@ -341,6 +341,9 @@
           combo       = combo.combo;
         }
 
+        // no duplicates please
+        _del(combo);
+
         // description is optional:
         if (description instanceof Function) {
           action = callback;
@@ -383,18 +386,23 @@
           // create the new wrapper callback
           callback = function(event) {
             var shouldExecute = true;
-            var target = event.target || event.srcElement; // srcElement is IE only
-            var nodeName = target.nodeName.toUpperCase();
 
-            // check if the input has a mousetrap class, and skip checking preventIn if so
-            if ((' ' + target.className + ' ').indexOf(' mousetrap ') > -1) {
-              shouldExecute = true;
-            } else {
-              // don't execute callback if the event was fired from inside an element listed in preventIn
-              for (var i=0; i<preventIn.length; i++) {
-                if (preventIn[i] === nodeName) {
-                  shouldExecute = false;
-                  break;
+            // if the callback is executed directly `hotkey.get('w').callback()`
+            // there will be no event, so just execute the callback.
+            if (event) {
+              var target = event.target || event.srcElement; // srcElement is IE only
+              var nodeName = target.nodeName.toUpperCase();
+
+              // check if the input has a mousetrap class, and skip checking preventIn if so
+              if ((' ' + target.className + ' ').indexOf(' mousetrap ') > -1) {
+                shouldExecute = true;
+              } else {
+                // don't execute callback if the event was fired from inside an element listed in preventIn
+                for (var i=0; i<preventIn.length; i++) {
+                  if (preventIn[i] === nodeName) {
+                    shouldExecute = false;
+                    break;
+                  }
                 }
               }
             }
@@ -442,6 +450,15 @@
             if (scope.hotkeys[index].combo.length > 1) {
               scope.hotkeys[index].combo.splice(scope.hotkeys[index].combo.indexOf(combo), 1);
             } else {
+
+              // remove hotkey from bound scopes
+              angular.forEach(boundScopes, function (boundScope) {
+                var scopeIndex = boundScope.indexOf(scope.hotkeys[index]);
+                if (scopeIndex !== -1) {
+                    boundScope.splice(scopeIndex, 1);
+                }
+              });
+
               scope.hotkeys.splice(index, 1);
             }
             return true;
