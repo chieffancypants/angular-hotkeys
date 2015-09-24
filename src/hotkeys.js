@@ -56,7 +56,7 @@
                         '</tr>' +
                       '</tbody></table>' +
                       '<div ng-bind-html="footer" ng-if="footer"></div>' +
-                      '<div class="cfp-hotkeys-close" ng-click="toggleCheatSheet()">×</div>' +
+                      '<div class="cfp-hotkeys-close" ng-click="toggleCheatSheet()">&#215;</div>' +
                     '</div></div>';
 
     /**
@@ -92,14 +92,14 @@
        */
       function symbolize (combo) {
         var map = {
-          command   : '⌘',
-          shift     : '⇧',
-          left      : '←',
-          right     : '→',
-          up        : '↑',
-          down      : '↓',
-          'return'  : '↩',
-          backspace : '⌫'
+          command   : '\u2318',     // ⌘
+          shift     : '\u21E7',     // ⇧
+          left      : '\u2190',     // ←
+          right     : '\u2192',     // →
+          up        : '\u2191',     // ↑
+          down      : '\u2193',     // ↓
+          'return'  : '\u23CE',     // ⏎
+          backspace : '\u232B'      // ⌫
         };
         combo = combo.split('+');
 
