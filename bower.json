@@ -1,9 +1,8 @@
 {
   "name": "angular-hotkeys",
-  "version": "1.4.5",
   "main": [
-    "build/hotkeys.min.js",
-    "build/hotkeys.min.css"
+    "build/hotkeys.js",
+    "build/hotkeys.css"
   ],
   "ignore": [
     "**/.*",

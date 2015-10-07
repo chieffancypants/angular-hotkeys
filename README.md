@@ -66,7 +66,6 @@ With a few dozen shortcuts, this left the DOM really messy, and with multiple vi
 
 
 ### Usage:
-
 You can either define hotkeys in your Controller, or in your Route configuration (or both).  To start, though, require the lib as a dependency for your angular app:
 
 ```js
@@ -74,6 +73,8 @@ angular.module('myApp', ['ngRoute', 'cfp.hotkeys']);
 ```
 
 Behind the scenes, I'm using the [Mousetrap](https://github.com/ccampbell/mousetrap) library to manage the key bindings.  Check out the docs there for more information on what kind of key combinations can be used.  This library is included in the files from the `build` directory, so there is no need to install and include Mousetrap separately.
+
+**Update:** [A YouTube video tutorial was created for this project](https://www.youtube.com/watch?v=silr0L7rJOY). Thanks guys!
 
 
 #### Binding hotkeys in controllers:
@@ -138,7 +139,9 @@ Example of how directive-based hotkeys works:
 <modal title="Modal Title" hotkey="{esc: close}">
 ```
 
-### Configuration
+#### Cheatsheet
+
+A cheatsheet is created automatically for you, showing which hotkeys are available for the current route, along with a description as to what it does. The default binding to show the cheatsheet is `?`. Be sure to include the `build/hotkeys.css` stylesheet. [Cheatsheet demo](http://chieffancypants.github.io/angular-hotkeys/#features)
 
 **Disable the cheatsheet:**
 
@@ -150,6 +153,8 @@ angular.module('myApp', ['cfp.hotkeys'])
     hotkeysProvider.includeCheatSheet = false;
   })
 ```
+
+### Configuration
 
 **Disable ngRoute integration:**
 
