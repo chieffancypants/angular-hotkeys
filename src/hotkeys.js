@@ -215,9 +215,9 @@
        * attached.  This is useful to catch when the scopes are `$destroy`d and
        * then automatically unbind the hotkey.
        *
-       * @type {Array}
+       * @type {Object}
        */
-      var boundScopes = [];
+      var boundScopes = {};
 
       if (this.useNgRoute) {
         $rootScope.$on('$routeChangeSuccess', function (event, route) {
