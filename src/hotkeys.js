@@ -336,7 +336,10 @@
         }
 
         // no duplicates please
-        _del(combo);
+        var existing = _get(combo);
+        if(existing && existing.action === action) {
+          _del(combo);
+        }
 
         // description is optional:
         if (description instanceof Function) {
