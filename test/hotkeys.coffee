@@ -431,24 +431,32 @@ describe 'Angular Hotkeys', ->
 
 describe 'hotkey directive', ->
 
-  elSimple = elAllowIn = scope = hotkeys = $compile = $document = executedSimple = executedAllowIn = null
+  elSimple = elAllowIn = scope = hotkeys = $compile = $document = $timeout = executedSimple = executedAllowIn = executedClickHandler = buttonDisabled = null
 
   beforeEach ->
     module('cfp.hotkeys')
     executedSimple = no
     executedAllowIn = no
-
-    inject ($rootScope, _$compile_, _$document_, _hotkeys_) ->
+    executedClickHandler = no
+    
+    inject ($rootScope, _$compile_, _$document_, _$timeout_, _hotkeys_) ->
       hotkeys = _hotkeys_
       $compile = _$compile_
+      $timeout = _$timeout_
       # el = angular.element()
       scope = $rootScope.$new()
       scope.callmeSimple = () ->
         executedSimple = yes
       scope.callmeAllowIn = () ->
         executedAllowIn = yes
+      scope.clickHandler = () ->
+        executedClickHandler = yes
+      
+      scope.buttonDisabled = no
+      
       elSimple = $compile('<div hotkey="{e: callmeSimple}" hotkey-description="testing simple case"></div>')(scope)
       elAllowIn = $compile('<div hotkey="{w: callmeAllowIn}" hotkey-description="testing with allowIn" hotkey-allow-in="INPUT, TEXTAREA"></div>')(scope)
+      elButton = $compile('<button hotkey="q" ng-click="clickHandler()" ng-disabled="buttonDisabled" hotkey-description="active search">search</button>')(scope)
       scope.$digest()
 
   it 'should allow hotkey binding via directive', ->
@@ -461,6 +469,20 @@ describe 'hotkey directive', ->
     expect(executedSimple).toBe yes
     expect(executedAllowIn).toBe yes
 
+  it 'should accept hotkey to bind click event', ->
+    expect(hotkeys.get('q').combo).toEqual ['q']
+    expect(executedClickHandler).toBe no
+    KeyEvent.simulate('q'.charCodeAt(0), 90)
+    $timeout.flush() # //flush $timout to avoid error "[$rootScope: inprog]: $apply already in progress"
+    expect(executedClickHandler).toBe yes
+    
+  it 'should not trigger clickHandler when element is disabled', ->
+    scope.buttonDisabled = yes
+    expect(executedClickHandler).toBe no
+    KeyEvent.simulate('q'.charCodeAt(0), 90)
+    $timeout.flush()
+    expect(executedClickHandler).toBe no
+    
   it 'should accept allowIn arguments', ->
 
     $body = angular.element document.body
@@ -471,7 +493,7 @@ describe 'hotkey directive', ->
     KeyEvent.simulate('w'.charCodeAt(0), 90)
     expect(executedAllowIn).toBe yes
     expect(hotkeys.get('w').allowIn).toEqual ['INPUT', 'TEXTAREA']
-
+    
   it 'should unbind the hotkey when the directive is destroyed', ->
     expect(hotkeys.get('e').combo).toEqual ['e']
     expect(hotkeys.get('w').combo).toEqual ['w']

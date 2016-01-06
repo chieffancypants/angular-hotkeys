@@ -580,31 +580,61 @@
 
   })
 
-  .directive('hotkey', function (hotkeys) {
+  .directive('hotkey', function (hotkeys, $timeout) {
+    function addHotKey (key, attrs, func) {
+      hotkeys.add({
+        combo: key,
+        description: attrs.hotkeyDescription,
+        callback: func,
+        action: attrs.hotkeyAction,
+        allowIn: typeof attrs.hotkeyAllowIn === "string" ? attrs.hotkeyAllowIn.split(/[\s,]+/) : []
+      });      
+    }
+    
+    function removeHotKeyOnElementDestroy (el, key) {
+      // remove the hotkey if the directive is destroyed:
+      el.bind('$destroy', function() {
+        hotkeys.del(key);
+      });
+    }
+    
+    function shortcutClickHandler (el, key, attrs) {
+      addHotKey(key, attrs, function (e) { 
+        e.preventDefault();
+        
+        if (!el.attr('disabled')) {
+          //$timout avoid "[$rootScope: inprog]: $apply already in progress"
+          $timeout(function(){
+            el[0].click(); 
+          });
+        }
+      });
+      
+      removeHotKeyOnElementDestroy(el, key);
+    }
+    
+    function multilpleHotkeysHandler (el, keys, attrs) {
+      var key;
+      
+      angular.forEach(keys, function (func, hotkey) {
+        key = hotkey;
+        
+        addHotKey(key, attrs, func);
+      });
+      
+      removeHotKeyOnElementDestroy(el, key);
+    }
+    
     return {
       restrict: 'A',
       link: function (scope, el, attrs) {
-        var key, allowIn;
-
-        angular.forEach(scope.$eval(attrs.hotkey), function (func, hotkey) {
-          // split and trim the hotkeys string into array
-          allowIn = typeof attrs.hotkeyAllowIn === "string" ? attrs.hotkeyAllowIn.split(/[\s,]+/) : [];
-
-          key = hotkey;
-
-          hotkeys.add({
-            combo: hotkey,
-            description: attrs.hotkeyDescription,
-            callback: func,
-            action: attrs.hotkeyAction,
-            allowIn: allowIn
-          });
-        });
-
-        // remove the hotkey if the directive is destroyed:
-        el.bind('$destroy', function() {
-          hotkeys.del(key);
-        });
+        var keys = scope.$eval(attrs.hotkey);
+        
+        if (!keys) {
+          shortcutClickHandler(el, attrs.hotkey, attrs);
+        } else {
+          multilpleHotkeysHandler(el, keys, attrs);
+        }
       }
     };
   })
