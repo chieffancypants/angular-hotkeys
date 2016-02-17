@@ -13,6 +13,17 @@
 
   angular.module('cfp.hotkeys', []).provider('hotkeys', function($injector) {
 
+    var symbols = {
+      command   : '⌘',
+      shift     : '⇧',
+      left      : '←',
+      right     : '→',
+      up        : '↑',
+      down      : '↓',
+      'return'  : '↩',
+      backspace : '⌫'
+    };
+
     /**
      * Configurable setting to disable the cheatsheet entirely
      * @type {Boolean}
@@ -31,6 +42,12 @@
      */
 
     this.templateTitle = 'Keyboard Shortcuts:';
+
+    /**
+     * Configurable setting for keyboard labels
+     * @type {Object}
+     */
+    this.symbols = symbols;
 
     /**
      * Configurable settings for the cheat sheet header and footer.  Both are HTML, and the header
@@ -91,16 +108,6 @@
        * @return {String}       The key combination with symbols
        */
       function symbolize (combo) {
-        var map = {
-          command   : '⌘',
-          shift     : '⇧',
-          left      : '←',
-          right     : '→',
-          up        : '↑',
-          down      : '↓',
-          'return'  : '↩',
-          backspace : '⌫'
-        };
         combo = combo.split('+');
 
         for (var i = 0; i < combo.length; i++) {
@@ -113,7 +120,7 @@
             }
           }
 
-          combo[i] = map[combo[i]] || combo[i];
+          combo[i] = symbols[combo[i]] || combo[i];
         }
 
         return combo.join(' + ');
@@ -566,6 +573,7 @@
         template              : this.template,
         toggleCheatSheet      : toggleCheatSheet,
         includeCheatSheet     : this.includeCheatSheet,
+        symbols               : symbols,
         cheatSheetHotkey      : this.cheatSheetHotkey,
         cheatSheetDescription : this.cheatSheetDescription,
         useNgRoute            : this.useNgRoute,
