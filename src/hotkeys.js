@@ -3,7 +3,7 @@
  *
  * Automatic keyboard shortcuts for your angular apps
  *
- * (c) 2014 Wes Cruver
+ * (c) 2016 Wes Cruver
  * License: MIT
  */
 
