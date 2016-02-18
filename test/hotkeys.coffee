@@ -323,6 +323,19 @@ describe 'Angular Hotkeys', ->
     expect(hotkeys.get('b')).toBe false
     expect(hotkeys.get('c')).toBe false
 
+  it 'should support pause/unpause for temporary disabling of hotkeys', ->
+    executed = false
+
+    hotkeys.add 'w', ->
+      executed = true
+
+    hotkeys.pause()
+    KeyEvent.simulate('w'.charCodeAt(0), 90)
+    expect(executed).toBe false
+    hotkeys.unpause()
+    KeyEvent.simulate('w'.charCodeAt(0), 90)
+    expect(executed).toBe true
+
 
   describe 'misc regression tests', ->
 
