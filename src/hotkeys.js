@@ -386,14 +386,18 @@
             if (event) {
               var target = event.target || event.srcElement; // srcElement is IE only
               var nodeName = target.nodeName.toUpperCase();
+              var elementClasses = target.className ?
+                                   target.className.split(/\s+/).map(function(className) {return className.toUpperCase();}) :
+                                   [];
 
               // check if the input has a mousetrap class, and skip checking preventIn if so
               if ((' ' + target.className + ' ').indexOf(' mousetrap ') > -1) {
                 shouldExecute = true;
               } else {
+                var classNameAllowed = elementClasses.some(function(className) { return allowIn.indexOf(className) > -1; });
                 // don't execute callback if the event was fired from inside an element listed in preventIn
                 for (var i=0; i<preventIn.length; i++) {
-                  if (preventIn[i] === nodeName) {
+                  if (preventIn[i] === nodeName && !classNameAllowed) {
                     shouldExecute = false;
                     break;
                   }

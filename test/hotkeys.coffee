@@ -233,6 +233,21 @@ describe 'Angular Hotkeys', ->
     KeyEvent.simulate('w'.charCodeAt(0), 90, undefined, $select[0])
     expect(executed).toBe no
 
+  it 'should callback when hotkey is pressed in select field with allowIn class cfp-test', ->
+    executed = no
+
+    $body = angular.element document.body
+    $select = angular.element '<select id="cfp-test" class="cfp-test"/>'
+    $body.prepend $select
+
+    hotkeys.add
+      combo: 'w'
+      allowIn: ['cfp-test']
+      callback: -> executed = yes
+
+    KeyEvent.simulate('w'.charCodeAt(0), 90, undefined, $select[0])
+    expect(executed).toBe yes
+    
   it 'should not callback when hotkey is pressed in textarea field without allowIn TEXTAREA', ->
     executed = no
 
