@@ -374,7 +374,7 @@
         if (typeof callback === 'function') {
 
           // save the original callback
-          _callback = callback;
+          _callback = wrapApply(callback);
 
           // make sure allowIn is an array
           if (!(allowIn instanceof Array)) {
@@ -416,15 +416,17 @@
             }
 
             if (shouldExecute) {
-              wrapApply(_callback.apply(this, arguments));
+              _callback.apply(this, arguments);
             }
           };
+        } else {
+          callback = wrapApply(callback);
         }
 
         if (typeof(action) === 'string') {
-          Mousetrap.bind(combo, wrapApply(callback), action);
+          Mousetrap.bind(combo, callback, action);
         } else {
-          Mousetrap.bind(combo, wrapApply(callback));
+          Mousetrap.bind(combo, callback);
         }
 
         var hotkey = new Hotkey(combo, description, callback, action, allowIn, persistent);
