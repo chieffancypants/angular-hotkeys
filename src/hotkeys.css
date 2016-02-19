@@ -54,6 +54,15 @@
   text-align: right;
 }
 
+.cfp-hotkeys-group:after {
+  content: " / ";
+  margin-right: 5px;
+}
+
+.cfp-hotkeys-group:last-child:after {
+  display: none;
+}
+
 .cfp-hotkeys-key {
   display: inline-block;
   color: #fff;
