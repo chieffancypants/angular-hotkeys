@@ -198,6 +198,7 @@ angular.module('myApp', ['cfp.hotkeys'])
 - `callback`: The function to execute when the key(s) are pressed.  Passes along two arguments, `event` and `hotkey`
 - `action`: [OPTIONAL] The type of event to listen for, such as `keypress`, `keydown` or `keyup`. Usage of this parameter is discouraged as the underlying library will pick the most suitable option automatically. This should only be necessary in advanced situations.
 - `allowIn`: [OPTIONAL] an array of tag names to allow this combo in ('INPUT', 'SELECT', and/or 'TEXTAREA')
+- `category`: [OPTIONAL] A category name that the shortcut will be grouped under.
 
 ```js
 hotkeys.add({

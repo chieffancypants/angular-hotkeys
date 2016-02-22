@@ -32,6 +32,12 @@
   font-size: 1.2em;
 }
 
+.cfp-hotkeys-category-title {
+  font-weight: bold;
+  font-size: 1.0em;
+  padding: 14px 0 10px 70px;
+}
+
 .cfp-hotkeys {
   width: 100%;
   height: 100%;
@@ -39,9 +45,28 @@
   vertical-align: middle;
 }
 
+.cfp-hotkeys-category-container {
+  margin: 0 auto;
+  display: table;
+}
+
+.cfp-hotkeys-category-container:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
 .cfp-hotkeys table {
-  margin: auto;
+  margin: 0 25px 0 0;
   color: #333;
+  float: left;
+  width: 300px;
+}
+
+.cfp-hotkeys-category-container table:nth-child(2n+3) {
+  content: "";
+  display: table;
+  clear: both;
 }
 
 .cfp-content {
@@ -52,6 +77,7 @@
 .cfp-hotkeys-keys {
   padding: 5px;
   text-align: right;
+  width: 45%;
 }
 
 .cfp-hotkeys-key {

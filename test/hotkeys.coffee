@@ -6,6 +6,7 @@ describe 'Angular Hotkeys', ->
   beforeEach ->
     module 'cfp.hotkeys', (hotkeysProvider) ->
       hotkeysProvider.useNgRoute = true
+      hotkeysProvider.defaultCategoryName = 'Generic'
       return
 
     result = null
@@ -76,6 +77,54 @@ describe 'Angular Hotkeys', ->
     expect(hotkeys.get('esc').combo).toEqual ['esc']
     KeyEvent.simulate('?'.charCodeAt(0), 90)
     expect(hotkeys.get('esc')).toBe false
+
+  it 'should show a separate group of hotkeys for each unique hotkey category', ->
+    hotkeys.add
+      combo: 'w'
+      description: 'w'
+      category: 'group1'
+
+    KeyEvent.simulate('?'.charCodeAt(0), 90)
+
+    categoryList = Object.keys(scope.$$prevSibling.categories)
+    expect(categoryList.length).toBe 2
+    categories = scope.$$prevSibling.categories
+    expect(categories['Generic']).toBeDefined()
+    expect(categories['group1']).toBeDefined()
+
+  it 'should show a separate group of hotkeys for each unique hotkey category', ->
+    hotkeys.add
+      combo: 'w'
+      description: 'w'
+      category: 'group1'
+
+    hotkeys.add
+      combo: 'm'
+      description: 'm'
+      category: 'group2'
+
+    hotkeys.add
+      combo: 'n'
+      description: 'n'
+      category: 'Generic' # Explicitly setting the default category is the same as not setting a category
+
+    hotkeys.add
+      combo: 'l'
+      description: 'l'
+
+    KeyEvent.simulate('?'.charCodeAt(0), 90)
+
+    categories = scope.$$prevSibling.categories
+    expect(categories['Generic'].length).toBe 3
+    expect(categories['Generic']).toContain(jasmine.objectContaining({combo: ['?'] }))
+    expect(categories['Generic']).toContain(jasmine.objectContaining({combo: ['n'] }))
+    expect(categories['Generic']).toContain(jasmine.objectContaining({combo: ['l'] }))
+
+    expect(categories['group1'].length).toBe 1
+    expect(categories['group1']).toContain(jasmine.objectContaining({combo: ['w'] }))
+
+    expect(categories['group2'].length).toBe 1
+    expect(categories['group2']).toContain(jasmine.objectContaining({combo: ['m'] }))
 
   it 'should remember previously bound ESC when cheatsheet is shown', ->
     expect(hotkeys.get('esc')).toBe false
@@ -558,6 +607,14 @@ describe 'Configuration options', ->
       children = angular.element($rootElement).children()
       expect(children.hasClass('little-teapot')).toBe true
 
+  it 'should set the configured default category name for hotkeys without a category', ->
+    module 'cfp.hotkeys', (hotkeysProvider) ->
+      hotkeysProvider.cheatSheetHotkey = 'h'
+      hotkeysProvider.defaultCategoryName = 'default'
+      return
+    inject ($rootElement, hotkeys) ->
+      expect(hotkeys.get('h').category).toBe 'default'
+
   it 'should run and inject itself so it is always available', ->
     module 'cfp.hotkeys'
 
@@ -572,7 +629,7 @@ describe 'Configuration options', ->
 
     injector = angular.bootstrap(document, ['cfp.hotkeys'])
     injected = angular.element(document.body).find('div')
-    expect(injected.length).toBe 3
+    expect(injected.length).toBe 4
     expect(injected.hasClass('cfp-hotkeys-container')).toBe true
 
   it 'should have a configurable hotkey and description', ->
