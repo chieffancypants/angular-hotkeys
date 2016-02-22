@@ -20,6 +20,13 @@
     this.includeCheatSheet = true;
 
     /**
+     * Category name displayed on the cheatsheet for shortcuts that have not been added to a category.
+     * No category name is displayed if categories aren't used on any hotkeys.
+     * @type {String}
+     */
+    this.defaultCategoryName = 'Generic';
+
+    /**
      * Configurable setting to disable ngRoute hooks
      * @type {Boolean}
      */
@@ -47,14 +54,19 @@
     this.template = '<div class="cfp-hotkeys-container fade" ng-class="{in: helpVisible}" style="display: none;"><div class="cfp-hotkeys">' +
                       '<h4 class="cfp-hotkeys-title" ng-if="!header">{{ title }}</h4>' +
                       '<div ng-bind-html="header" ng-if="header"></div>' +
-                      '<table><tbody>' +
-                        '<tr ng-repeat="hotkey in hotkeys | filter:{ description: \'!$$undefined$$\' }">' +
-                          '<td class="cfp-hotkeys-keys">' +
-                            '<span ng-repeat="key in hotkey.format() track by $index" class="cfp-hotkeys-key">{{ key }}</span>' +
-                          '</td>' +
-                          '<td class="cfp-hotkeys-text">{{ hotkey.description }}</td>' +
-                        '</tr>' +
-                      '</tbody></table>' +
+                      '<div class="cfp-hotkeys-category-container">' +
+                        '<table ng-repeat="(categoryName,hotkeysInCategory) in categories"><tbody>' +
+                          '<tr ng-if="numCategories > 1">' +
+                            '<td class="cfp-hotkeys-category-title" colspan="2">{{categoryName}}</td>' +
+                          '</tr>' +
+                          '<tr ng-repeat="hotkey in hotkeysInCategory | filter:{ description: \'!$$undefined$$\' }">' +
+                            '<td class="cfp-hotkeys-keys">' +
+                              '<span class="cfp-hotkeys-key" ng-repeat="key in hotkey.format() track by $index">{{ key }}</span>' +
+                            '</td>' +
+                            '<td class="cfp-hotkeys-text">{{ hotkey.description }}</td>' +
+                          '</tr>' +
+                        '</tbody></table>' +
+                      '</div>' +
                       '<div ng-bind-html="footer" ng-if="footer"></div>' +
                       '<div class="cfp-hotkeys-close" ng-click="toggleCheatSheet()">&#215;</div>' +
                     '</div></div>';
@@ -142,8 +154,9 @@
        * @param {string}   action      the type of event to listen for (for mousetrap)
        * @param {array}    allowIn     an array of tag names to allow this combo in ('INPUT', 'SELECT', and/or 'TEXTAREA')
        * @param {Boolean}  persistent  Whether the hotkey persists navigation events
+       * @param {string}   category    Optional name for a category that the cheatsheet will show this hotkey under
        */
-      function Hotkey (combo, description, callback, action, allowIn, persistent) {
+      function Hotkey (combo, description, callback, action, allowIn, persistent, category) {
         // TODO: Check that the values are sane because we could
         // be trying to instantiate a new Hotkey with outside dev's
         // supplied values
@@ -154,6 +167,7 @@
         this.action = action;
         this.allowIn = allowIn;
         this.persistent = persistent;
+        this.category = category;
         this._formated = null;
       }
 
@@ -223,6 +237,11 @@
        */
       scope.toggleCheatSheet = toggleCheatSheet;
 
+      /**
+       * Expose defaultCategoryName to hotkeys scope so we can access it from within the Hotkey object
+       * @type {String}
+       */
+      scope.defaultCategoryName = this.defaultCategoryName;
 
       /**
        * Holds references to the different scopes that have bound hotkeys
@@ -291,7 +310,26 @@
       }
 
       /**
-       * Toggles the help menu element's visiblity
+       * Rebuilds the shortcut categories so the cheatsheet will reflect the currently active shortcuts in their respective categories
+       */
+      function _updateCategories () {
+        scope.categories = {};
+        scope.numCategories = 0;
+
+        for (var i = 0; i < scope.hotkeys.length; ++i) {
+          var hotkey = scope.hotkeys[i];
+          var category = hotkey.category;
+
+          if (!scope.categories[category]) {
+            scope.categories[category] = [];
+            ++scope.numCategories;
+          }
+          scope.categories[category].push(hotkey);
+        }
+      }
+
+      /**
+       * Toggles the help menu element's visibility
        */
       var previousEsc = false;
 
@@ -302,6 +340,8 @@
         // as a directive in the template, but that would create a nasty
         // circular dependency issue that I don't feel like sorting out.
         if (scope.helpVisible) {
+          _updateCategories();
+
           previousEsc = _get('esc');
           _del('esc');
 
@@ -328,9 +368,9 @@
        * @param {string}   action      the type of event to listen for (for mousetrap)
        * @param {array}    allowIn     an array of tag names to allow this combo in ('INPUT', 'SELECT', and/or 'TEXTAREA')
        * @param {boolean}  persistent  if true, the binding is preserved upon route changes
+       * @param {string}   category       optional name for a category that the cheatsheet will show this hotkey under
        */
-      function _add (combo, description, callback, action, allowIn, persistent) {
-
+      function _add (combo, description, callback, action, allowIn, persistent, category) {
         // used to save original callback for "allowIn" wrapping:
         var _callback;
 
@@ -346,6 +386,7 @@
           action      = combo.action;
           persistent  = combo.persistent;
           allowIn     = combo.allowIn;
+          category    = combo.category;
           combo       = combo.combo;
         }
 
@@ -359,6 +400,11 @@
           description = '$$undefined$$';
         } else if (angular.isUndefined(description)) {
           description = '$$undefined$$';
+        }
+
+        // category is optional, but hotkeys that are not categorized still live in an implicit default category
+        if (!category) {
+          category = scope.defaultCategoryName;
         }
 
         // any items added through the public API are for controllers
@@ -427,7 +473,7 @@
           Mousetrap.bind(combo, wrapApply(callback));
         }
 
-        var hotkey = new Hotkey(combo, description, callback, action, allowIn, persistent);
+        var hotkey = new Hotkey(combo, description, callback, action, allowIn, persistent, category);
         scope.hotkeys.push(hotkey);
         return hotkey;
       }
@@ -579,6 +625,7 @@
         template              : this.template,
         toggleCheatSheet      : toggleCheatSheet,
         includeCheatSheet     : this.includeCheatSheet,
+        defaultCategoryName   : this.defaultCategoryName,
         cheatSheetHotkey      : this.cheatSheetHotkey,
         cheatSheetDescription : this.cheatSheetDescription,
         useNgRoute            : this.useNgRoute,
@@ -591,8 +638,6 @@
       return publicApi;
 
     };
-
-
   })
 
   .directive('hotkey', function (hotkeys) {
@@ -629,5 +674,4 @@
     // force hotkeys to run by injecting it. Without this, hotkeys only runs
     // when a controller or something else asks for it via DI.
   });
-
 })();
