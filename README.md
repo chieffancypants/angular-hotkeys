@@ -203,6 +203,7 @@ angular.module('myApp', ['cfp.hotkeys'])
 hotkeys.add({
   combo: 'ctrl+w',
   description: 'Description goes here',
+  action: 'keyup',
   callback: function(event, hotkey) {
     event.preventDefault();
   }
