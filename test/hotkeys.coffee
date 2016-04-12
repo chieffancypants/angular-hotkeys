@@ -160,6 +160,35 @@ describe 'Angular Hotkeys', ->
     expect(executed).toBe true
     expect(passedArg).toBe 'ishmael'
 
+  it 'should callback when hotkey is pressed in contenteditable field and inContentEditable is configured', ->
+    executed = no
+
+    $body = angular.element document.body
+    $element = angular.element '<span contenteditable></span>'
+    $body.prepend $element
+
+    hotkeys.add
+      combo: 'w'
+      inContentEditable: true
+      callback: -> executed = yes
+
+    KeyEvent.simulate('w'.charCodeAt(0), 90, undefined, $element[0])
+    expect(executed).toBe yes
+
+  it 'should not callback when hotkey is pressed in contenteditable field and inContentEditable is not configured', ->
+    executed = no
+
+    $body = angular.element document.body
+    $element = angular.element '<span contenteditable></span>'
+    $body.prepend $element
+
+    hotkeys.add
+      combo: 'w'
+      callback: -> executed = yes
+
+    KeyEvent.simulate('w'.charCodeAt(0), 90, undefined, $element[0])
+    expect(executed).toBe no
+
   it 'should callback when hotkey is pressed in input field and allowIn INPUT is configured', ->
     executed = no
 

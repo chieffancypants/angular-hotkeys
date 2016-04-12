@@ -85,18 +85,13 @@
 
       // monkeypatch Mousetrap's stopCallback() function
       // this version doesn't return true when the element is an INPUT, SELECT, or TEXTAREA
-      // (instead we will perform this check per-key in the _add() method)
+      // (instead we will perform this check per-key in the _add() method). Idem for contenteditable elements.
       Mousetrap.prototype.stopCallback = function(event, element) {
         if (!mouseTrapEnabled) {
           return true;
         }
 
-        // if the element has the class "mousetrap" then no need to stop
-        if ((' ' + element.className + ' ').indexOf(' mousetrap ') > -1) {
-          return false;
-        }
-
-        return (element.contentEditable && element.contentEditable == 'true');
+        return false;
       };
 
       /**
@@ -136,14 +131,15 @@
       /**
        * Hotkey object used internally for consistency
        *
-       * @param {array}    combo       The keycombo. it's an array to support multiple combos
-       * @param {String}   description Description for the keycombo
-       * @param {Function} callback    function to execute when keycombo pressed
-       * @param {string}   action      the type of event to listen for (for mousetrap)
-       * @param {array}    allowIn     an array of tag names to allow this combo in ('INPUT', 'SELECT', and/or 'TEXTAREA')
-       * @param {Boolean}  persistent  Whether the hotkey persists navigation events
+       * @param {array}    combo              The keycombo. it's an array to support multiple combos
+       * @param {String}   description        Description for the keycombo
+       * @param {Function} callback           function to execute when keycombo pressed
+       * @param {string}   action             the type of event to listen for (for mousetrap)
+       * @param {array}    allowIn            an array of tag names to allow this combo in ('INPUT', 'SELECT', and/or 'TEXTAREA')
+       * @param {Boolean}  persistent         Whether the hotkey persists navigation events
+       * @param {boolean}  inContentEditable  Wether to allow combo in contenteditable elements
        */
-      function Hotkey (combo, description, callback, action, allowIn, persistent) {
+      function Hotkey (combo, description, callback, action, allowIn, persistent, inContentEditable) {
         // TODO: Check that the values are sane because we could
         // be trying to instantiate a new Hotkey with outside dev's
         // supplied values
@@ -154,6 +150,7 @@
         this.action = action;
         this.allowIn = allowIn;
         this.persistent = persistent;
+        this.inContentEditable = inContentEditable;
         this._formated = null;
       }
 
@@ -322,14 +319,15 @@
       /**
        * Creates a new Hotkey and creates the Mousetrap binding
        *
-       * @param {string}   combo       mousetrap key binding
-       * @param {string}   description description for the help menu
-       * @param {Function} callback    method to call when key is pressed
-       * @param {string}   action      the type of event to listen for (for mousetrap)
-       * @param {array}    allowIn     an array of tag names to allow this combo in ('INPUT', 'SELECT', and/or 'TEXTAREA')
-       * @param {boolean}  persistent  if true, the binding is preserved upon route changes
+       * @param {string}   combo              mousetrap key binding
+       * @param {string}   description        description for the help menu
+       * @param {Function} callback           method to call when key is pressed
+       * @param {string}   action             the type of event to listen for (for mousetrap)
+       * @param {array}    allowIn            an array of tag names to allow this combo in ('INPUT', 'SELECT', and/or 'TEXTAREA')
+       * @param {boolean}  persistent         if true, the binding is preserved upon route changes
+       * @param {boolean}  inContentEditable  Wether to allow combo in contenteditable elements
        */
-      function _add (combo, description, callback, action, allowIn, persistent) {
+      function _add (combo, description, callback, action, allowIn, persistent, inContentEditable) {
 
         // used to save original callback for "allowIn" wrapping:
         var _callback;
@@ -341,12 +339,13 @@
         var objType = Object.prototype.toString.call(combo);
 
         if (objType === '[object Object]') {
-          description = combo.description;
-          callback    = combo.callback;
-          action      = combo.action;
-          persistent  = combo.persistent;
-          allowIn     = combo.allowIn;
-          combo       = combo.combo;
+          description       = combo.description;
+          callback          = combo.callback;
+          action            = combo.action;
+          persistent        = combo.persistent;
+          allowIn           = combo.allowIn;
+          inContentEditable = combo.inContentEditable;
+          combo             = combo.combo;
         }
 
         // no duplicates please
@@ -405,6 +404,11 @@
               if ((' ' + target.className + ' ').indexOf(' mousetrap ') > -1) {
                 shouldExecute = true;
               } else {
+                // By default prevent execution of callback if in contenteditable
+                if (target.contentEditable && target.contentEditable == 'true') {
+                  shouldExecute = inContentEditable || false;
+                }
+
                 // don't execute callback if the event was fired from inside an element listed in preventIn
                 for (var i=0; i<preventIn.length; i++) {
                   if (preventIn[i] === nodeName) {

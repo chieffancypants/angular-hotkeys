@@ -198,6 +198,7 @@ angular.module('myApp', ['cfp.hotkeys'])
 - `callback`: The function to execute when the key(s) are pressed.  Passes along two arguments, `event` and `hotkey`
 - `action`: [OPTIONAL] The type of event to listen for, such as `keypress`, `keydown` or `keyup`. Usage of this parameter is discouraged as the underlying library will pick the most suitable option automatically. This should only be necessary in advanced situations.
 - `allowIn`: [OPTIONAL] an array of tag names to allow this combo in ('INPUT', 'SELECT', and/or 'TEXTAREA')
+- `inContentEditable`: [OPTIONAL] Wether to allow this combo in a contenteditable element. Defaults to false.
 
 ```js
 hotkeys.add({
@@ -237,6 +238,19 @@ hotkeys.add({
   combo: 'ctrl+w',
   description: 'Description goes here',
   allowIn: ['INPUT', 'SELECT', 'TEXTAREA'],
+  callback: function(event, hotkey) {
+    event.preventDefault();
+  }
+});
+```
+
+### Allowing hotkeys in contenteditable elements
+By default, Mousetrap prevents hotkey callbacks from firing when their event originates from an element with contenteditable="true". To enable hotkeys in these elements, you must set `inContentEditable` to `true`:
+```js
+hotkeys.add({
+  combo: 'ctrl+w',
+  description: 'Description goes here',
+  inContentEditable: true
   callback: function(event, hotkey) {
     event.preventDefault();
   }
