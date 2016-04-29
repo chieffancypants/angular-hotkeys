@@ -586,6 +586,7 @@
         templateTitle         : this.templateTitle,
         pause                 : pause,
         unpause               : unpause
+        symbolize             : symbolize
       };
 
       return publicApi;
