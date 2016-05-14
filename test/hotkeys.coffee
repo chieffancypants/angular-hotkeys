@@ -444,7 +444,7 @@ describe 'Angular Hotkeys', ->
 
 describe 'hotkey directive', ->
 
-  elSimple = elAllowIn = elMultiple = scope = hotkeys = $compile = $document = executedSimple = executedAllowIn = null
+  elSimpleAction = elMultipleAction = elSimple = elAllowIn = elMultiple = scope = hotkeys = $compile = $document = executedSimple = executedAllowIn = null
 
   beforeEach ->
     module('cfp.hotkeys')
@@ -463,7 +463,9 @@ describe 'hotkey directive', ->
       scope.callmeMultiple = () ->
       elSimple = $compile('<div hotkey="{e: callmeSimple}" hotkey-description="testing simple case"></div>')(scope)
       elAllowIn = $compile('<div hotkey="{w: callmeAllowIn}" hotkey-description="testing with allowIn" hotkey-allow-in="INPUT, TEXTAREA"></div>')(scope)
-      elMultiple = $compile('<div hotkey="{a: callmeMultiple, b: callmeMultiple}" hotkey-description="testing with multiple hotkeys"></div>')(scope)
+      elMultiple = $compile('<div hotkey="{a: callmeMultiple, b: callmeMultiple}" hotkey-description="{a: \'test for a\', b: \'test for b\'}"></div>')(scope)
+      elSimpleAction = $compile('<div hotkey="{q: callmeSimple}" hotkey-action="keypress"></div>')(scope)
+      elMultipleAction = $compile('<div hotkey="{u: callmeMultiple, v: callmeMultiple}" hotkey-action="{u: \'keypress\'}"></div>')(scope)
       scope.$digest()
 
   it 'should allow hotkey binding via directive', ->
@@ -489,9 +491,13 @@ describe 'hotkey directive', ->
 
   it 'should unbind the hotkey when the directive is destroyed', ->
     expect(hotkeys.get('e').combo).toEqual ['e']
+    expect(hotkeys.get('e').description).toEqual 'testing simple case'
     expect(hotkeys.get('w').combo).toEqual ['w']
+    expect(hotkeys.get('w').description).toEqual 'testing with allowIn'
     expect(hotkeys.get('a').combo).toEqual ['a']
+    expect(hotkeys.get('a').description).toEqual 'test for a'
     expect(hotkeys.get('b').combo).toEqual ['b']
+    expect(hotkeys.get('b').description).toEqual 'test for b'
     elSimple.remove()
     elAllowIn.remove()
     elMultiple.remove()
@@ -500,6 +506,13 @@ describe 'hotkey directive', ->
     expect(hotkeys.get('a')).toBe no
     expect(hotkeys.get('b')).toBe no
 
+  it 'should handle actions simply and multiply', ->
+    expect(hotkeys.get('q').combo).toEqual ['q']
+    expect(hotkeys.get('q').action).toEqual 'keypress'
+    expect(hotkeys.get('u').combo).toEqual ['u']
+    expect(hotkeys.get('u').action).toEqual 'keypress'
+    expect(hotkeys.get('v').combo).toEqual ['v']
+    expect(hotkeys.get('v').action).toBe undefined
 
 describe 'Platform specific things', ->
   beforeEach ->
