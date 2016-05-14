@@ -136,7 +136,19 @@ Lastly, even though binding hotkeys in your templates/html tends to be a bad ide
 Example of how directive-based hotkeys works:
 
 ```html
-<modal title="Modal Title" hotkey="{esc: close}">
+<modal title="Modal Title" hotkey="{esc: close}" hotkey-description="close modal">
+```
+
+another example:
+
+```html
+<modal
+  title="Another Modal Title"
+  hotkey="{'ctrl+m': handleControlM, enter: handleEnter}"
+  hotkey-description="{'ctrl+m': 'control-m thing', enter: 'an enter'}"
+  hotkey-action="{'ctrl+m': 'keypress'}"
+  hotkey-allow-in="INPUT,TEXTAREA"
+  >
 ```
 
 #### Cheatsheet

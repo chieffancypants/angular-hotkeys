@@ -600,19 +600,41 @@
       restrict: 'A',
       link: function (scope, el, attrs) {
         var keys = [],
-            allowIn;
+            allowIn,
+            hotkeyDescription,
+            hotkeyAction;
 
         angular.forEach(scope.$eval(attrs.hotkey), function (func, hotkey) {
           // split and trim the hotkeys string into array
           allowIn = typeof attrs.hotkeyAllowIn === "string" ? attrs.hotkeyAllowIn.split(/[\s,]+/) : [];
+          
+          if (typeof attrs.hotkeyDescription === "string") {
+            try {
+              hotkeyDescription = scope.$eval(attrs.hotkeyDescription)[hotkey];
+            } catch(e) {
+              hotkeyDescription = attrs.hotkeyDescription;
+            }
+          } else {
+            hotkeyDescription = attrs.hotkeyDescription;
+          }
+
+          if (typeof attrs.hotkeyAction === "string") {
+            try {
+              hotkeyAction = scope.$eval(attrs.hotkeyAction)[hotkey];
+            } catch(e) {
+              hotkeyAction = attrs.hotkeyAction;
+            }
+          } else {
+            hotkeyAction = attrs.hotkeyAction;
+          }
 
           keys.push(hotkey);
 
           hotkeys.add({
             combo: hotkey,
-            description: attrs.hotkeyDescription,
+            description: hotkeyDescription,
             callback: func,
-            action: attrs.hotkeyAction,
+            action: hotkeyAction,
             allowIn: allowIn
           });
         });
