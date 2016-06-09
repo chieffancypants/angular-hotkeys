@@ -911,14 +911,14 @@
     }
 
     /**
-     * stops propogation for this event
+     * stops immediate propagation for this event
      *
      * @param {Event} e
      * @returns void
      */
-    function _stopPropagation(e) {
-        if (e.stopPropagation) {
-            e.stopPropagation();
+    function _stopImmediatePropagation(e) {
+        if (e.stopImmediatePropagation) {
+            e.stopImmediatePropagation();
             return;
         }
 
@@ -1244,7 +1244,7 @@
 
             if (callback(e, combo) === false) {
                 _preventDefault(e);
-                _stopPropagation(e);
+                _stopImmediatePropagation(e);
             }
         }
 
