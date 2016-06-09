@@ -319,6 +319,11 @@
         }
       }
 
+      // Helper function to expose helpVisible for the public API
+      function helpVisible() {
+        return scope.helpVisible;
+      }
+
       /**
        * Creates a new Hotkey and creates the Mousetrap binding
        *
@@ -578,6 +583,7 @@
         bindTo                : bindTo,
         template              : this.template,
         toggleCheatSheet      : toggleCheatSheet,
+        helpVisible           : helpVisible,
         includeCheatSheet     : this.includeCheatSheet,
         cheatSheetHotkey      : this.cheatSheetHotkey,
         cheatSheetDescription : this.cheatSheetDescription,
