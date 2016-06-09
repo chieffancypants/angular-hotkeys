@@ -323,6 +323,8 @@
             _add(previousEsc);
           }
         }
+        
+        return false;
       }
 
       /**
