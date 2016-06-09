@@ -416,7 +416,7 @@
             }
 
             if (shouldExecute) {
-              wrapApply(_callback.apply(this, arguments));
+              return _callback.apply(this, arguments);
             }
           };
         }
@@ -564,9 +564,9 @@
 
           // this takes place outside angular, so we'll have to call
           // $apply() to make sure angular's digest happens
-          $rootScope.$apply(function() {
+          return $rootScope.$apply(function() {
             // call the original hotkey callback with the keyboard event
-            callback(event, _get(combo));
+            return callback(event, _get(combo));
           });
         };
       }
