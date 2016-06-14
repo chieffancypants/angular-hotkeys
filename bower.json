@@ -12,7 +12,7 @@
     "example"
   ],
   "devDependencies": {
-    "mousetrap": "~1.5.2",
+    "mousetrap": "https://github.com/leyanlo/mousetrap/tarball/53c7e812c2de1dbb203dc6d668b17ed78297a473",
     "angular-mocks": "~1.2.15",
     "angular-route": "~1.2.15"
   }

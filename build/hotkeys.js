@@ -323,6 +323,13 @@
             _add(previousEsc);
           }
         }
+        
+        return false;
+      }
+
+      // Helper function to expose helpVisible for the public API
+      function helpVisible() {
+        return scope.helpVisible;
       }
 
       /**
@@ -422,7 +429,7 @@
             }
 
             if (shouldExecute) {
-              wrapApply(_callback.apply(this, arguments));
+              return _callback.apply(this, arguments);
             }
           };
         }
@@ -570,9 +577,9 @@
 
           // this takes place outside angular, so we'll have to call
           // $apply() to make sure angular's digest happens
-          $rootScope.$apply(function() {
+          return $rootScope.$apply(function() {
             // call the original hotkey callback with the keyboard event
-            callback(event, _get(combo));
+            return callback(event, _get(combo));
           });
         };
       }
@@ -584,6 +591,7 @@
         bindTo                : bindTo,
         template              : this.template,
         toggleCheatSheet      : toggleCheatSheet,
+        helpVisible           : helpVisible,
         includeCheatSheet     : this.includeCheatSheet,
         cheatSheetHotkey      : this.cheatSheetHotkey,
         cheatSheetDescription : this.cheatSheetDescription,
@@ -911,14 +919,14 @@
     }
 
     /**
-     * stops propogation for this event
+     * stops immediate propagation for this event
      *
      * @param {Event} e
      * @returns void
      */
-    function _stopPropagation(e) {
-        if (e.stopPropagation) {
-            e.stopPropagation();
+    function _stopImmediatePropagation(e) {
+        if (e.stopImmediatePropagation) {
+            e.stopImmediatePropagation();
             return;
         }
 
@@ -1244,7 +1252,7 @@
 
             if (callback(e, combo) === false) {
                 _preventDefault(e);
-                _stopPropagation(e);
+                _stopImmediatePropagation(e);
             }
         }
 
