@@ -139,6 +139,14 @@ Example of how directive-based hotkeys works:
 <modal title="Modal Title" hotkey="{esc: close}">
 ```
 
+#### Supported Keys
+
+For modifier keys you can use `shift`, `ctrl`, `alt`, or `meta`.
+
+Other special keys are `backspace`, `tab`, `enter`, `return`, `capslock`, `esc`, `escape`, `space`, `pageup`, `pagedown`, `end`, `home`, `left`, `up`, `right`, `down`, `ins`, `del`, and `plus`.
+
+Any other key you should be able to reference by name like `a`, `/`, `$`, `*`, or `=`.
+
 #### Cheatsheet
 
 A cheatsheet is created automatically for you, showing which hotkeys are available for the current route, along with a description as to what it does. The default binding to show the cheatsheet is `?`. Be sure to include the `build/hotkeys.css` stylesheet. [Cheatsheet demo](http://chieffancypants.github.io/angular-hotkeys/#features)
