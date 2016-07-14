@@ -166,15 +166,19 @@
        */
       Hotkey.prototype.format = function() {
         if (this._formated === null) {
-          // Don't show all the possible key combos, just the first one.  Not sure
-          // of usecase here, so open a ticket if my assumptions are wrong
-          var combo = this.combo[0];
+          // Show all the possible key combos, formatted.
+          // A possible use case could be a combo with keys that differ from platform to platform.
+          // ex. combo: ['home','alt+left'] could be used for PC/Mac key bindings
+          var _formated = [];
 
-          var sequence = combo.split(/[\s]/);
-          for (var i = 0; i < sequence.length; i++) {
-            sequence[i] = symbolize(sequence[i]);
-          }
-          this._formated = sequence;
+          angular.forEach(this.combo, function(combo) {
+            var sequence = combo.split(/[\s]/);
+            for (var i = 0; i < sequence.length; i++) {
+              sequence[i] = symbolize(sequence[i]);
+            }
+            _formated.push(sequence.join(' '));
+          });
+          this._formated = _formated; 
         }
 
         return this._formated;
