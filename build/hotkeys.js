@@ -574,6 +574,8 @@
             // call the original hotkey callback with the keyboard event
             callback(event, _get(combo));
           });
+          // Return false so Mousetrap cancels the event and prevents propagation
+          return false;
         };
       }
 
@@ -1050,7 +1052,7 @@
     }
 
     function _belongsTo(element, ancestor) {
-        if (element === document) {
+        if (element === null || element === document) {
             return false;
         }
 

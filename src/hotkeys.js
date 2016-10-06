@@ -568,6 +568,8 @@
             // call the original hotkey callback with the keyboard event
             callback(event, _get(combo));
           });
+          // Return false so Mousetrap cancels the event and prevents propagation
+          return false;
         };
       }
 
