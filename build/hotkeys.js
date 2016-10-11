@@ -1,5 +1,5 @@
 /*! 
- * angular-hotkeys v1.7.0
+ * angular-hotkeys v1.8.0
  * https://chieffancypants.github.io/angular-hotkeys
  * Copyright (c) 2016 Wes Cruver
  * License: MIT
@@ -70,6 +70,12 @@
      * @type {String}
      */
     this.cheatSheetHotkey = '?';
+
+		/**
+		 * Configurable setting for allowing the cheat sheet hotkey in certain nodes like 'INPUT', 'SELECT' and 'TEXTAREA'.
+		 * @type {Array} Array of strings
+		 */
+    this.cheatSheetAllowIn = null;
 
     /**
      * Configurable setting for the cheat sheet description
@@ -269,7 +275,7 @@
         var document = $document[0];
         var element = $rootElement[0];
         var helpMenu = angular.element(this.template);
-        _add(this.cheatSheetHotkey, this.cheatSheetDescription, toggleCheatSheet);
+        _add(this.cheatSheetHotkey, this.cheatSheetDescription, toggleCheatSheet, null, this.cheatSheetAllowIn);
 
         // If $rootElement is document or documentElement, then body must be used
         if (element === document || element === document.documentElement) {
@@ -574,6 +580,8 @@
             // call the original hotkey callback with the keyboard event
             callback(event, _get(combo));
           });
+          // Return false so Mousetrap cancels the event and prevents propagation
+          return false;
         };
       }
 
@@ -586,6 +594,7 @@
         toggleCheatSheet      : toggleCheatSheet,
         includeCheatSheet     : this.includeCheatSheet,
         cheatSheetHotkey      : this.cheatSheetHotkey,
+        cheatSheetAllowIn     : this.cheatSheetAllowIn,
         cheatSheetDescription : this.cheatSheetDescription,
         useNgRoute            : this.useNgRoute,
         purgeHotkeys          : purgeHotkeys,
@@ -1050,7 +1059,7 @@
     }
 
     function _belongsTo(element, ancestor) {
-        if (element === document) {
+        if (element === null || element === document) {
             return false;
         }
 

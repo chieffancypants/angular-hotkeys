@@ -65,6 +65,12 @@
      */
     this.cheatSheetHotkey = '?';
 
+		/**
+		 * Configurable setting for allowing the cheat sheet hotkey in certain nodes like 'INPUT', 'SELECT' and 'TEXTAREA'.
+		 * @type {Array} Array of strings
+		 */
+    this.cheatSheetAllowIn = null;
+
     /**
      * Configurable setting for the cheat sheet description
      * @type {String}
@@ -263,7 +269,7 @@
         var document = $document[0];
         var element = $rootElement[0];
         var helpMenu = angular.element(this.template);
-        _add(this.cheatSheetHotkey, this.cheatSheetDescription, toggleCheatSheet);
+        _add(this.cheatSheetHotkey, this.cheatSheetDescription, toggleCheatSheet, null, this.cheatSheetAllowIn);
 
         // If $rootElement is document or documentElement, then body must be used
         if (element === document || element === document.documentElement) {
@@ -568,6 +574,8 @@
             // call the original hotkey callback with the keyboard event
             callback(event, _get(combo));
           });
+          // Return false so Mousetrap cancels the event and prevents propagation
+          return false;
         };
       }
 
@@ -580,6 +588,7 @@
         toggleCheatSheet      : toggleCheatSheet,
         includeCheatSheet     : this.includeCheatSheet,
         cheatSheetHotkey      : this.cheatSheetHotkey,
+        cheatSheetAllowIn     : this.cheatSheetAllowIn,
         cheatSheetDescription : this.cheatSheetDescription,
         useNgRoute            : this.useNgRoute,
         purgeHotkeys          : purgeHotkeys,
