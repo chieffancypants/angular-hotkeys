@@ -11,7 +11,7 @@
 
   'use strict';
 
-  angular.module('cfp.hotkeys', []).provider('hotkeys', function($injector) {
+  angular.module('cfp.hotkeys', []).provider('hotkeys', [function($injector) {
 
     /**
      * Configurable setting to disable the cheatsheet entirely
@@ -593,9 +593,9 @@
     };
 
 
-  })
+  }])
 
-  .directive('hotkey', function (hotkeys) {
+  .directive('hotkey', [function (hotkeys) {
     return {
       restrict: 'A',
       link: function (scope, el, attrs) {
@@ -623,7 +623,7 @@
         });
       }
     };
-  })
+  }])
 
   .run(function(hotkeys) {
     // force hotkeys to run by injecting it. Without this, hotkeys only runs
