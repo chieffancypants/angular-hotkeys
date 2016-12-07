@@ -71,7 +71,7 @@
      */
     this.cheatSheetDescription = 'Show / hide this help menu';
 
-    this.$get = function ($rootElement, $rootScope, $compile, $window, $document) {
+    this.$get = ['$rootElement', '$rootScope', '$compile', '$window', '$document', function ($rootElement, $rootScope, $compile, $window, $document) {
 
       var mouseTrapEnabled = true;
 
