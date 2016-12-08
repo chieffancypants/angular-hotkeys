@@ -516,8 +516,7 @@
           boundScopes[scope.$id] = [];
 
           scope.$on('$destroy', function () {
-            var i = boundScopes[scope.$id].length;
-            while (i--) {
+            while (boundScopes[scope.$id].length) {
               _del(boundScopes[scope.$id].pop());
             }
           });
