@@ -193,7 +193,7 @@ angular.module('myApp', ['cfp.hotkeys'])
 
 #### hotkeys.add(object)
 `object`: An object with the following parameters:
-- `combo`: They keyboard combo (shortcut) you want to bind to
+- `combo`: The keyboard combo (shortcut) you want to bind to
 - `description`: [OPTIONAL] The description for what the combo does and is only used for the Cheat Sheet.  If it is not supplied, it will not show up, and in effect, allows you to have unlisted hotkeys.
 - `callback`: The function to execute when the key(s) are pressed.  Passes along two arguments, `event` and `hotkey`
 - `action`: [OPTIONAL] The type of event to listen for, such as `keypress`, `keydown` or `keyup`. Usage of this parameter is discouraged as the underlying library will pick the most suitable option automatically. This should only be necessary in advanced situations.
