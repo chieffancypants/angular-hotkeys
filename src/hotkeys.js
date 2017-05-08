@@ -18,7 +18,20 @@
      * @type {Boolean}
      */
     this.includeCheatSheet = true;
-
+    
+     /**
+     * Configurable setting allow in CheatSheet
+     * @type {Array}
+     */
+    this.allowInCheat = [];
+    
+    
+     /**
+     * Configurable setting for translation
+     * @type {Array}
+     */
+    this.mapInit = {};
+    
     /**
      * Configurable setting to disable ngRoute hooks
      * @type {Boolean}
@@ -104,17 +117,11 @@
        * @param  {String} combo Key combination, e.g. 'mod+f'
        * @return {String}       The key combination with symbols
        */
+      var mapaInit = this.mapInit;
+      
       function symbolize (combo) {
-        var map = {
-          command   : '\u2318',     // ⌘
-          shift     : '\u21E7',     // ⇧
-          left      : '\u2190',     // ←
-          right     : '\u2192',     // →
-          up        : '\u2191',     // ↑
-          down      : '\u2193',     // ↓
-          'return'  : '\u23CE',     // ⏎
-          backspace : '\u232B'      // ⌫
-        };
+        var map = mapaInit;
+        
         combo = combo.split('+');
 
         for (var i = 0; i < combo.length; i++) {
@@ -263,7 +270,7 @@
         var document = $document[0];
         var element = $rootElement[0];
         var helpMenu = angular.element(this.template);
-        _add(this.cheatSheetHotkey, this.cheatSheetDescription, toggleCheatSheet);
+        _add(this.cheatSheetHotkey, this.cheatSheetDescription, toggleCheatSheet, null, this.allowInCheat);
 
         // If $rootElement is document or documentElement, then body must be used
         if (element === document || element === document.documentElement) {
