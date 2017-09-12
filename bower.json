@@ -11,6 +11,9 @@
     "test",
     "example"
   ],
+  "dependencies": {
+    "angular": "1.x"
+  },
   "devDependencies": {
     "mousetrap": "~1.5.2",
     "angular-mocks": "~1.2.15",
