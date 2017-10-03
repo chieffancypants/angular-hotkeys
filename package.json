@@ -5,7 +5,7 @@
   "license": "MIT",
   "description": "Automatic keyboard shortcuts for your Angular Apps",
   "homepage": "https://chieffancypants.github.io/angular-hotkeys",
-  "main": "build/hotkeys.js",
+  "main": "index.js",
   "keywords": [
     "angular",
     "angularjs",
