@@ -298,6 +298,8 @@
       function toggleCheatSheet() {
         scope.helpVisible = !scope.helpVisible;
 
+        angular.element(document.body).toggleClass('cfp-hotkeys-visible', scope.helpVisible);
+
         // Bind to esc to remove the cheat sheet.  Ideally, this would be done
         // as a directive in the template, but that would create a nasty
         // circular dependency issue that I don't feel like sorting out.
