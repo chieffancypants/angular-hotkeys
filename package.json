@@ -22,6 +22,7 @@
   },
   "scripts": {
     "postinstall": "bower install",
+    "test": "karma start test/karma.conf.js"
   },
   "devDependencies": {
     "bower": "^1.8.8",
