@@ -1,11 +1,12 @@
 body.cfp-hotkeys-visible {
   overflow: hidden;
 }
+
 .cfp-hotkeys-container {
-  display: table !important;
+  display: flex !important;
+  justify-content: center;
+  overflow-y: auto;
   position: fixed;
-  width: 100%;
-  height: 100%;
   top: 0;
   left: 0;
   color: #333;
