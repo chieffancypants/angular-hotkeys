@@ -1,3 +1,6 @@
+body.cfp-hotkeys-visible {
+  overflow: hidden;
+}
 .cfp-hotkeys-container {
   display: table !important;
   position: fixed;
