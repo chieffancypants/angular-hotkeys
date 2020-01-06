@@ -21,7 +21,6 @@
     "url": "https://github.com/chieffancypants/angular-hotkeys/issues"
   },
   "scripts": {
-    "postinstall": "bower install",
     "test": "karma start test/karma.conf.js"
   },
   "devDependencies": {
