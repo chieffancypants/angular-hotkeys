@@ -21,9 +21,10 @@
     "url": "https://github.com/chieffancypants/angular-hotkeys/issues"
   },
   "scripts": {
-    "test": "node_modules/karma/bin/karma start test/karma.conf.js"
+    "test": "karma start test/karma.conf.js"
   },
   "devDependencies": {
+    "bower": "^1.8.8",
     "grunt": "~0.4.1",
     "grunt-contrib-concat": "^0.5.1",
     "grunt-contrib-cssmin": "^0.12.3",
