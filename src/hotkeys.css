@@ -37,8 +37,9 @@ body.cfp-hotkeys-visible {
 }
 
 .cfp-hotkeys {
-  width: 100%;
-  height: 100%;
+  height: 100vh;
+  width: 100vw;
+  padding: 20px;
   display: table-cell;
   vertical-align: middle;
 }
